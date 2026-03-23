@@ -11,13 +11,8 @@ from datetime import date
 
 import polars as pl
 
-from ck_trading.strategies.base import Strategy
-
-try:
-    from ck_trading.strategies.registry import register
-except ImportError:
-    def register(cls):
-        return cls
+from ck_trading.strategies.base import Strategy, empty_screen_result
+from ck_trading.strategies.registry import register
 
 
 @register
@@ -54,14 +49,14 @@ class GARPStrategy(Strategy):
         extra_data: dict[str, pl.DataFrame] | None = None,
     ) -> pl.DataFrame:
         if fundamentals.is_empty():
-            return _empty_result()
+            return empty_screen_result()
 
         if "period_end" not in fundamentals.columns:
-            return _empty_result()
+            return empty_screen_result()
 
         fund = fundamentals.filter(pl.col("period_end") <= as_of_date)
         if fund.is_empty():
-            return _empty_result()
+            return empty_screen_result()
 
         # Get the two most recent periods per ticker
         ranked = (
@@ -83,7 +78,7 @@ class GARPStrategy(Strategy):
         )
 
         if ticker_counts.is_empty():
-            return _empty_result()
+            return empty_screen_result()
 
         valid_tickers = ticker_counts["ticker"].to_list()
 
@@ -152,18 +147,7 @@ class GARPStrategy(Strategy):
             })
 
         if not results:
-            return _empty_result()
+            return empty_screen_result()
 
         result_df = pl.DataFrame(results).sort("score", descending=True)
         return result_df.head(self.top_n)
-
-
-def _empty_result() -> pl.DataFrame:
-    return pl.DataFrame(
-        schema={
-            "ticker": pl.Utf8,
-            "score": pl.Float64,
-            "signal_type": pl.Utf8,
-            "rationale": pl.Utf8,
-        }
-    )

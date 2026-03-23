@@ -11,19 +11,8 @@ from datetime import date
 
 import polars as pl
 
-from ck_trading.strategies.base import Strategy
+from ck_trading.strategies.base import Strategy, empty_screen_result
 from ck_trading.strategies.registry import register
-
-
-def _empty_result() -> pl.DataFrame:
-    return pl.DataFrame(
-        schema={
-            "ticker": pl.Utf8,
-            "score": pl.Float64,
-            "signal_type": pl.Utf8,
-            "rationale": pl.Utf8,
-        }
-    )
 
 
 @register
@@ -63,11 +52,11 @@ class RiskParityStrategy(Strategy):
         extra_data: dict[str, pl.DataFrame] | None = None,
     ) -> pl.DataFrame:
         if prices.is_empty():
-            return _empty_result()
+            return empty_screen_result()
 
         hist = prices.filter(pl.col("date") <= as_of_date)
         if hist.is_empty():
-            return _empty_result()
+            return empty_screen_result()
 
         tickers = hist["ticker"].unique().to_list()
         ticker_vols: list[tuple[str, float]] = []
@@ -104,7 +93,7 @@ class RiskParityStrategy(Strategy):
             ticker_vols.append((ticker, ann_vol))
 
         if not ticker_vols:
-            return _empty_result()
+            return empty_screen_result()
 
         # Compute inverse-vol weights
         inv_vols = [(t, 1.0 / v) for t, v in ticker_vols]

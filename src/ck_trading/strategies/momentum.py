@@ -10,19 +10,8 @@ from datetime import date, timedelta
 
 import polars as pl
 
-from ck_trading.strategies.base import Strategy
+from ck_trading.strategies.base import Strategy, empty_screen_result
 from ck_trading.strategies.registry import register
-
-
-def _empty_result() -> pl.DataFrame:
-    return pl.DataFrame(
-        schema={
-            "ticker": pl.Utf8,
-            "score": pl.Float64,
-            "signal_type": pl.Utf8,
-            "rationale": pl.Utf8,
-        }
-    )
 
 
 @register
@@ -66,7 +55,7 @@ class MomentumStrategy(Strategy):
         extra_data: dict[str, pl.DataFrame] | None = None,
     ) -> pl.DataFrame:
         if prices.is_empty():
-            return _empty_result()
+            return empty_screen_result()
 
         # Compute window boundaries
         lookback_start = _subtract_months(as_of_date, self.lookback_months)
@@ -78,7 +67,7 @@ class MomentumStrategy(Strategy):
         )
 
         if window.is_empty():
-            return _empty_result()
+            return empty_screen_result()
 
         # For each ticker: get first and last close in the window
         per_ticker = (
@@ -95,7 +84,7 @@ class MomentumStrategy(Strategy):
         per_ticker = per_ticker.filter(pl.col("num_days") >= self.min_history_days)
 
         if per_ticker.is_empty():
-            return _empty_result()
+            return empty_screen_result()
 
         # Compute return
         per_ticker = per_ticker.with_columns(
@@ -126,7 +115,7 @@ class MomentumStrategy(Strategy):
         result = per_ticker.filter(pl.col("signal_type") != "HOLD")
 
         if result.is_empty():
-            return _empty_result()
+            return empty_screen_result()
 
         # Score = momentum return (higher = better for BUY; for SELL, we still
         # use the return so that the most negative are "strongest" sells)

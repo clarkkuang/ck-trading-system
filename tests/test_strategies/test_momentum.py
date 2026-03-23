@@ -82,10 +82,10 @@ class TestMomentumStrategy:
         result = s.screen(prices, EMPTY_FUNDAMENTALS, AS_OF)
 
         # Y should rank higher because X's spike is in the skipped month
-        if not result.is_empty():
-            buys = result.filter(pl.col("signal_type") == "BUY")
-            if not buys.is_empty():
-                assert "Y" in buys["ticker"].to_list()
+        assert not result.is_empty(), "Strategy should produce results with this test data"
+        buys = result.filter(pl.col("signal_type") == "BUY")
+        assert not buys.is_empty(), "Strategy should produce BUY signals with this test data"
+        assert "Y" in buys["ticker"].to_list()
 
     def test_insufficient_history(self):
         """Ticker with < min_history_days should be filtered out."""

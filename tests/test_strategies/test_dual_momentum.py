@@ -76,9 +76,8 @@ def test_all_negative():
     s = DualMomentumStrategy(lookback_months=12, bond_ticker="TLT")
     result = s.screen(prices, EMPTY_FUND, start + timedelta(days=days - 1))
 
-    # Either empty or no BUY signals
-    if not result.is_empty():
-        assert "BUY" not in result["signal_type"].to_list()
+    # Should be empty (all stocks negative, bond also negative)
+    assert result.is_empty(), "Strategy should produce no results when all returns are negative"
 
 
 def test_no_tlt_graceful():

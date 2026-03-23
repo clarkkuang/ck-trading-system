@@ -10,19 +10,8 @@ from datetime import date
 
 import polars as pl
 
-from ck_trading.strategies.base import Strategy
+from ck_trading.strategies.base import Strategy, empty_screen_result
 from ck_trading.strategies.registry import register
-
-
-def _empty_result() -> pl.DataFrame:
-    return pl.DataFrame(
-        schema={
-            "ticker": pl.Utf8,
-            "score": pl.Float64,
-            "signal_type": pl.Utf8,
-            "rationale": pl.Utf8,
-        }
-    )
 
 
 def compute_rsi(closes: list[float], period: int = 14) -> float | None:
@@ -98,12 +87,12 @@ class MeanReversionStrategy(Strategy):
         extra_data: dict[str, pl.DataFrame] | None = None,
     ) -> pl.DataFrame:
         if prices.is_empty():
-            return _empty_result()
+            return empty_screen_result()
 
         # Use prices up to as_of_date
         hist = prices.filter(pl.col("date") <= as_of_date)
         if hist.is_empty():
-            return _empty_result()
+            return empty_screen_result()
 
         tickers = hist["ticker"].unique().to_list()
         rows: list[dict] = []
@@ -136,7 +125,7 @@ class MeanReversionStrategy(Strategy):
                 })
 
         if not rows:
-            return _empty_result()
+            return empty_screen_result()
 
         result = pl.DataFrame(rows)
 
@@ -154,6 +143,6 @@ class MeanReversionStrategy(Strategy):
 
         combined = pl.concat([buys, sells], how="diagonal")
         if combined.is_empty():
-            return _empty_result()
+            return empty_screen_result()
 
         return combined.select(["ticker", "score", "signal_type", "rationale"])

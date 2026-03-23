@@ -131,8 +131,13 @@ class EarningsCollector:
         url = f"{self.FMP_BASE_URL}/analyst-estimates/{ticker}"
         params = {"apikey": self.fmp_api_key}
 
-        resp = client.get(url, params=params)
-        resp.raise_for_status()
+        try:
+            resp = client.get(url, params=params)
+            resp.raise_for_status()
+        except httpx.HTTPError as exc:
+            # Redact API key from error messages to prevent leaking in logs
+            sanitized_msg = str(exc).replace(self.fmp_api_key, "***REDACTED***")
+            raise RuntimeError(sanitized_msg) from None
         data = resp.json()
 
         if not isinstance(data, list):

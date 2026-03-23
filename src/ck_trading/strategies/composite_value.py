@@ -17,7 +17,7 @@ from datetime import date
 
 import polars as pl
 
-from ck_trading.strategies.base import Strategy
+from ck_trading.strategies.base import Strategy, empty_screen_result
 from ck_trading.strategies.registry import register
 
 
@@ -61,7 +61,7 @@ class CompositeValueStrategy(Strategy):
         extra_data: dict[str, pl.DataFrame] | None = None,
     ) -> pl.DataFrame:
         if fundamentals.is_empty():
-            return _empty_result()
+            return empty_screen_result()
 
         # Get latest fundamentals
         if "period_end" in fundamentals.columns:
@@ -76,7 +76,7 @@ class CompositeValueStrategy(Strategy):
             latest = fundamentals.group_by("ticker").first()
 
         if latest.is_empty() or latest.height < 5:
-            return _empty_result()
+            return empty_screen_result()
 
         # Market cap filter
         if "market_cap" in latest.columns:
@@ -92,7 +92,7 @@ class CompositeValueStrategy(Strategy):
             )
 
         if latest.is_empty() or latest.height < 3:
-            return _empty_result()
+            return empty_screen_result()
 
         # Score each factor using percentile rank (0 to 1)
         scored = latest
@@ -203,14 +203,3 @@ class CompositeValueStrategy(Strategy):
         top = top.with_columns(pl.lit("BUY").alias("signal_type"))
 
         return top.select(["ticker", "score", "signal_type", "rationale"])
-
-
-def _empty_result() -> pl.DataFrame:
-    return pl.DataFrame(
-        schema={
-            "ticker": pl.Utf8,
-            "score": pl.Float64,
-            "signal_type": pl.Utf8,
-            "rationale": pl.Utf8,
-        }
-    )

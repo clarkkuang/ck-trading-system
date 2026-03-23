@@ -10,7 +10,7 @@ from datetime import date, timedelta
 
 import polars as pl
 
-from ck_trading.strategies.base import Strategy
+from ck_trading.strategies.base import Strategy, empty_screen_result
 from ck_trading.strategies.registry import register
 
 
@@ -46,13 +46,13 @@ class DualMomentumStrategy(Strategy):
         extra_data: dict[str, pl.DataFrame] | None = None,
     ) -> pl.DataFrame:
         if prices.is_empty():
-            return _empty_result()
+            return empty_screen_result()
 
         lookback_start = as_of_date - timedelta(days=self.lookback_months * 30)
 
         filtered = prices.filter(pl.col("date") <= as_of_date)
         if filtered.is_empty():
-            return _empty_result()
+            return empty_screen_result()
 
         # Compute returns for all tickers
         returns_data = {}
@@ -73,14 +73,14 @@ class DualMomentumStrategy(Strategy):
             if end_data.is_empty():
                 continue
 
-            start_price = start_data.sort("date").row(0, named=True)["adj_close"]
-            end_price = end_data.sort("date", descending=True).row(0, named=True)["adj_close"]
+            start_price = start_data.sort("date").row(0, named=True)["close"]
+            end_price = end_data.sort("date", descending=True).row(0, named=True)["close"]
 
             if start_price > 0:
                 returns_data[ticker] = (end_price / start_price) - 1.0
 
         if not returns_data:
-            return _empty_result()
+            return empty_screen_result()
 
         bond_return = returns_data.pop(self.bond_ticker, None)
 
@@ -98,7 +98,7 @@ class DualMomentumStrategy(Strategy):
                         "rationale": [f"No stocks available, bond return={bond_return * 100:.1f}%"],
                     }
                 )
-            return _empty_result()
+            return empty_screen_result()
 
         # Absolute momentum: keep only positive returns
         positive_stocks = {k: v for k, v in stock_returns.items() if v > 0}
@@ -116,7 +116,7 @@ class DualMomentumStrategy(Strategy):
                         ],
                     }
                 )
-            return _empty_result()
+            return empty_screen_result()
 
         # Build result from positive stocks, sorted by return
         sorted_stocks = sorted(positive_stocks.items(), key=lambda x: x[1], reverse=True)
@@ -133,14 +133,3 @@ class DualMomentumStrategy(Strategy):
             )
 
         return pl.DataFrame(results).select(["ticker", "score", "signal_type", "rationale"])
-
-
-def _empty_result() -> pl.DataFrame:
-    return pl.DataFrame(
-        schema={
-            "ticker": pl.Utf8,
-            "score": pl.Float64,
-            "signal_type": pl.Utf8,
-            "rationale": pl.Utf8,
-        }
-    )

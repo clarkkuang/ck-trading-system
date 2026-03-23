@@ -166,9 +166,9 @@ class TestRiskParityStrategy:
         s = RiskParityStrategy(vol_lookback_days=60, min_history_days=30, max_positions=50)
         result = s.screen(prices, EMPTY_FUNDAMENTALS, AS_OF)
 
-        if not result.is_empty():
-            total_weight = result["score"].sum()
-            assert abs(total_weight - 1.0) < 0.01
+        assert not result.is_empty(), "Strategy should produce results with this test data"
+        total_weight = result["score"].sum()
+        assert abs(total_weight - 1.0) < 0.01
 
     def test_rationale_format(self):
         """Rationale should contain Vol and Weight percentages."""

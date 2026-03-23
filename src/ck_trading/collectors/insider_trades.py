@@ -26,6 +26,7 @@ class InsiderTradesCollector:
     def __init__(self, timeout: float = 30.0):
         self.timeout = timeout
         self._last_request_time: float = 0.0
+        self._cik_map: dict[str, str] | None = None
 
     def collect(
         self, tickers: list[str], days_back: int = 90
@@ -82,21 +83,27 @@ class InsiderTradesCollector:
 
         return self._parse_filings(data, ticker, cutoff_date)
 
+    def _get_cik_map(self, client: httpx.Client) -> dict[str, str]:
+        """Download and cache the SEC company tickers mapping."""
+        if self._cik_map is None:
+            self._rate_limit()
+            try:
+                resp = client.get("https://www.sec.gov/files/company_tickers.json")
+                resp.raise_for_status()
+                tickers_data = resp.json()
+                self._cik_map = {
+                    entry["ticker"].upper(): str(entry["cik_str"])
+                    for entry in tickers_data.values()
+                }
+            except Exception as exc:
+                logger.warning("Failed to download CIK map: %s", exc)
+                self._cik_map = {}
+        return self._cik_map
+
     def _lookup_cik(self, client: httpx.Client, ticker: str) -> str | None:
         """Look up CIK number for a ticker symbol."""
-        self._rate_limit()
-        try:
-            # Use the SEC EDGAR company tickers JSON
-            resp = client.get("https://www.sec.gov/files/company_tickers.json")
-            resp.raise_for_status()
-            tickers_data = resp.json()
-
-            for _key, entry in tickers_data.items():
-                if entry.get("ticker", "").upper() == ticker.upper():
-                    return str(entry.get("cik_str", ""))
-        except Exception as exc:
-            logger.warning("CIK lookup failed for %s: %s", ticker, exc)
-        return None
+        cik_map = self._get_cik_map(client)
+        return cik_map.get(ticker.upper())
 
     def _parse_filings(
         self, data: dict, ticker: str, cutoff_date: date

@@ -16,7 +16,7 @@ from datetime import date
 
 import polars as pl
 
-from ck_trading.strategies.base import Strategy
+from ck_trading.strategies.base import Strategy, empty_screen_result
 from ck_trading.strategies.registry import register
 
 
@@ -46,7 +46,7 @@ class MagicFormulaStrategy(Strategy):
         extra_data: dict[str, pl.DataFrame] | None = None,
     ) -> pl.DataFrame:
         if fundamentals.is_empty():
-            return _empty_result()
+            return empty_screen_result()
 
         # Get latest fundamentals
         if "period_end" in fundamentals.columns:
@@ -61,7 +61,7 @@ class MagicFormulaStrategy(Strategy):
             latest = fundamentals.group_by("ticker").first()
 
         if latest.is_empty():
-            return _empty_result()
+            return empty_screen_result()
 
         # Filter: need EBIT and EV data
         available = set(latest.columns)
@@ -86,7 +86,7 @@ class MagicFormulaStrategy(Strategy):
                 (1.0 / pl.col("pe_ratio")).alias("earnings_yield")
             )
         else:
-            return _empty_result()
+            return empty_screen_result()
 
         # Compute Return on Capital
         if all(c in available for c in ["ebit", "total_assets", "current_liabilities"]):
@@ -114,10 +114,10 @@ class MagicFormulaStrategy(Strategy):
             latest = latest.filter(pl.col("roe").is_not_null())
             latest = latest.with_columns(pl.col("roe").alias("return_on_capital"))
         else:
-            return _empty_result()
+            return empty_screen_result()
 
         if latest.is_empty():
-            return _empty_result()
+            return empty_screen_result()
 
         # Market cap filter
         if "market_cap" in available:
@@ -127,7 +127,7 @@ class MagicFormulaStrategy(Strategy):
             )
 
         if latest.is_empty():
-            return _empty_result()
+            return empty_screen_result()
 
         # Rank by both factors (lower rank = better)
         latest = latest.with_columns(
@@ -168,14 +168,3 @@ class MagicFormulaStrategy(Strategy):
         top = top.with_columns(pl.lit("BUY").alias("signal_type"))
 
         return top.select(["ticker", "score", "signal_type", "rationale"])
-
-
-def _empty_result() -> pl.DataFrame:
-    return pl.DataFrame(
-        schema={
-            "ticker": pl.Utf8,
-            "score": pl.Float64,
-            "signal_type": pl.Utf8,
-            "rationale": pl.Utf8,
-        }
-    )

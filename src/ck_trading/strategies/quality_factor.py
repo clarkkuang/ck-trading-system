@@ -11,13 +11,8 @@ from datetime import date
 
 import polars as pl
 
-from ck_trading.strategies.base import Strategy
-
-try:
-    from ck_trading.strategies.registry import register
-except ImportError:
-    def register(cls):
-        return cls
+from ck_trading.strategies.base import Strategy, empty_screen_result
+from ck_trading.strategies.registry import register
 
 
 @register
@@ -56,14 +51,14 @@ class QualityFactorStrategy(Strategy):
         extra_data: dict[str, pl.DataFrame] | None = None,
     ) -> pl.DataFrame:
         if fundamentals.is_empty():
-            return _empty_result()
+            return empty_screen_result()
 
         if "period_end" not in fundamentals.columns:
-            return _empty_result()
+            return empty_screen_result()
 
         fund = fundamentals.filter(pl.col("period_end") <= as_of_date)
         if fund.is_empty():
-            return _empty_result()
+            return empty_screen_result()
 
         # Get latest fundamentals per ticker
         latest = (
@@ -78,10 +73,10 @@ class QualityFactorStrategy(Strategy):
                 (pl.col("roe").is_not_null()) & (pl.col("roe") >= self.min_roe)
             )
         else:
-            return _empty_result()
+            return empty_screen_result()
 
         if latest.is_empty():
-            return _empty_result()
+            return empty_screen_result()
 
         # Filter by debt-to-equity
         if "debt_to_equity" in latest.columns:
@@ -91,7 +86,7 @@ class QualityFactorStrategy(Strategy):
             )
 
         if latest.is_empty():
-            return _empty_result()
+            return empty_screen_result()
 
         # Filter by market cap
         if "market_cap" in latest.columns:
@@ -101,7 +96,7 @@ class QualityFactorStrategy(Strategy):
             )
 
         if latest.is_empty():
-            return _empty_result()
+            return empty_screen_result()
 
         # Compute earnings stability per ticker
         # Need multiple periods with net_income
@@ -152,7 +147,7 @@ class QualityFactorStrategy(Strategy):
             stability_records.append({"ticker": ticker, "stability": stability})
 
         if not stability_records:
-            return _empty_result()
+            return empty_screen_result()
 
         stability_df = pl.DataFrame(stability_records)
 
@@ -160,7 +155,7 @@ class QualityFactorStrategy(Strategy):
         scored = latest.join(stability_df, on="ticker", how="inner")
 
         if scored.is_empty():
-            return _empty_result()
+            return empty_screen_result()
 
         n = scored.height
 
@@ -204,14 +199,3 @@ class QualityFactorStrategy(Strategy):
         top = top.with_columns(pl.lit("BUY").alias("signal_type"))
 
         return top.select(["ticker", "score", "signal_type", "rationale"])
-
-
-def _empty_result() -> pl.DataFrame:
-    return pl.DataFrame(
-        schema={
-            "ticker": pl.Utf8,
-            "score": pl.Float64,
-            "signal_type": pl.Utf8,
-            "rationale": pl.Utf8,
-        }
-    )

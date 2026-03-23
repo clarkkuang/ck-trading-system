@@ -20,7 +20,7 @@ from datetime import date
 
 import polars as pl
 
-from ck_trading.strategies.base import Strategy
+from ck_trading.strategies.base import Strategy, empty_screen_result
 from ck_trading.strategies.registry import register
 
 
@@ -60,7 +60,7 @@ class GrahamDefensiveStrategy(Strategy):
         extra_data: dict[str, pl.DataFrame] | None = None,
     ) -> pl.DataFrame:
         if fundamentals.is_empty():
-            return _empty_result()
+            return empty_screen_result()
 
         # Get the most recent fundamentals for each ticker as of the screen date
         if "period_end" in fundamentals.columns:
@@ -75,7 +75,7 @@ class GrahamDefensiveStrategy(Strategy):
             latest = fundamentals.group_by("ticker").first()
 
         if latest.is_empty():
-            return _empty_result()
+            return empty_screen_result()
 
         # Apply filters
         screened = latest
@@ -124,7 +124,7 @@ class GrahamDefensiveStrategy(Strategy):
             )
 
         if screened.is_empty():
-            return _empty_result()
+            return empty_screen_result()
 
         # Score: lower P/E × P/B = better (invert for score)
         if "pe_ratio" in screened.columns and "pb_ratio" in screened.columns:
@@ -167,14 +167,3 @@ class GrahamDefensiveStrategy(Strategy):
             .select(["ticker", "score", "signal_type", "rationale"])
             .sort("score", descending=True)
         )
-
-
-def _empty_result() -> pl.DataFrame:
-    return pl.DataFrame(
-        schema={
-            "ticker": pl.Utf8,
-            "score": pl.Float64,
-            "signal_type": pl.Utf8,
-            "rationale": pl.Utf8,
-        }
-    )

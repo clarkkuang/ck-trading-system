@@ -1,29 +1,32 @@
 """Piotroski F-Score strategy.
 
-9-point scoring system evaluating three areas:
+8-point scoring system evaluating three areas:
 1. Profitability (4 points):
    - Positive ROA
    - Positive operating cash flow
    - ROA improvement (year over year)
    - Accruals: operating cash flow > net income (quality of earnings)
 
-2. Leverage/Liquidity (3 points):
+2. Leverage/Liquidity (2 points):
    - Decrease in long-term debt ratio
    - Increase in current ratio
-   - No new share issuance (dilution)
 
 3. Operating Efficiency (2 points):
    - Increase in gross margin
    - Increase in asset turnover
 
-Stocks scoring 8-9 are strong buys; 0-2 are potential shorts.
+Note: The original Piotroski F-Score includes a 9th point for no share dilution,
+but this implementation omits it because reliable shares-outstanding data is not
+always available. Scores range from 0-8.
+
+Stocks scoring 7-8 are strong buys; 0-2 are potential shorts.
 """
 
 from datetime import date
 
 import polars as pl
 
-from ck_trading.strategies.base import Strategy
+from ck_trading.strategies.base import Strategy, empty_screen_result
 from ck_trading.strategies.registry import register
 
 
@@ -35,13 +38,13 @@ class PiotroskiFScoreStrategy(Strategy):
 
     @property
     def description(self) -> str:
-        return "9-factor scoring: profitability, leverage, and operating efficiency"
+        return "8-factor scoring: profitability, leverage, and operating efficiency"
 
     @property
     def rebalance_frequency(self) -> str:
         return "quarterly"
 
-    def __init__(self, min_score: int = 7):
+    def __init__(self, min_score: int = 6):
         self.min_score = min_score
 
     def screen(
@@ -52,15 +55,15 @@ class PiotroskiFScoreStrategy(Strategy):
         extra_data: dict[str, pl.DataFrame] | None = None,
     ) -> pl.DataFrame:
         if fundamentals.is_empty():
-            return _empty_result()
+            return empty_screen_result()
 
         # Need at least 2 periods to compute year-over-year changes
         if "period_end" not in fundamentals.columns:
-            return _empty_result()
+            return empty_screen_result()
 
         fund = fundamentals.filter(pl.col("period_end") <= as_of_date)
         if fund.is_empty():
-            return _empty_result()
+            return empty_screen_result()
 
         # Get latest two periods per ticker
         ranked = (
@@ -94,16 +97,16 @@ class PiotroskiFScoreStrategy(Strategy):
                     "ticker": ticker,
                     "score": float(score),
                     "signal_type": "BUY",
-                    "rationale": f"F-Score={score}/9 ({', '.join(details)})",
+                    "rationale": f"F-Score={score}/8 ({', '.join(details)})",
                 })
 
         if not results:
-            return _empty_result()
+            return empty_screen_result()
 
         return pl.DataFrame(results).sort("score", descending=True)
 
     def _compute_f_score(self, current: dict, prior: dict | None) -> tuple[int, list[str]]:
-        """Compute 9-point Piotroski F-Score."""
+        """Compute 8-point Piotroski F-Score."""
         score = 0
         details = []
 
@@ -158,14 +161,9 @@ class PiotroskiFScoreStrategy(Strategy):
                 score += 1
                 details.append("CR+")
 
-        # 7. No dilution (simplified: check if shares outstanding didn't increase)
-        # yfinance doesn't always have shares data, give benefit of doubt
-        score += 1
-        details.append("NoDilution")
-
         # --- Operating Efficiency (2 points) ---
 
-        # 8. Gross margin improvement
+        # 7. Gross margin improvement
         if prior:
             curr_gm = current.get("gross_margin")
             prev_gm = prior.get("gross_margin")
@@ -173,7 +171,7 @@ class PiotroskiFScoreStrategy(Strategy):
                 score += 1
                 details.append("GM+")
 
-        # 9. Asset turnover improvement
+        # 8. Asset turnover improvement
         if prior:
             curr_at = current.get("asset_turnover")
             prev_at = prior.get("asset_turnover")
@@ -182,14 +180,3 @@ class PiotroskiFScoreStrategy(Strategy):
                 details.append("AT+")
 
         return score, details
-
-
-def _empty_result() -> pl.DataFrame:
-    return pl.DataFrame(
-        schema={
-            "ticker": pl.Utf8,
-            "score": pl.Float64,
-            "signal_type": pl.Utf8,
-            "rationale": pl.Utf8,
-        }
-    )

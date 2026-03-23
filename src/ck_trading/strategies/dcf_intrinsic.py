@@ -12,7 +12,7 @@ from datetime import date
 
 import polars as pl
 
-from ck_trading.strategies.base import Strategy
+from ck_trading.strategies.base import Strategy, empty_screen_result
 from ck_trading.strategies.registry import register
 
 
@@ -50,7 +50,7 @@ class DCFIntrinsicStrategy(Strategy):
         extra_data: dict[str, pl.DataFrame] | None = None,
     ) -> pl.DataFrame:
         if fundamentals.is_empty():
-            return _empty_result()
+            return empty_screen_result()
 
         # Get fundamentals with at least 2 periods for growth estimation
         if "period_end" in fundamentals.columns:
@@ -59,7 +59,7 @@ class DCFIntrinsicStrategy(Strategy):
             fund = fundamentals
 
         if "free_cash_flow" not in fund.columns and "operating_cash_flow" not in fund.columns:
-            return _empty_result()
+            return empty_screen_result()
 
         tickers = fund["ticker"].unique().to_list()
         results = []
@@ -106,7 +106,7 @@ class DCFIntrinsicStrategy(Strategy):
                 })
 
         if not results:
-            return _empty_result()
+            return empty_screen_result()
 
         return pl.DataFrame(results).sort("score", descending=True)
 
@@ -162,20 +162,12 @@ class DCFIntrinsicStrategy(Strategy):
             total_pv += pv
 
         # Terminal value
+        if self.discount_rate <= self.terminal_growth:
+            # Cannot compute terminal value when discount rate <= growth rate
+            return None
         terminal_fcf = projected_fcf * (1 + self.terminal_growth)
         terminal_value = terminal_fcf / (self.discount_rate - self.terminal_growth)
         terminal_pv = terminal_value / (1 + self.discount_rate) ** self.projection_years
         total_pv += terminal_pv
 
         return total_pv
-
-
-def _empty_result() -> pl.DataFrame:
-    return pl.DataFrame(
-        schema={
-            "ticker": pl.Utf8,
-            "score": pl.Float64,
-            "signal_type": pl.Utf8,
-            "rationale": pl.Utf8,
-        }
-    )

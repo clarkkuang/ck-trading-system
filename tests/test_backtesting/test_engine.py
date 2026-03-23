@@ -172,10 +172,10 @@ class TestBacktestEngine:
         )
         result = engine.run()
 
-        if not result.positions.is_empty():
-            for d in result.positions["date"].unique().to_list():
-                day_pos = result.positions.filter(pl.col("date") == d)
-                assert day_pos.height <= 2
+        assert not result.positions.is_empty(), "Backtest should produce positions with this test data"
+        for d in result.positions["date"].unique().to_list():
+            day_pos = result.positions.filter(pl.col("date") == d)
+            assert day_pos.height <= 2
 
     def test_empty_fundamentals_returns_empty_result(self, backtest_prices):
         config = _make_config()
@@ -235,8 +235,8 @@ class TestBacktestEngine:
         )
         result = engine.run()
 
-        if not result.trades.is_empty():
-            assert (result.trades["cost"] > 0).all()
+        assert not result.trades.is_empty(), "Backtest should produce trades with this test data"
+        assert (result.trades["cost"] > 0).all()
 
     def test_missing_price_day_uses_last_known(self, backtest_fundamentals):
         """Regression: missing price defaulted to 0, causing fake -100% drawdown.
@@ -283,12 +283,12 @@ class TestBacktestEngine:
         )
         result = engine.run()
 
-        if not result.returns.is_empty():
-            rets = result.returns["portfolio_return"].to_list()
-            # No daily return should be catastrophically negative
-            # (old bug: missing price → 0 → return ≈ -100%)
-            for r in rets:
-                assert r > -0.5, (
-                    f"Daily return {r:.2%} is catastrophic — "
-                    f"likely caused by missing price defaulting to 0"
-                )
+        assert not result.returns.is_empty(), "Backtest should produce returns with this test data"
+        rets = result.returns["portfolio_return"].to_list()
+        # No daily return should be catastrophically negative
+        # (old bug: missing price → 0 → return ≈ -100%)
+        for r in rets:
+            assert r > -0.5, (
+                f"Daily return {r:.2%} is catastrophic — "
+                f"likely caused by missing price defaulting to 0"
+            )

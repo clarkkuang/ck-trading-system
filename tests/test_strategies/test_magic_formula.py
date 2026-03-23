@@ -104,7 +104,7 @@ class TestMagicFormulaStrategy:
         s = MagicFormulaStrategy(top_n=10)
         result = s.screen(sample_prices, sample_fundamentals, date(2020, 12, 31))
 
-        if not result.is_empty():
-            rationale = result["rationale"][0]
-            assert "EY=" in rationale
-            assert "ROC=" in rationale
+        assert not result.is_empty(), "Strategy should produce results with this test data"
+        rationale = result["rationale"][0]
+        assert "EY=" in rationale
+        assert "ROC=" in rationale

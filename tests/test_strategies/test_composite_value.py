@@ -63,9 +63,9 @@ class TestCompositeValueStrategy:
         s = CompositeValueStrategy(top_n=10)
         result = s.screen(sample_prices, fundamentals, date(2020, 12, 31))
 
-        if not result.is_empty():
-            assert (result["score"] >= 0).all()
-            assert (result["score"] <= 1.5).all()  # Weighted sum could exceed 1 slightly
+        assert not result.is_empty(), "Strategy should produce results with this test data"
+        assert (result["score"] >= 0).all()
+        assert (result["score"] <= 1.5).all()  # Weighted sum could exceed 1 slightly
 
     def test_top_n_respected(self, sample_prices):
         fundamentals = _make_fundamentals(20)
@@ -137,11 +137,11 @@ class TestCompositeValueStrategy:
         s = CompositeValueStrategy(top_n=5, min_market_cap=1e8)
         result = s.screen(sample_prices, fundamentals, date(2020, 12, 31))
 
-        if not result.is_empty():
-            for r in result["rationale"].to_list():
-                assert r is not None
-                assert isinstance(r, str)
-                assert len(r) > 0
+        assert not result.is_empty(), "Strategy should produce results with this test data"
+        for r in result["rationale"].to_list():
+            assert r is not None
+            assert isinstance(r, str)
+            assert len(r) > 0
 
     def test_missing_optional_columns(self, sample_prices):
         """Should work with only pe_ratio and market_cap."""

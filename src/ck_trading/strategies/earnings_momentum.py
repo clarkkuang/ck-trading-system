@@ -9,7 +9,7 @@ from datetime import date, timedelta
 
 import polars as pl
 
-from ck_trading.strategies.base import Strategy
+from ck_trading.strategies.base import Strategy, empty_screen_result
 from ck_trading.strategies.registry import register
 
 
@@ -45,15 +45,15 @@ class EarningsMomentumStrategy(Strategy):
         extra_data: dict[str, pl.DataFrame] | None = None,
     ) -> pl.DataFrame:
         if extra_data is None or "earnings" not in extra_data:
-            return _empty_result()
+            return empty_screen_result()
 
         earnings = extra_data["earnings"]
         if earnings.is_empty():
-            return _empty_result()
+            return empty_screen_result()
 
         required = {"ticker", "report_date", "surprise_pct"}
         if not required.issubset(set(earnings.columns)):
-            return _empty_result()
+            return empty_screen_result()
 
         cutoff_date = as_of_date - timedelta(days=self.lookback_days)
 
@@ -66,7 +66,7 @@ class EarningsMomentumStrategy(Strategy):
         )
 
         if recent.is_empty():
-            return _empty_result()
+            return empty_screen_result()
 
         # Take latest surprise per ticker
         latest = (
@@ -87,14 +87,3 @@ class EarningsMomentumStrategy(Strategy):
 
         result = latest.sort("score", descending=True).head(self.top_n)
         return result.select(["ticker", "score", "signal_type", "rationale"])
-
-
-def _empty_result() -> pl.DataFrame:
-    return pl.DataFrame(
-        schema={
-            "ticker": pl.Utf8,
-            "score": pl.Float64,
-            "signal_type": pl.Utf8,
-            "rationale": pl.Utf8,
-        }
-    )

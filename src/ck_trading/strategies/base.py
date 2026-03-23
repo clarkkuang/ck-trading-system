@@ -118,3 +118,18 @@ def _days_in_month(year: int, month: int) -> int:
     """Return number of days in a month."""
     import calendar
     return calendar.monthrange(year, month)[1]
+
+
+def empty_screen_result() -> pl.DataFrame:
+    """Return an empty DataFrame with the standard screen result schema.
+
+    All strategies should use this instead of defining their own _empty_result().
+    """
+    return pl.DataFrame(
+        schema={
+            "ticker": pl.Utf8,
+            "score": pl.Float64,
+            "signal_type": pl.Utf8,
+            "rationale": pl.Utf8,
+        }
+    )
