@@ -2,11 +2,14 @@
 
 from datetime import date
 
+import polars as pl
 import streamlit as st
 
 st.set_page_config(page_title="Backtest", page_icon="📊", layout="wide")
 st.title("Strategy Backtesting")
 
+from ck_trading.dashboard.widgets.stock_pool_selector import stock_pool_selector
+from ck_trading.storage.metadata_store import MetadataStore
 from ck_trading.strategies.registry import get_all_strategies
 
 strategies = get_all_strategies()
@@ -27,6 +30,11 @@ with col2:
 rebalance_freq = st.selectbox("Rebalance Frequency", ["quarterly", "monthly", "annual"])
 initial_capital = st.number_input("Initial Capital ($)", 10000, 10000000, 1000000, step=100000)
 
+# --- Stock pool selector ---
+meta = MetadataStore()
+selected_tickers = stock_pool_selector(meta, key_prefix="backtest_")
+meta.close()
+
 if st.button("Run Backtest", type="primary"):
     with st.spinner("Running backtest... This may take a minute."):
         try:
@@ -37,6 +45,11 @@ if st.button("Run Backtest", type="primary"):
             store = ParquetStore()
             prices = store.load_prices("us")
             fundamentals = store.load_fundamentals("us")
+
+            # Filter to selected stock pool
+            if selected_tickers:
+                prices = prices.filter(pl.col("ticker").is_in(selected_tickers))
+                fundamentals = fundamentals.filter(pl.col("ticker").is_in(selected_tickers))
 
             if prices.is_empty():
                 st.error("No price data. Run backfill_data.py first.")
@@ -76,7 +89,7 @@ if st.button("Run Backtest", type="primary"):
                 active_start = result.metrics.get("active_start")
                 if active_start and str(config.start_date) != active_start:
                     st.info(
-                        f"📅 No signals before **{active_start}** (data gap). "
+                        f"No signals before **{active_start}** (data gap). "
                         f"Metrics are calculated from {active_start} to "
                         f"{result.metrics.get('active_end', config.end_date)}."
                     )

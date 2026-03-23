@@ -65,7 +65,8 @@ class MetadataStore:
                 ticker TEXT NOT NULL UNIQUE,
                 market TEXT NOT NULL DEFAULT 'US',
                 added_at TEXT DEFAULT CURRENT_TIMESTAMP,
-                notes TEXT
+                notes TEXT,
+                source TEXT NOT NULL DEFAULT 'manual'
             );
 
             CREATE TABLE IF NOT EXISTS universe (
@@ -86,6 +87,20 @@ class MetadataStore:
             );
         """)
         self.conn.commit()
+        self._migrate()
+
+    def _migrate(self) -> None:
+        """Apply schema migrations for existing databases."""
+        # Add 'source' column to watchlist if it doesn't exist
+        cols = [
+            row[1]
+            for row in self.conn.execute("PRAGMA table_info(watchlist)").fetchall()
+        ]
+        if "source" not in cols:
+            self.conn.execute(
+                "ALTER TABLE watchlist ADD COLUMN source TEXT NOT NULL DEFAULT 'manual'"
+            )
+            self.conn.commit()
 
     # --- Signals ---
 
@@ -181,10 +196,16 @@ class MetadataStore:
 
     # --- Watchlist ---
 
-    def add_to_watchlist(self, ticker: str, market: str = "US", notes: str = "") -> None:
+    def add_to_watchlist(
+        self,
+        ticker: str,
+        market: str = "US",
+        notes: str = "",
+        source: str = "manual",
+    ) -> None:
         self.conn.execute(
-            "INSERT OR IGNORE INTO watchlist (ticker, market, notes) VALUES (?, ?, ?)",
-            (ticker, market, notes),
+            "INSERT OR IGNORE INTO watchlist (ticker, market, notes, source) VALUES (?, ?, ?, ?)",
+            (ticker, market, notes, source),
         )
         self.conn.commit()
 

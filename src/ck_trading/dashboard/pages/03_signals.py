@@ -21,9 +21,17 @@ try:
 
     # Manual signal generation
     st.subheader("Generate New Signals")
+
+    # --- Stock pool selector ---
+    from ck_trading.dashboard.widgets.stock_pool_selector import stock_pool_selector
+
+    selected_tickers = stock_pool_selector(meta, key_prefix="signals_")
+
     if st.button("Run All Strategies", type="primary"):
         with st.spinner("Generating signals..."):
             try:
+                import polars as pl
+
                 from ck_trading.signals.generator import SignalGenerator
                 from ck_trading.signals.manager import SignalManager
                 from ck_trading.storage.parquet_store import ParquetStore
@@ -32,6 +40,11 @@ try:
                 store = ParquetStore()
                 prices = store.load_prices("us")
                 fundamentals = store.load_fundamentals("us")
+
+                # Filter to selected stock pool
+                if selected_tickers:
+                    prices = prices.filter(pl.col("ticker").is_in(selected_tickers))
+                    fundamentals = fundamentals.filter(pl.col("ticker").is_in(selected_tickers))
 
                 all_strategies = get_all_strategies()
                 generator = SignalGenerator([

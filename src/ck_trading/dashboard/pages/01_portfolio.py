@@ -178,6 +178,9 @@ try:
                 ):
                     for p in parsed:
                         meta.save_position(p)
+                        meta.add_to_watchlist(
+                            p.ticker, p.market.value, source="portfolio"
+                        )
                     count = len(parsed)
                     # Reset state so the same file can't be re-imported
                     st.session_state.parsed_positions = _NOT_PARSED
@@ -229,6 +232,9 @@ try:
                     date_acquired=acq_date,
                 )
                 meta.save_position(pos)
+                meta.add_to_watchlist(
+                    ticker.upper(), market, source="portfolio"
+                )
                 st.toast(
                     f"Added {shares:.0f} shares of {ticker.upper()} "
                     f"@ ${avg_cost:.2f}"
