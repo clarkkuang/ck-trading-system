@@ -34,9 +34,15 @@ class BacktestResult:
 
     def summary(self) -> str:
         lines = [f"Backtest: {self.config.strategy_name}"]
-        lines.append(f"Period: {self.config.start_date} to {self.config.end_date}")
+        active_start = self.metrics.get("active_start", str(self.config.start_date))
+        active_end = self.metrics.get("active_end", str(self.config.end_date))
+        lines.append(f"Period: {active_start} to {active_end}")
         lines.append(f"Initial Capital: ${self.config.initial_capital:,.0f}")
         for k, v in self.metrics.items():
+            if k in ("active_start", "active_end"):
+                continue  # Skip metadata
+            if not isinstance(v, (int, float)):
+                continue
             if "pct" in k or "return" in k or "ratio" in k:
                 lines.append(f"  {k}: {v:.2%}")
             else:

@@ -55,13 +55,13 @@ class ParquetStore:
                 path = data_dir / f"{safe_name}.parquet"
                 if path.exists():
                     frames.append(pl.read_parquet(path))
-            return pl.concat(frames) if frames else pl.DataFrame()
+            return pl.concat(frames, how="diagonal") if frames else pl.DataFrame()
 
         # Load all
         files = list(data_dir.glob("*.parquet"))
         if not files:
             return pl.DataFrame()
-        return pl.concat([pl.read_parquet(f) for f in files])
+        return pl.concat([pl.read_parquet(f) for f in files], how="diagonal")
 
     # --- Fundamentals ---
 
@@ -101,12 +101,12 @@ class ParquetStore:
                 path = data_dir / f"{safe_name}_financials.parquet"
                 if path.exists():
                     frames.append(pl.read_parquet(path))
-            return pl.concat(frames) if frames else pl.DataFrame()
+            return pl.concat(frames, how="diagonal") if frames else pl.DataFrame()
 
         files = list(data_dir.glob("*_financials.parquet"))
         if not files:
             return pl.DataFrame()
-        return pl.concat([pl.read_parquet(f) for f in files])
+        return pl.concat([pl.read_parquet(f) for f in files], how="diagonal")
 
     # --- Macro ---
 
@@ -132,3 +132,43 @@ class ParquetStore:
         if not path.exists():
             return pl.DataFrame()
         return pl.read_parquet(path)
+
+    # --- Alternative Data ---
+
+    def save_alternative(self, df: pl.DataFrame, source: str, name: str) -> None:
+        """Save alternative data to ``alternative/{source}/{name}.parquet``.
+
+        Merges with existing data and deduplicates.
+        """
+        if df.is_empty():
+            return
+
+        out_dir = self.base_dir / "alternative" / source
+        out_dir.mkdir(parents=True, exist_ok=True)
+        path = out_dir / f"{name}.parquet"
+
+        if path.exists():
+            existing = pl.read_parquet(path)
+            # Deduplicate using all columns
+            df = pl.concat([existing, df], how="diagonal").unique()
+
+        df.write_parquet(path)
+
+    def load_alternative(
+        self,
+        source: str,
+        name: str,
+        tickers: list[str] | None = None,
+    ) -> pl.DataFrame:
+        """Load alternative data from ``alternative/{source}/{name}.parquet``.
+
+        Returns an empty DataFrame if the file does not exist.
+        """
+        path = self.base_dir / "alternative" / source / f"{name}.parquet"
+        if not path.exists():
+            return pl.DataFrame()
+
+        df = pl.read_parquet(path)
+        if tickers and "ticker" in df.columns:
+            df = df.filter(pl.col("ticker").is_in(tickers))
+        return df

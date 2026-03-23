@@ -21,8 +21,10 @@ from datetime import date
 import polars as pl
 
 from ck_trading.strategies.base import Strategy
+from ck_trading.strategies.registry import register
 
 
+@register
 class GrahamDefensiveStrategy(Strategy):
     @property
     def name(self) -> str:
@@ -55,6 +57,7 @@ class GrahamDefensiveStrategy(Strategy):
         prices: pl.DataFrame,
         fundamentals: pl.DataFrame,
         as_of_date: date,
+        extra_data: dict[str, pl.DataFrame] | None = None,
     ) -> pl.DataFrame:
         if fundamentals.is_empty():
             return _empty_result()

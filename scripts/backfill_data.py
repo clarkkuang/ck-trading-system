@@ -90,6 +90,79 @@ def main():
         except Exception as e:
             print(f"  Error: {e}")
 
+    # --- Extended FRED Macro ---
+    print("\nCollecting macro data from FRED...")
+    try:
+        from ck_trading.collectors.macro import MacroCollector
+
+        if settings.fred_api_key:
+            macro_collector = MacroCollector()
+            macro_data = macro_collector.collect(start_date=start_date, end_date=end_date)
+            if not macro_data.is_empty():
+                store.save_macro(macro_data)
+                print(f"  Saved {macro_data.height} macro records")
+        else:
+            print("  Skipped: FRED_API_KEY not configured")
+    except Exception as e:
+        print(f"  Error: {e}")
+
+    # --- Earnings Data ---
+    if us_tickers:
+        print(f"\nCollecting earnings data for {len(fund_tickers)} tickers...")
+        try:
+            from ck_trading.collectors.earnings import EarningsCollector
+
+            earnings_collector = EarningsCollector(fmp_api_key=settings.fmp_api_key or None)
+            earnings = earnings_collector.collect_earnings_history(fund_tickers)
+            if not earnings.is_empty():
+                store.save_alternative(earnings, "earnings", "combined")
+                print(f"  Saved {earnings.height} earnings records")
+        except Exception as e:
+            print(f"  Error: {e}")
+
+    # --- FINRA Short Interest ---
+    if us_tickers:
+        print(f"\nCollecting short interest data...")
+        try:
+            from ck_trading.collectors.short_interest import ShortInterestCollector
+
+            si_collector = ShortInterestCollector()
+            si_data = si_collector.collect(fund_tickers, start_date, end_date)
+            if not si_data.is_empty():
+                store.save_alternative(si_data, "short_interest", "finra")
+                print(f"  Saved {si_data.height} short interest records")
+        except Exception as e:
+            print(f"  Error: {e}")
+
+    # --- Crypto (BTC/ETH) ---
+    print("\nCollecting crypto prices...")
+    try:
+        from ck_trading.collectors.crypto import CryptoCollector
+
+        crypto_collector = CryptoCollector()
+        crypto_data = crypto_collector.collect_prices(
+            coins=["BTC", "ETH"], start_date=start_date, end_date=end_date
+        )
+        if not crypto_data.is_empty():
+            store.save_prices(crypto_data, "crypto")
+            print(f"  Saved {crypto_data.height} crypto price records")
+    except Exception as e:
+        print(f"  Error: {e}")
+
+    # --- SEC Insider Trades ---
+    if us_tickers:
+        print(f"\nCollecting insider trades...")
+        try:
+            from ck_trading.collectors.insider_trades import InsiderTradesCollector
+
+            insider_collector = InsiderTradesCollector()
+            insider_data = insider_collector.collect(fund_tickers[:20], days_back=180)  # Limit to 20 tickers to avoid rate limits
+            if not insider_data.is_empty():
+                store.save_alternative(insider_data, "insider_trades", "edgar")
+                print(f"  Saved {insider_data.height} insider trade records")
+        except Exception as e:
+            print(f"  Error: {e}")
+
     meta.close()
     print("\nBackfill complete!")
 

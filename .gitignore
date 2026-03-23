@@ -13,8 +13,12 @@ wheels/
 data/prices/
 data/fundamentals/
 data/macro/
+data/alternative/
 data/*.duckdb
 data/*.db
+
+# Claude Code
+.claude/
 
 # Environment
 .env

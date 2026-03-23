@@ -19,7 +19,7 @@ class Signal(BaseModel):
     signal_type: SignalType
     strategy_name: str
     score: float  # Higher = stronger conviction
-    rationale: str
+    rationale: str = ""
     generated_at: datetime
     price_at_signal: float | None = None
     target_price: float | None = None

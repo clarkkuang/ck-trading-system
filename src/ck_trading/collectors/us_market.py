@@ -49,7 +49,7 @@ class USMarketCollector(BaseCollector):
         if not frames:
             return _empty_price_df()
 
-        return pl.concat(frames)
+        return pl.concat(frames, how="diagonal")
 
     def collect_info(self, tickers: list[str]) -> pl.DataFrame:
         """Collect basic stock info (sector, industry, market cap)."""
@@ -95,6 +95,10 @@ def _pandas_to_polars_ohlcv(pdf, ticker: str) -> pl.DataFrame:
         pl.col("date").cast(pl.Date),
         pl.lit(ticker).alias("ticker"),
     )
+
+    # Normalize volume to Int64 (yfinance sometimes returns Float64)
+    if "volume" in df.columns:
+        df = df.with_columns(pl.col("volume").cast(pl.Int64))
 
     # Select and order columns
     available = df.columns

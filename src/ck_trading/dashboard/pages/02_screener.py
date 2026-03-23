@@ -7,9 +7,13 @@ import streamlit as st
 st.set_page_config(page_title="Screener", page_icon="🔍", layout="wide")
 st.title("Value Stock Screener")
 
+from ck_trading.strategies.registry import get_all_strategies
+
+strategies = get_all_strategies()
+
 strategy_name = st.selectbox(
     "Strategy",
-    ["Graham Defensive", "Piotroski F-Score", "Magic Formula", "Composite Value"],
+    list(strategies.keys()),
 )
 
 market = st.selectbox("Market", ["us", "hk"])
@@ -18,17 +22,6 @@ if st.button("Run Screen", type="primary"):
     with st.spinner("Running screen..."):
         try:
             from ck_trading.storage.parquet_store import ParquetStore
-            from ck_trading.strategies.composite_value import CompositeValueStrategy
-            from ck_trading.strategies.graham_defensive import GrahamDefensiveStrategy
-            from ck_trading.strategies.magic_formula import MagicFormulaStrategy
-            from ck_trading.strategies.piotroski_f_score import PiotroskiFScoreStrategy
-
-            strategies = {
-                "Graham Defensive": GrahamDefensiveStrategy,
-                "Piotroski F-Score": PiotroskiFScoreStrategy,
-                "Magic Formula": MagicFormulaStrategy,
-                "Composite Value": CompositeValueStrategy,
-            }
 
             store = ParquetStore()
             prices = store.load_prices(market)

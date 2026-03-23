@@ -19,9 +19,15 @@ def test_graham_basic_screen(sample_prices, sample_fundamentals):
     assert "signal_type" in result.columns
     assert "rationale" in result.columns
 
-    # Both AAPL and MSFT should pass with our test data (P/E < 15, P/B < 1.5)
+    # Both AAPL and MSFT satisfy Graham filters:
+    #   AAPL: P/E=12.5, P/B=1.2, P/E×P/B=15.0, CR=2.5, cap=$2T
+    #   MSFT: P/E=10.0, P/B=1.0, P/E×P/B=10.0, CR=2.8, cap=$1.6T
     tickers = result["ticker"].to_list()
-    assert "MSFT" in tickers  # P/E=10, P/B=1.0 should pass
+    assert "AAPL" in tickers
+    assert "MSFT" in tickers
+
+    # SPY has no fundamentals → must not appear
+    assert "SPY" not in tickers
 
 
 def test_graham_empty_fundamentals(sample_prices):

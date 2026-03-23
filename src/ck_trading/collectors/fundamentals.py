@@ -24,7 +24,7 @@ class FundamentalsCollector:
         if not records:
             return pl.DataFrame()
 
-        return pl.DataFrame(records)
+        return pl.from_dicts(records)
 
     def _collect_single(self, ticker: str, market: Market) -> list[dict]:
         """Collect fundamentals for a single ticker."""

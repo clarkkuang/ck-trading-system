@@ -32,6 +32,7 @@ class Strategy(ABC):
         prices: pl.DataFrame,
         fundamentals: pl.DataFrame,
         as_of_date: date,
+        extra_data: dict[str, pl.DataFrame] | None = None,
     ) -> pl.DataFrame:
         """Screen stocks and return ranked results.
 
@@ -39,6 +40,7 @@ class Strategy(ABC):
             prices: DataFrame with columns [ticker, date, open, high, low, close, volume]
             fundamentals: DataFrame with financial data
             as_of_date: Date to evaluate as-of (for point-in-time correctness)
+            extra_data: Optional dict of additional DataFrames (e.g. alternative data)
 
         Returns:
             DataFrame with columns: [ticker, score, signal_type, rationale]
@@ -55,6 +57,7 @@ class Strategy(ABC):
         start_date: date,
         end_date: date,
         rebalance_dates: list[date] | None = None,
+        extra_data: dict[str, pl.DataFrame] | None = None,
     ) -> pl.DataFrame:
         """Generate signals across a date range (for backtesting).
 
@@ -68,7 +71,7 @@ class Strategy(ABC):
 
         frames = []
         for rebal_date in rebalance_dates:
-            result = self.screen(prices, fundamentals, rebal_date)
+            result = self.screen(prices, fundamentals, rebal_date, extra_data=extra_data)
             if not result.is_empty():
                 result = result.with_columns(pl.lit(rebal_date).alias("date"))
                 frames.append(result)
@@ -79,7 +82,7 @@ class Strategy(ABC):
                         "signal_type": pl.Utf8, "rationale": pl.Utf8}
             )
 
-        return pl.concat(frames)
+        return pl.concat(frames, how="diagonal")
 
 
 def _generate_rebalance_dates(

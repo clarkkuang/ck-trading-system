@@ -7,12 +7,16 @@ import streamlit as st
 st.set_page_config(page_title="Backtest", page_icon="📊", layout="wide")
 st.title("Strategy Backtesting")
 
+from ck_trading.strategies.registry import get_all_strategies
+
+strategies = get_all_strategies()
+
 col1, col2 = st.columns(2)
 
 with col1:
     strategy_name = st.selectbox(
         "Strategy",
-        ["Graham Defensive", "Piotroski F-Score", "Magic Formula", "Composite Value"],
+        list(strategies.keys()),
     )
     start_date = st.date_input("Start Date", date(2015, 1, 1))
 
@@ -29,17 +33,6 @@ if st.button("Run Backtest", type="primary"):
             from ck_trading.backtesting.engine import BacktestEngine
             from ck_trading.models.backtest import BacktestConfig
             from ck_trading.storage.parquet_store import ParquetStore
-            from ck_trading.strategies.composite_value import CompositeValueStrategy
-            from ck_trading.strategies.graham_defensive import GrahamDefensiveStrategy
-            from ck_trading.strategies.magic_formula import MagicFormulaStrategy
-            from ck_trading.strategies.piotroski_f_score import PiotroskiFScoreStrategy
-
-            strategies = {
-                "Graham Defensive": GrahamDefensiveStrategy,
-                "Piotroski F-Score": PiotroskiFScoreStrategy,
-                "Magic Formula": MagicFormulaStrategy,
-                "Composite Value": CompositeValueStrategy,
-            }
 
             store = ParquetStore()
             prices = store.load_prices("us")
@@ -65,7 +58,29 @@ if st.button("Run Backtest", type="primary"):
                 engine = BacktestEngine(strategy, config, prices, fundamentals)
                 result = engine.run()
 
+                # Debug info
+                with st.expander("Debug Info", expanded=False):
+                    st.write(f"Config: start={config.start_date}, end={config.end_date}, "
+                             f"max_pos={config.max_positions}, freq={config.rebalance_freq}")
+                    st.write(f"Prices: {prices.height} rows, date range: "
+                             f"{prices['date'].min()} - {prices['date'].max()}")
+                    st.write(f"Fundamentals: {fundamentals.height} rows")
+                    st.write(f"Trades: {result.trades.height if not result.trades.is_empty() else 0}")
+                    st.write(f"Returns: {result.returns.height if not result.returns.is_empty() else 0}")
+                    st.write(f"Metrics keys: {list(result.metrics.keys())}")
+                    st.write(f"Metrics values: { {k: (round(v, 4) if isinstance(v, (int, float)) else v) for k, v in result.metrics.items()} }")
+
                 st.subheader("Results")
+
+                # Show active period notice if it differs from config
+                active_start = result.metrics.get("active_start")
+                if active_start and str(config.start_date) != active_start:
+                    st.info(
+                        f"📅 No signals before **{active_start}** (data gap). "
+                        f"Metrics are calculated from {active_start} to "
+                        f"{result.metrics.get('active_end', config.end_date)}."
+                    )
+
                 st.text(result.summary())
 
                 if result.metrics:

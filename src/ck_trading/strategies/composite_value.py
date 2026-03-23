@@ -18,8 +18,10 @@ from datetime import date
 import polars as pl
 
 from ck_trading.strategies.base import Strategy
+from ck_trading.strategies.registry import register
 
 
+@register
 class CompositeValueStrategy(Strategy):
     @property
     def name(self) -> str:
@@ -56,6 +58,7 @@ class CompositeValueStrategy(Strategy):
         prices: pl.DataFrame,
         fundamentals: pl.DataFrame,
         as_of_date: date,
+        extra_data: dict[str, pl.DataFrame] | None = None,
     ) -> pl.DataFrame:
         if fundamentals.is_empty():
             return _empty_result()
@@ -190,7 +193,9 @@ class CompositeValueStrategy(Strategy):
                 )
                 parts.append(f"_r_{col_name}")
             top = top.with_columns(
-                pl.concat_str(parts, separator=", ").alias("rationale")
+                pl.concat_str(parts, separator=", ", ignore_nulls=True)
+                .fill_null("Composite value score")
+                .alias("rationale")
             )
         else:
             top = top.with_columns(pl.lit("Composite value score").alias("rationale"))

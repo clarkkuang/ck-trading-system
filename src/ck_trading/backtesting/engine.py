@@ -18,11 +18,13 @@ class BacktestEngine:
         config: BacktestConfig,
         prices: pl.DataFrame,
         fundamentals: pl.DataFrame,
+        extra_data: dict[str, pl.DataFrame] | None = None,
     ):
         self.strategy = strategy
         self.config = config
         self.prices = prices
         self.fundamentals = fundamentals
+        self.extra_data = extra_data
 
     def run(self) -> BacktestResult:
         """Execute the backtest and return results."""
@@ -39,6 +41,7 @@ class BacktestEngine:
             self.config.start_date,
             self.config.end_date,
             rebal_dates,
+            extra_data=self.extra_data,
         )
 
         if signals.is_empty():
@@ -149,8 +152,8 @@ class BacktestEngine:
                     "weight": (pos["shares"] * price) / max(portfolio_value, 1),
                 })
 
-        # Calculate daily returns
-        returns_df = self._calculate_daily_returns(holdings, cash, rebal_dates)
+        # Calculate daily returns by replaying trades over trading days
+        returns_df = self._calculate_daily_returns(all_trades, rebal_dates)
 
         trades_df = pl.DataFrame(all_trades) if all_trades else pl.DataFrame(
             schema={"date": pl.Date, "ticker": pl.Utf8, "action": pl.Utf8,
@@ -161,13 +164,24 @@ class BacktestEngine:
                     "value": pl.Float64, "weight": pl.Float64}
         )
 
-        # Compute metrics
+        # Compute metrics — only from the first trade date onward
+        # so CAGR isn't diluted by idle years with no data/signals
         metrics = {}
         if not returns_df.is_empty() and "portfolio_return" in returns_df.columns:
-            metrics = compute_metrics(
-                returns_df,
-                initial_capital=self.config.initial_capital,
-            )
+            active_returns = returns_df
+            if all_trades:
+                first_trade_date = min(t["date"] for t in all_trades)
+                active_returns = returns_df.filter(pl.col("date") >= first_trade_date)
+
+            if not active_returns.is_empty():
+                metrics = compute_metrics(
+                    active_returns,
+                    initial_capital=self.config.initial_capital,
+                    num_trades=len(all_trades),
+                )
+                # Record the active period for display
+                metrics["active_start"] = str(active_returns["date"].min())
+                metrics["active_end"] = str(active_returns["date"].max())
 
         return BacktestResult(
             config=self.config,
@@ -189,15 +203,14 @@ class BacktestEngine:
 
     def _calculate_daily_returns(
         self,
-        final_holdings: dict,
-        final_cash: float,
+        all_trades: list[dict],
         rebal_dates: list[date],
     ) -> pl.DataFrame:
-        """Calculate daily portfolio returns over the backtest period."""
+        """Calculate daily portfolio returns by replaying trades over trading days."""
         if not rebal_dates:
             return pl.DataFrame()
 
-        # Get all trading days
+        # Get all trading days in the backtest period
         daily_prices = (
             self.prices
             .filter(
@@ -211,6 +224,14 @@ class BacktestEngine:
             return pl.DataFrame()
 
         dates = daily_prices["date"].unique().sort().to_list()
+
+        # Build a lookup: date -> {ticker -> close}
+        price_lookup: dict[date, dict[str, float]] = {}
+        for row in daily_prices.iter_rows(named=True):
+            d = row["date"]
+            if d not in price_lookup:
+                price_lookup[d] = {}
+            price_lookup[d][row["ticker"]] = row["close"]
 
         # Get benchmark returns
         benchmark_prices = (
@@ -235,14 +256,79 @@ class BacktestEngine:
                 bm_close["return"].fill_null(0).to_list(), strict=False,
             ))
 
-        # Simplified: compute total return between rebalance dates
+        # Index trades by date for quick lookup
+        # Snap non-trading-day trades to the next available trading day
+        date_set = set(dates)
+        trades_by_date: dict[date, list[dict]] = {}
+        for trade in all_trades:
+            td = trade["date"]
+            # If trade date is not a trading day, find the next one
+            if td not in date_set:
+                snapped = None
+                for candidate in dates:
+                    if candidate >= td:
+                        snapped = candidate
+                        break
+                if snapped is None:
+                    # Trade is after all trading days — use last day
+                    snapped = dates[-1] if dates else td
+                td = snapped
+            if td not in trades_by_date:
+                trades_by_date[td] = []
+            trades_by_date[td].append(trade)
+
+        # Replay day by day
+        cash = self.config.initial_capital
+        holdings: dict[str, float] = {}  # ticker -> shares
+        # Track last known price per ticker to handle missing-price days
+        # (halts, cross-market calendar gaps, data holes)
+        last_known_price: dict[str, float] = {}
+        prev_portfolio_value = self.config.initial_capital
+
         records = []
         for d in dates:
+            # Apply any trades that happened on or before this date but haven't been applied
+            if d in trades_by_date:
+                for trade in trades_by_date[d]:
+                    ticker = trade["ticker"]
+                    shares = trade["shares"]
+                    price = trade["price"]
+                    cost = trade["cost"]
+                    if trade["action"] == "BUY":
+                        holdings[ticker] = holdings.get(ticker, 0) + shares
+                        cash -= shares * price + cost
+                        last_known_price[ticker] = price
+                    elif trade["action"] == "SELL":
+                        holdings[ticker] = holdings.get(ticker, 0) - shares
+                        cash += shares * price - cost
+                        last_known_price[ticker] = price
+                        if holdings.get(ticker, 0) <= 0:
+                            holdings.pop(ticker, None)
+
+            # Compute portfolio value at close
+            # Use last known price when today's price is missing (halt, gap)
+            day_prices = price_lookup.get(d, {})
+            portfolio_value = cash
+            for ticker, shares in holdings.items():
+                price = day_prices.get(ticker)
+                if price is not None:
+                    last_known_price[ticker] = price
+                else:
+                    price = last_known_price.get(ticker, 0)
+                portfolio_value += shares * price
+
+            # Daily return
+            if prev_portfolio_value > 0:
+                daily_return = (portfolio_value - prev_portfolio_value) / prev_portfolio_value
+            else:
+                daily_return = 0.0
+
             records.append({
                 "date": d,
-                "portfolio_return": 0.0,  # Simplified
+                "portfolio_return": daily_return,
                 "benchmark_return": benchmark_returns.get(d, 0.0),
             })
+            prev_portfolio_value = portfolio_value
 
         return pl.DataFrame(records)
 

@@ -8,29 +8,41 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 from ck_trading.config import settings
 from ck_trading.storage.metadata_store import MetadataStore
 
-# Major US value stocks + broad universe
+# User-selected stocks (priority)
 US_TICKERS = [
-    # Mega caps
+    # --- User picks ---
+    "NVDA",   # NVIDIA
+    "NFLX",   # Netflix
+    "TSLA",   # Tesla
+    "INTC",   # Intel
+    "RBLX",   # Roblox
+    "T",      # AT&T
+    "TLT",    # iShares 20+ Year Treasury Bond
+    "QQQ",    # Nasdaq 100
+    "VOO",    # S&P 500 (Vanguard)
+    "ARKG",   # ARK Genomic Revolution
+    "INDA",   # iShares MSCI India
+    # --- Mega caps ---
     "AAPL", "MSFT", "GOOGL", "AMZN", "META", "BRK-B", "JPM", "JNJ",
     "V", "PG", "UNH", "HD", "MA", "DIS", "CSCO", "VZ", "PFE",
     "KO", "PEP", "MRK", "ABT", "WMT", "TMO", "COST", "NKE",
-    # Value-oriented
-    "BRK-B", "BAC", "WFC", "C", "GS", "MS",  # Financials
-    "XOM", "CVX", "COP",  # Energy
-    "CAT", "DE", "MMM", "HON", "GE",  # Industrials
-    "IBM", "INTC", "QCOM", "TXN",  # Tech value
-    "T", "CMCSA", "TMUS",  # Telecom
-    "MO", "PM", "BTI",  # Consumer staples
-    "CVS", "CI", "HUM",  # Healthcare
-    "F", "GM",  # Auto
-    # Benchmarks
-    "SPY", "QQQ", "IWM", "VTV",  # ETFs for comparison
+    # --- Value-oriented ---
+    "BAC", "WFC", "C", "GS", "MS",       # Financials
+    "XOM", "CVX", "COP",                  # Energy
+    "CAT", "DE", "MMM", "HON", "GE",      # Industrials
+    "IBM", "QCOM", "TXN",                 # Tech value
+    "CMCSA", "TMUS",                       # Telecom
+    "MO", "PM", "BTI",                    # Consumer staples
+    "CVS", "CI", "HUM",                   # Healthcare
+    "F", "GM",                             # Auto
+    # --- Benchmarks ---
+    "SPY", "IWM", "VTV",
 ]
 
-# Hong Kong blue chips (Hang Seng components)
+# Hong Kong stocks
 HK_TICKERS = [
-    {"ticker": "0005.HK", "name": "HSBC Holdings", "sector": "Financials"},
     {"ticker": "0700.HK", "name": "Tencent Holdings", "sector": "Technology"},
+    {"ticker": "0005.HK", "name": "HSBC Holdings", "sector": "Financials"},
     {"ticker": "9988.HK", "name": "Alibaba Group", "sector": "Technology"},
     {"ticker": "0941.HK", "name": "China Mobile", "sector": "Telecom"},
     {"ticker": "1299.HK", "name": "AIA Group", "sector": "Financials"},

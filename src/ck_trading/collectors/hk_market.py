@@ -56,7 +56,7 @@ class HKMarketCollector(BaseCollector):
         if not frames:
             return _empty_price_df()
 
-        return pl.concat(frames)
+        return pl.concat(frames, how="diagonal")
 
     @staticmethod
     def _normalize_ticker(ticker: str) -> str:

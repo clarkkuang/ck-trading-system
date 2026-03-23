@@ -10,6 +10,7 @@ def compute_metrics(
     initial_capital: float = 1_000_000,
     risk_free_rate: float = 0.04,
     trading_days: int = 252,
+    num_trades: int | None = None,
 ) -> dict[str, float]:
     """Compute a suite of performance metrics from daily returns.
 
@@ -128,7 +129,7 @@ def compute_metrics(
         "avg_win": avg_win,
         "avg_loss": avg_loss,
         "profit_factor": profit_factor,
-        "total_trades": total_trading_days,
+        "total_trades": num_trades if num_trades is not None else total_trading_days,
         "benchmark_total_return": bm_total_return,
         "benchmark_cagr": bm_cagr,
         "alpha": cagr - bm_cagr,

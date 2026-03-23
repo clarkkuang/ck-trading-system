@@ -27,20 +27,15 @@ try:
                 from ck_trading.signals.generator import SignalGenerator
                 from ck_trading.signals.manager import SignalManager
                 from ck_trading.storage.parquet_store import ParquetStore
-                from ck_trading.strategies.composite_value import CompositeValueStrategy
-                from ck_trading.strategies.graham_defensive import GrahamDefensiveStrategy
-                from ck_trading.strategies.magic_formula import MagicFormulaStrategy
-                from ck_trading.strategies.piotroski_f_score import PiotroskiFScoreStrategy
+                from ck_trading.strategies.registry import get_all_strategies
 
                 store = ParquetStore()
                 prices = store.load_prices("us")
                 fundamentals = store.load_fundamentals("us")
 
+                all_strategies = get_all_strategies()
                 generator = SignalGenerator([
-                    GrahamDefensiveStrategy(),
-                    PiotroskiFScoreStrategy(),
-                    MagicFormulaStrategy(),
-                    CompositeValueStrategy(),
+                    cls() for cls in all_strategies.values()
                 ])
 
                 raw_signals = generator.generate(prices, fundamentals)

@@ -20,6 +20,14 @@ class MacroCollector:
         "unemployment": "UNRATE",
         "gdp_growth": "A191RL1Q225SBEA",
         "vix": "VIXCLS",
+        "yield_spread_10y2y": "T10Y2Y",
+        "m2_money_supply": "M2SL",
+        "housing_starts": "HOUST",
+        "consumer_sentiment": "UMCSENT",
+        "ism_manufacturing": "MANEMP",
+        "initial_claims": "ICSA",
+        "breakeven_inflation_5y": "T5YIE",
+        "corporate_spread": "BAMLC0A0CM",
     }
 
     def collect(
@@ -58,4 +66,4 @@ class MacroCollector:
         if not frames:
             return pl.DataFrame()
 
-        return pl.concat(frames)
+        return pl.concat(frames, how="diagonal")

@@ -22,6 +22,7 @@ class SignalGenerator:
         prices: pl.DataFrame,
         fundamentals: pl.DataFrame,
         as_of_date: date | None = None,
+        extra_data: dict[str, pl.DataFrame] | None = None,
     ) -> list[Signal]:
         """Run all strategies and collect signals."""
         if as_of_date is None:
@@ -30,7 +31,7 @@ class SignalGenerator:
         signals = []
         for strategy in self.strategies:
             try:
-                result = strategy.screen(prices, fundamentals, as_of_date)
+                result = strategy.screen(prices, fundamentals, as_of_date, extra_data=extra_data)
                 if result.is_empty():
                     continue
 
@@ -49,7 +50,7 @@ class SignalGenerator:
                         signal_type=SignalType(row["signal_type"]),
                         strategy_name=strategy.name,
                         score=row["score"],
-                        rationale=row.get("rationale", ""),
+                        rationale=row.get("rationale") or "",
                         generated_at=datetime.now(),
                         price_at_signal=price,
                     )
