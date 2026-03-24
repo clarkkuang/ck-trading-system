@@ -13,20 +13,19 @@ def stock_pool_selector(meta: MetadataStore, key_prefix: str = "") -> list[str]:
 
     The pool selection sets the *default* tickers. A multiselect then lets the
     user add or remove individual tickers before running the action.
-
-    Args:
-        meta: MetadataStore instance for querying universe/watchlist/positions.
-        key_prefix: Unique prefix for Streamlit widget keys (use when
-            placing multiple selectors on the same page).
-
-    Returns:
-        List of ticker strings based on user selection.
     """
-    pool = st.selectbox(
-        "Stock Pool",
-        POOL_OPTIONS,
-        key=f"{key_prefix}stock_pool",
-    )
+    pool_key = f"{key_prefix}stock_pool"
+    prev_pool_key = f"{key_prefix}prev_pool"
+    edit_key = f"{key_prefix}editable_tickers"
+
+    pool = st.selectbox("Stock Pool", POOL_OPTIONS, key=pool_key)
+
+    # Detect pool change — clear multiselect state so defaults refresh
+    prev_pool = st.session_state.get(prev_pool_key)
+    if prev_pool is not None and prev_pool != pool:
+        # Pool changed: remove the cached multiselect value
+        st.session_state.pop(edit_key, None)
+    st.session_state[prev_pool_key] = pool
 
     # Get default tickers from the selected pool
     if pool == "Full Universe":
@@ -45,14 +44,12 @@ def stock_pool_selector(meta: MetadataStore, key_prefix: str = "") -> list[str]:
         if not default_tickers:
             st.warning("No open positions. Import or add on the Portfolio page.")
 
-    else:  # Custom — start with nothing, user picks manually
+    else:  # Custom
         default_tickers = []
 
-    # All known tickers as options (union of universe so user can add any)
+    # All known tickers as options (union so user can add any)
     universe = meta.get_universe()
     all_known = sorted({u["ticker"] for u in universe})
-
-    # Ensure defaults are in options (portfolio tickers might not be in universe)
     all_options = sorted(set(all_known) | set(default_tickers))
 
     # Editable multiselect — pre-filled from pool, user can add/remove
@@ -60,10 +57,10 @@ def stock_pool_selector(meta: MetadataStore, key_prefix: str = "") -> list[str]:
         "Tickers (add or remove as needed)",
         options=all_options,
         default=default_tickers,
-        key=f"{key_prefix}editable_tickers",
+        key=edit_key,
     )
 
-    # Cache in session state for reliable access during button-click reruns
+    # Cache for button-click reruns
     st.session_state[f"{key_prefix}selected_tickers"] = tickers
 
     st.info(f"**{len(tickers)}** tickers selected (from {pool}, editable)")
