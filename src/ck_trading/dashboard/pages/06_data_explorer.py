@@ -268,7 +268,9 @@ try:
             filtered_uni = filtered_uni.filter(pl.col("market").is_in(market_filter))
         if sector_filter and "sector" in uni_df.columns:
             filtered_uni = filtered_uni.filter(
-                pl.col("sector").is_in(sector_filter) | pl.col("sector").is_null()
+                pl.col("sector").is_in(sector_filter)
+                | pl.col("sector").is_null()
+                | (pl.col("sector") == "")
             )
 
         st.caption(f"Showing {filtered_uni.height} of {uni_df.height} tickers")
