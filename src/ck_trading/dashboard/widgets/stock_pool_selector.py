@@ -20,11 +20,12 @@ def stock_pool_selector(meta: MetadataStore, key_prefix: str = "") -> list[str]:
 
     pool = st.selectbox("Stock Pool", POOL_OPTIONS, key=pool_key)
 
-    # Detect pool change — clear multiselect state so defaults refresh
+    # Detect pool change — force rerun with cleared multiselect state
     prev_pool = st.session_state.get(prev_pool_key)
     if prev_pool is not None and prev_pool != pool:
-        # Pool changed: remove the cached multiselect value
         st.session_state.pop(edit_key, None)
+        st.session_state[prev_pool_key] = pool
+        st.rerun()
     st.session_state[prev_pool_key] = pool
 
     # Get default tickers from the selected pool
