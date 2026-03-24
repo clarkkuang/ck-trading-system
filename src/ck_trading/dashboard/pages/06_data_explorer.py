@@ -287,13 +287,12 @@ try:
     st.header("Alternative Data Status")
 
     ALT_DATA_SOURCES = [
-        ("earnings", "earnings"),
-        ("short_interest", "short_interest"),
-        ("insider_trades", "insider_trades"),
-        ("crypto", "crypto"),
+        ("earnings", "combined"),
+        ("short_interest", "finra"),
+        ("insider_trades", "edgar"),
     ]
 
-    alt_cols = st.columns(len(ALT_DATA_SOURCES))
+    alt_cols = st.columns(len(ALT_DATA_SOURCES) + 1)  # +1 for crypto
 
     for i, (source, name) in enumerate(ALT_DATA_SOURCES):
         with alt_cols[i]:
@@ -304,7 +303,6 @@ try:
                     st.info("Not collected yet - run backfill")
                 else:
                     st.metric("Records", f"{adf.height:,}")
-                    # Try to find a date column
                     date_col = None
                     for cand in ["date", "trade_date", "reported_date", "timestamp", "created_at"]:
                         if cand in adf.columns:
@@ -312,10 +310,23 @@ try:
                             break
                     if date_col:
                         st.caption(_date_range_str(adf, date_col))
-                    else:
-                        st.caption("No date column found")
             except Exception:
                 st.info("Not collected yet - run backfill")
+
+    # Crypto lives in prices/crypto
+    with alt_cols[-1]:
+        st.subheader("Crypto")
+        try:
+            crypto = store.load_prices("crypto")
+            if crypto.is_empty():
+                st.info("Not collected yet - run backfill")
+            else:
+                tickers = crypto["ticker"].unique().to_list()
+                st.metric("Records", f"{crypto.height:,}")
+                st.caption(f"Tickers: {', '.join(sorted(tickers))}")
+                st.caption(_date_range_str(crypto, "date"))
+        except Exception:
+            st.info("Not collected yet - run backfill")
 
     meta.close()
 except Exception as e:
