@@ -46,11 +46,15 @@ def stock_pool_selector(meta: MetadataStore, key_prefix: str = "") -> list[str]:
     all_options = sorted(set(all_known) | set(default_tickers))
 
     # Editable multiselect
+    # Only pass default when key has no existing value (first render or after pool switch)
+    multiselect_kwargs = {"key": edit_key}
+    if edit_key not in st.session_state:
+        multiselect_kwargs["default"] = default_tickers
+
     tickers = st.multiselect(
         "Tickers (add or remove as needed)",
         options=all_options,
-        default=default_tickers,
-        key=edit_key,
+        **multiselect_kwargs,
     )
 
     # Cache for button-click reruns
