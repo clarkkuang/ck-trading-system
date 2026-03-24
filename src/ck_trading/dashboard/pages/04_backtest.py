@@ -30,12 +30,19 @@ with col2:
 rebalance_freq = st.selectbox("Rebalance Frequency", ["quarterly", "monthly", "annual"])
 initial_capital = st.number_input("Initial Capital ($)", 10000, 10000000, 1000000, step=100000)
 
+benchmark = st.text_input("Benchmark Ticker", value="SPY")
+
+market = st.selectbox("Market", ["us", "hk"], key="backtest_market")
+
 # --- Stock pool selector ---
 meta = MetadataStore()
 selected_tickers = stock_pool_selector(meta, key_prefix="backtest_")
 meta.close()
 
 if st.button("Run Backtest", type="primary"):
+    # Re-read from session state to survive the rerun
+    tickers = st.session_state.get("backtest_selected_tickers", selected_tickers)
+
     with st.spinner("Running backtest... This may take a minute."):
         try:
             from ck_trading.backtesting.engine import BacktestEngine
@@ -43,36 +50,43 @@ if st.button("Run Backtest", type="primary"):
             from ck_trading.storage.parquet_store import ParquetStore
 
             store = ParquetStore()
-            prices = store.load_prices("us")
-            fundamentals = store.load_fundamentals("us")
+            prices = store.load_prices(market)
+            fundamentals = store.load_fundamentals(market)
 
             # Filter to selected stock pool
-            if selected_tickers:
-                prices = prices.filter(pl.col("ticker").is_in(selected_tickers))
-                fundamentals = fundamentals.filter(pl.col("ticker").is_in(selected_tickers))
+            if tickers:
+                # Keep benchmark ticker in prices even if not in selected pool
+                pool_with_benchmark = set(tickers) | {benchmark}
+                prices = prices.filter(pl.col("ticker").is_in(pool_with_benchmark))
+                fundamentals = fundamentals.filter(pl.col("ticker").is_in(tickers))
 
             if prices.is_empty():
                 st.error("No price data. Run backfill_data.py first.")
             else:
-                tickers = prices["ticker"].unique().to_list()
-                tickers = [t for t in tickers if t not in {"SPY", "QQQ", "IWM", "VTV"}]
+                # Only exclude the benchmark from tradeable universe, NOT all ETFs
+                universe_tickers = prices["ticker"].unique().to_list()
+                universe_tickers = [t for t in universe_tickers if t != benchmark]
 
                 strategy = strategies[strategy_name]()
                 config = BacktestConfig(
                     strategy_name=strategy.name,
-                    universe=tickers,
+                    universe=universe_tickers,
                     start_date=start_date,
                     end_date=end_date,
                     initial_capital=float(initial_capital),
                     max_positions=max_positions,
                     rebalance_freq=rebalance_freq,
+                    benchmark=benchmark,
                 )
 
                 engine = BacktestEngine(strategy, config, prices, fundamentals)
                 result = engine.run()
 
                 # Debug info
-                with st.expander("Debug Info", expanded=False):
+                with st.expander("Debug: Stock Pool & Engine", expanded=False):
+                    st.write(f"Selected tickers: {len(tickers)}")
+                    st.write(f"Universe (tradeable): {sorted(universe_tickers)}")
+                    st.write(f"Benchmark: {benchmark}")
                     st.write(f"Config: start={config.start_date}, end={config.end_date}, "
                              f"max_pos={config.max_positions}, freq={config.rebalance_freq}")
                     st.write(f"Prices: {prices.height} rows, date range: "
@@ -80,8 +94,6 @@ if st.button("Run Backtest", type="primary"):
                     st.write(f"Fundamentals: {fundamentals.height} rows")
                     st.write(f"Trades: {result.trades.height if not result.trades.is_empty() else 0}")
                     st.write(f"Returns: {result.returns.height if not result.returns.is_empty() else 0}")
-                    st.write(f"Metrics keys: {list(result.metrics.keys())}")
-                    st.write(f"Metrics values: { {k: (round(v, 4) if isinstance(v, (int, float)) else v) for k, v in result.metrics.items()} }")
 
                 st.subheader("Results")
 

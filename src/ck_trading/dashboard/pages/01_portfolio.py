@@ -233,7 +233,7 @@ try:
                 )
                 meta.save_position(pos)
                 meta.add_to_watchlist(
-                    ticker.upper(), market, source="portfolio"
+                    ticker.upper(), market.lower(), source="portfolio"
                 )
                 st.toast(
                     f"Added {shares:.0f} shares of {ticker.upper()} "

@@ -21,7 +21,7 @@ try:
         st.write("")
         if st.button("Add", type="primary"):
             if new_ticker:
-                meta.add_to_watchlist(new_ticker.upper(), new_market, source="manual")
+                meta.add_to_watchlist(new_ticker.upper(), new_market.lower(), source="manual")
                 st.success(f"Added {new_ticker.upper()} to watchlist")
                 st.rerun()
 

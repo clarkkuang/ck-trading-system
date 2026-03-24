@@ -22,12 +22,17 @@ try:
     # Manual signal generation
     st.subheader("Generate New Signals")
 
+    market = st.selectbox("Market", ["us", "hk"], key="signals_market")
+
     # --- Stock pool selector ---
     from ck_trading.dashboard.widgets.stock_pool_selector import stock_pool_selector
 
     selected_tickers = stock_pool_selector(meta, key_prefix="signals_")
 
     if st.button("Run All Strategies", type="primary"):
+        # Re-read from session state to survive the rerun
+        tickers = st.session_state.get("signals_selected_tickers", selected_tickers)
+
         with st.spinner("Generating signals..."):
             try:
                 import polars as pl
@@ -38,13 +43,22 @@ try:
                 from ck_trading.strategies.registry import get_all_strategies
 
                 store = ParquetStore()
-                prices = store.load_prices("us")
-                fundamentals = store.load_fundamentals("us")
+                prices = store.load_prices(market)
+                fundamentals = store.load_fundamentals(market)
 
                 # Filter to selected stock pool
-                if selected_tickers:
-                    prices = prices.filter(pl.col("ticker").is_in(selected_tickers))
-                    fundamentals = fundamentals.filter(pl.col("ticker").is_in(selected_tickers))
+                if tickers:
+                    prices = prices.filter(pl.col("ticker").is_in(tickers))
+                    fundamentals = fundamentals.filter(pl.col("ticker").is_in(tickers))
+
+                # Debug
+                with st.expander("Debug: Stock Pool", expanded=False):
+                    actual_tickers = (
+                        prices["ticker"].unique().sort().to_list()
+                        if not prices.is_empty() else []
+                    )
+                    st.write(f"Selected tickers: {len(tickers)}")
+                    st.write(f"Tickers in prices: {len(actual_tickers)} — {actual_tickers}")
 
                 all_strategies = get_all_strategies()
                 generator = SignalGenerator([
@@ -52,6 +66,11 @@ try:
                 ])
 
                 raw_signals = generator.generate(prices, fundamentals)
+
+                # Post-filter: only keep signals for selected tickers
+                if tickers:
+                    raw_signals = [s for s in raw_signals if s.ticker in set(tickers)]
+
                 manager = SignalManager(meta)
                 processed = manager.process_signals(raw_signals)
 
