@@ -185,15 +185,6 @@ class MetadataStore:
         )
         self.conn.commit()
 
-    def add_to_universe(self, ticker: str, market: str = "us") -> None:
-        """Add a single ticker to the universe (idempotent)."""
-        self.conn.execute(
-            """INSERT OR IGNORE INTO universe (ticker, market, name, sector, industry)
-               VALUES (?, ?, '', '', '')""",
-            (ticker.upper(), market.lower()),
-        )
-        self.conn.commit()
-
     def get_universe(self, market: str | None = None) -> list[dict]:
         if market:
             rows = self.conn.execute(
