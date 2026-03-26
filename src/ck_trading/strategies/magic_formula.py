@@ -28,7 +28,11 @@ class MagicFormulaStrategy(Strategy):
 
     @property
     def description(self) -> str:
-        return "Greenblatt's Magic Formula: high earnings yield + high return on capital"
+        return (
+            "Joel Greenblatt's Magic Formula: rank stocks by combined earnings yield "
+            "and return on capital. Buy the top-ranked stocks. "
+            "Data: fundamentals (income statement + balance sheet)."
+        )
 
     @property
     def rebalance_frequency(self) -> str:

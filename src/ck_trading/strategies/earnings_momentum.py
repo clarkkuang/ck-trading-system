@@ -21,7 +21,11 @@ class EarningsMomentumStrategy(Strategy):
 
     @property
     def description(self) -> str:
-        return "Buy stocks with recent positive earnings surprises"
+        return (
+            "Buy stocks with recent positive earnings surprises above a threshold. "
+            "Captures post-earnings announcement drift from single-quarter beats. "
+            "Data: earnings reports (extra_data)."
+        )
 
     @property
     def rebalance_frequency(self) -> str:

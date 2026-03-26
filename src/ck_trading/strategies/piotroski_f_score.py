@@ -38,7 +38,11 @@ class PiotroskiFScoreStrategy(Strategy):
 
     @property
     def description(self) -> str:
-        return "8-factor scoring: profitability, leverage, and operating efficiency"
+        return (
+            "Piotroski F-Score: 8-factor fundamental scoring across profitability, "
+            "leverage/liquidity, and operating efficiency. Scores 0-8; buy high scorers. "
+            "Data: fundamentals (income statement + balance sheet + cash flow)."
+        )
 
     @property
     def rebalance_frequency(self) -> str:

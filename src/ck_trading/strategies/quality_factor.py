@@ -23,7 +23,11 @@ class QualityFactorStrategy(Strategy):
 
     @property
     def description(self) -> str:
-        return "High ROE, low leverage, and stable earnings growth"
+        return (
+            "Quality factor: rank stocks by high ROE, low debt-to-equity, and stable "
+            "earnings growth. Targets profitable, well-managed companies. "
+            "Data: fundamentals (income statement + balance sheet)."
+        )
 
     @property
     def rebalance_frequency(self) -> str:

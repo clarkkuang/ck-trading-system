@@ -22,7 +22,11 @@ class DualMomentumStrategy(Strategy):
 
     @property
     def description(self) -> str:
-        return "Relative + absolute momentum with bond fallback"
+        return (
+            "Gary Antonacci's Dual Momentum: combines relative momentum (pick the winner "
+            "between equities) with absolute momentum (move to bonds if negative). "
+            "Data: price only."
+        )
 
     @property
     def rebalance_frequency(self) -> str:

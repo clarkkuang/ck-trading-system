@@ -24,7 +24,11 @@ class DCFIntrinsicStrategy(Strategy):
 
     @property
     def description(self) -> str:
-        return "Buy stocks trading below DCF intrinsic value with margin of safety"
+        return (
+            "Discounted Cash Flow intrinsic value: estimate fair value from projected free cash "
+            "flows and buy stocks trading below DCF value with a margin of safety. "
+            "Data: fundamentals (cash flow statement + balance sheet) + price."
+        )
 
     @property
     def rebalance_frequency(self) -> str:

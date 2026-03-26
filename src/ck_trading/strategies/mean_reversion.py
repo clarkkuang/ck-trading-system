@@ -71,8 +71,9 @@ class MeanReversionStrategy(Strategy):
     @property
     def description(self) -> str:
         return (
-            f"RSI({self.rsi_period}) mean reversion: "
-            f"buy < {self.oversold_threshold}, sell > {self.overbought_threshold}"
+            f"RSI({self.rsi_period}) mean reversion: buy oversold (RSI < "
+            f"{self.oversold_threshold}), sell overbought (RSI > {self.overbought_threshold}). "
+            f"Data: price only."
         )
 
     @property

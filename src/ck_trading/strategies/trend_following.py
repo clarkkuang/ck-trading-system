@@ -39,8 +39,9 @@ class TrendFollowingStrategy(Strategy):
     @property
     def description(self) -> str:
         return (
-            f"SMA({self.fast_sma}/{self.slow_sma}) trend following "
-            f"with ATR({self.atr_period}) stop"
+            f"Dual SMA crossover ({self.fast_sma}/{self.slow_sma}) trend following with "
+            f"ATR({self.atr_period}) volatility stop-loss. Buy uptrends, sell downtrends. "
+            f"Data: price only."
         )
 
     @property

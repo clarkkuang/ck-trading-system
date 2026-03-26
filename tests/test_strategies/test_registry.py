@@ -19,20 +19,25 @@ EXPECTED_NAMES = [
     "Quality Factor",
     "Risk Parity",
     "Trend Following",
+    "Low Volatility",
+    "Insider Following",
+    "Short Squeeze",
+    "Sector Rotation",
+    "Earnings Surprise",
 ]
 
 
 def test_all_strategies_registered():
-    """All 13 built-in strategies should be present in the registry."""
+    """All 18 built-in strategies should be present in the registry."""
     strategies = get_all_strategies()
     for name in EXPECTED_NAMES:
         assert name in strategies, f"{name!r} not found in registry"
 
 
 def test_get_all_strategies_returns_correct_count():
-    """get_all_strategies() returns a dict with at least the 13 built-in entries."""
+    """get_all_strategies() returns a dict with at least the 18 built-in entries."""
     strategies = get_all_strategies()
-    assert len(strategies) >= 13
+    assert len(strategies) >= 18
 
 
 def test_get_all_strategies_values_are_classes():

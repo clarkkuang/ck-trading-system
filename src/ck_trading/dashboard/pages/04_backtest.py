@@ -21,6 +21,8 @@ with col1:
         "Strategy",
         list(strategies.keys()),
     )
+    strategy_instance = strategies[strategy_name]()
+    st.caption(f"\u2139\ufe0f {strategy_instance.description}")
     start_date = st.date_input("Start Date", date(2015, 1, 1))
 
 with col2:
@@ -79,7 +81,10 @@ if st.button("Run Backtest", type="primary"):
                     benchmark=benchmark,
                 )
 
-                engine = BacktestEngine(strategy, config, prices, fundamentals)
+                from ck_trading.dashboard.widgets.extra_data import build_extra_data
+
+                extra_data = build_extra_data(store, tickers)
+                engine = BacktestEngine(strategy, config, prices, fundamentals, extra_data=extra_data)
                 result = engine.run()
 
                 # Debug info

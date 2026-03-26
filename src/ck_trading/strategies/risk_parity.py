@@ -36,8 +36,8 @@ class RiskParityStrategy(Strategy):
     @property
     def description(self) -> str:
         return (
-            f"Inverse-volatility weighting over {self.vol_lookback_days}D, "
-            f"max {self.max_positions} positions"
+            f"Risk parity: inverse-volatility weighting over {self.vol_lookback_days}D so each "
+            f"position contributes equal risk. Max {self.max_positions} positions. Data: price only."
         )
 
     @property

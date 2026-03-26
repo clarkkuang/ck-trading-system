@@ -19,4 +19,15 @@ from ck_trading.strategies import (  # noqa: F401
     quality_factor,
     risk_parity,
     trend_following,
+    low_volatility,
+    insider_following,
+    short_squeeze,
+    sector_rotation,
+    earnings_surprise,
 )
+
+from ck_trading.strategies.low_volatility import LowVolatilityStrategy  # noqa: F401
+from ck_trading.strategies.insider_following import InsiderFollowingStrategy  # noqa: F401
+from ck_trading.strategies.short_squeeze import ShortSqueezeStrategy  # noqa: F401
+from ck_trading.strategies.sector_rotation import SectorRotationStrategy  # noqa: F401
+from ck_trading.strategies.earnings_surprise import EarningsSurpriseStrategy  # noqa: F401

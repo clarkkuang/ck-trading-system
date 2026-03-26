@@ -29,7 +29,11 @@ class CompositeValueStrategy(Strategy):
 
     @property
     def description(self) -> str:
-        return "Multi-factor value scoring: cheapness + quality + safety"
+        return (
+            "Multi-factor composite value scoring: combines cheapness (P/E, P/B, EV/EBITDA), "
+            "quality (ROE, margins), and safety (leverage, current ratio) into a single score. "
+            "Data: fundamentals."
+        )
 
     @property
     def rebalance_frequency(self) -> str:

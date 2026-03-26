@@ -32,7 +32,11 @@ class GrahamDefensiveStrategy(Strategy):
 
     @property
     def description(self) -> str:
-        return "Graham defensive investor: low P/E, low P/B, strong balance sheet"
+        return (
+            "Benjamin Graham's defensive investor criteria: low P/E, low P/B, adequate "
+            "current ratio, consistent earnings growth, and dividend history. "
+            "Data: fundamentals (income statement + balance sheet)."
+        )
 
     @property
     def rebalance_frequency(self) -> str:

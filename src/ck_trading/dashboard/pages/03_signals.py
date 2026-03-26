@@ -60,12 +60,16 @@ try:
                     st.write(f"Selected tickers: {len(tickers)}")
                     st.write(f"Tickers in prices: {len(actual_tickers)} — {actual_tickers}")
 
+                from ck_trading.dashboard.widgets.extra_data import build_extra_data
+
+                extra_data = build_extra_data(store, tickers)
+
                 all_strategies = get_all_strategies()
                 generator = SignalGenerator([
                     cls() for cls in all_strategies.values()
                 ])
 
-                raw_signals = generator.generate(prices, fundamentals)
+                raw_signals = generator.generate(prices, fundamentals, extra_data=extra_data)
 
                 # Post-filter: only keep signals for selected tickers
                 if tickers:

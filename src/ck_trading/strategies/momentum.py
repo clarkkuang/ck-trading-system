@@ -39,8 +39,9 @@ class MomentumStrategy(Strategy):
     @property
     def description(self) -> str:
         return (
-            f"{self.lookback_months}M momentum with {self.skip_months}M skip: "
-            f"long top {self.top_pct:.0%}, short bottom {self.bottom_pct:.0%}"
+            f"Cross-sectional momentum: {self.lookback_months}M lookback with "
+            f"{self.skip_months}M skip period. Long top {self.top_pct:.0%}, short bottom "
+            f"{self.bottom_pct:.0%} of universe. Data: price only."
         )
 
     @property

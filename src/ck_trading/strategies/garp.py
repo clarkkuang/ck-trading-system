@@ -23,7 +23,11 @@ class GARPStrategy(Strategy):
 
     @property
     def description(self) -> str:
-        return "Growth at Reasonable Price: low PEG ratio screening"
+        return (
+            "Growth at a Reasonable Price (GARP): screen for low PEG ratio stocks "
+            "with strong earnings growth at reasonable valuations. "
+            "Data: fundamentals (income statement + valuation ratios)."
+        )
 
     @property
     def rebalance_frequency(self) -> str:
