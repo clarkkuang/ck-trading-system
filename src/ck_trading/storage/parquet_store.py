@@ -86,6 +86,26 @@ class ParquetStore:
 
             ticker_df.write_parquet(path)
 
+    # Numeric columns that yfinance sometimes returns as strings ("N/A", "-", etc.)
+    _FUND_FLOAT_COLS = {
+        "revenue", "gross_profit", "operating_income", "net_income", "ebit", "ebitda",
+        "total_assets", "total_liabilities", "total_equity", "current_assets",
+        "current_liabilities", "cash_and_equivalents", "total_debt",
+        "operating_cash_flow", "capex", "free_cash_flow",
+        "pe_ratio", "pb_ratio", "ps_ratio", "roe", "roa", "dividend_yield",
+        "enterprise_value", "eps", "book_value_per_share", "market_cap",
+        "current_ratio", "debt_to_equity", "gross_margin", "operating_margin",
+        "net_margin", "asset_turnover",
+    }
+
+    def _normalize_fundamentals(self, df: pl.DataFrame) -> pl.DataFrame:
+        """Cast any string-typed numeric columns to Float64 (turns non-numeric to null)."""
+        casts = []
+        for col in df.columns:
+            if col in self._FUND_FLOAT_COLS and df[col].dtype == pl.Utf8:
+                casts.append(pl.col(col).cast(pl.Float64, strict=False))
+        return df.with_columns(casts) if casts else df
+
     def load_fundamentals(
         self, market: str, tickers: list[str] | None = None
     ) -> pl.DataFrame:
@@ -100,13 +120,16 @@ class ParquetStore:
                 safe_name = ticker.replace(".", "_").replace("/", "_")
                 path = data_dir / f"{safe_name}_financials.parquet"
                 if path.exists():
-                    frames.append(pl.read_parquet(path))
+                    frames.append(self._normalize_fundamentals(pl.read_parquet(path)))
             return pl.concat(frames, how="diagonal") if frames else pl.DataFrame()
 
         files = list(data_dir.glob("*_financials.parquet"))
         if not files:
             return pl.DataFrame()
-        return pl.concat([pl.read_parquet(f) for f in files], how="diagonal")
+        return pl.concat(
+            [self._normalize_fundamentals(pl.read_parquet(f)) for f in files],
+            how="diagonal",
+        )
 
     # --- Macro ---
 
