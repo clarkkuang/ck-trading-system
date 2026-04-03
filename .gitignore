@@ -17,8 +17,9 @@ data/alternative/
 data/*.duckdb
 data/*.db
 
-# Claude Code
-.claude/
+# Claude Code – ignore everything except skills/
+.claude/*
+!.claude/skills/
 
 # Environment
 .env
