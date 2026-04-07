@@ -50,10 +50,11 @@ if st.button("Run Backtest", type="primary"):
             from ck_trading.backtesting.engine import BacktestEngine
             from ck_trading.models.backtest import BacktestConfig
             from ck_trading.storage.parquet_store import ParquetStore
+            from ck_trading.dashboard.data_cache import load_prices, load_fundamentals
 
             store = ParquetStore()
-            prices = store.load_prices(market)
-            fundamentals = store.load_fundamentals(market)
+            prices = load_prices(market)
+            fundamentals = load_fundamentals(market)
 
             # Filter to selected stock pool
             if tickers:

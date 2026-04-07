@@ -213,3 +213,104 @@ def portfolio_var(
     var_return = port_returns[idx]
 
     return var_return * total_value
+
+
+def find_correlated_tickers(
+    prices: pl.DataFrame,
+    ticker: str,
+    candidates: list[str] | None = None,
+    lookback_days: int = 252,
+) -> pl.DataFrame:
+    """Compute correlation of one reference ticker vs all others.
+
+    Efficient O(N) — computes pairwise correlations one-at-a-time, avoiding a
+    massive pivot of all tickers (which would drop rows due to missing data).
+
+    Args:
+        prices: DataFrame with columns [ticker, date, close]
+        ticker: the reference ticker to compare against
+        candidates: optional list of tickers to compare with (default: all available)
+        lookback_days: number of trading days to look back
+
+    Returns:
+        DataFrame with columns [other_ticker, correlation] sorted by correlation ascending.
+        Empty DataFrame if ticker not found or no data.
+    """
+    empty = pl.DataFrame(schema={"other_ticker": pl.Utf8, "correlation": pl.Float64})
+
+    if prices.is_empty() or "ticker" not in prices.columns:
+        return empty
+
+    available = prices["ticker"].unique().to_list()
+    if ticker not in available:
+        return empty
+
+    # Determine date cutoff
+    max_date = prices["date"].max()
+    from datetime import timedelta
+    cutoff = max_date - timedelta(days=int(lookback_days * 1.5))  # calendar days buffer
+    recent = prices.filter(pl.col("date") >= cutoff)
+
+    # Get reference ticker returns
+    ref_data = (
+        recent.filter(pl.col("ticker") == ticker)
+        .sort("date")
+        .with_columns(
+            (pl.col("close") / pl.col("close").shift(1) - 1).alias("ref_ret")
+        )
+        .filter(pl.col("ref_ret").is_not_null())
+        .select(["date", "ref_ret"])
+    )
+    if ref_data.height < 20:
+        return empty
+
+    # Determine comparison set
+    if candidates is not None:
+        others = [t for t in candidates if t in available and t != ticker]
+    else:
+        others = [t for t in available if t != ticker]
+
+    if not others:
+        return empty
+
+    # Compute pairwise correlations in batches via pivot (much faster than 1-by-1)
+    results = []
+    batch_size = 500
+    for i in range(0, len(others), batch_size):
+        batch = others[i : i + batch_size]
+        batch_tickers = [ticker] + batch
+        batch_prices = recent.filter(pl.col("ticker").is_in(batch_tickers))
+        if batch_prices.is_empty():
+            continue
+
+        wide = batch_prices.sort("date").pivot(on="ticker", index="date", values="close")
+        if ticker not in wide.columns:
+            continue
+
+        # Compute returns for ref
+        ref_ret_col = f"_r_{ticker}"
+        wide = wide.with_columns(
+            (pl.col(ticker) / pl.col(ticker).shift(1) - 1).alias(ref_ret_col)
+        )
+
+        for t in batch:
+            if t not in wide.columns:
+                continue
+            other_ret_col = f"_r_{t}"
+            wide_t = wide.with_columns(
+                (pl.col(t) / pl.col(t).shift(1) - 1).alias(other_ret_col)
+            )
+            # Drop nulls for just these two columns
+            pair = wide_t.select([ref_ret_col, other_ret_col]).drop_nulls()
+            if pair.height < 20:
+                continue
+            corr_val = pair.select(
+                pl.corr(ref_ret_col, other_ret_col).alias("c")
+            )["c"][0]
+            if corr_val is not None and corr_val == corr_val:  # filter NaN
+                results.append({"other_ticker": t, "correlation": round(float(corr_val), 4)})
+
+    if not results:
+        return empty
+
+    return pl.DataFrame(results).sort("correlation")

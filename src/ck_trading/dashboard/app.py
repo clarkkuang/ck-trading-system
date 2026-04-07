@@ -28,23 +28,20 @@ st.subheader("System Status")
 
 try:
     from ck_trading.storage.metadata_store import MetadataStore
-    from ck_trading.storage.parquet_store import ParquetStore
+    from ck_trading.dashboard.data_cache import price_count, fundamentals_count
 
-    store = ParquetStore()
     meta = MetadataStore()
 
     col1, col2, col3 = st.columns(3)
     with col1:
         try:
-            us_prices = store.load_prices("us")
-            st.metric("US Price Records", f"{us_prices.height:,}" if not us_prices.is_empty() else "0")
+            st.metric("US Price Records", f"{price_count('us'):,}")
         except Exception:
             st.metric("US Price Records", "N/A")
 
     with col2:
         try:
-            us_fund = store.load_fundamentals("us")
-            st.metric("US Fundamental Records", f"{us_fund.height:,}" if not us_fund.is_empty() else "0")
+            st.metric("US Fundamental Records", f"{fundamentals_count('us'):,}")
         except Exception:
             st.metric("US Fundamental Records", "N/A")
 

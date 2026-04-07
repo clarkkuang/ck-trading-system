@@ -13,6 +13,8 @@ try:
     from ck_trading.storage.metadata_store import MetadataStore
     from ck_trading.storage.parquet_store import ParquetStore
 
+    from ck_trading.dashboard.data_cache import load_prices, load_fundamentals, load_macro
+
     store = ParquetStore()
     meta = MetadataStore()
 
@@ -21,12 +23,12 @@ try:
     # =====================================================================
     st.header("Data Health Overview")
 
-    # Load all data once for reuse
-    us_prices = store.load_prices("us")
-    hk_prices = store.load_prices("hk")
-    us_fundamentals = store.load_fundamentals("us")
-    hk_fundamentals = store.load_fundamentals("hk")
-    macro = store.load_macro()
+    # Load all data once for reuse (cached)
+    us_prices = load_prices("us")
+    hk_prices = load_prices("hk")
+    us_fundamentals = load_fundamentals("us")
+    hk_fundamentals = load_fundamentals("hk")
+    macro = load_macro()
     universe = meta.get_universe()
     positions = meta.get_open_positions()
     signals = meta.get_recent_signals(limit=10_000)

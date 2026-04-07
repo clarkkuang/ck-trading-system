@@ -228,3 +228,57 @@ class TestPortfolioVaR:
         prices = pl.DataFrame()
         var = portfolio_var(prices, holdings={}, confidence=0.95)
         assert var == 0.0
+
+
+# ---- find_correlated_tickers tests ----
+
+class TestFindCorrelatedTickers:
+    def test_basic(self):
+        """Returns DataFrame with other_ticker and correlation columns, sorted ascending."""
+        from ck_trading.portfolio.risk import find_correlated_tickers
+
+        rows = _make_price_series("AAPL", 150, n=120)
+        rows += _make_price_series("MSFT", 300, n=120)
+        rows += _make_price_series("TLT", 90, n=120)
+        prices = pl.DataFrame(rows)
+        result = find_correlated_tickers(prices, "AAPL")
+        assert not result.is_empty()
+        assert "other_ticker" in result.columns
+        assert "correlation" in result.columns
+        # Should contain MSFT and TLT
+        tickers = result["other_ticker"].to_list()
+        assert "MSFT" in tickers
+        assert "TLT" in tickers
+        # Sorted ascending (most negative first)
+        corrs = result["correlation"].to_list()
+        assert corrs == sorted(corrs)
+
+    def test_unknown_ticker(self):
+        """Unknown reference ticker returns empty DataFrame."""
+        from ck_trading.portfolio.risk import find_correlated_tickers
+
+        rows = _make_price_series("AAPL", 150, n=60)
+        prices = pl.DataFrame(rows)
+        result = find_correlated_tickers(prices, "DOES_NOT_EXIST")
+        assert result.is_empty()
+
+    def test_with_candidates(self):
+        """candidates parameter limits which tickers are compared."""
+        from ck_trading.portfolio.risk import find_correlated_tickers
+
+        rows = _make_price_series("AAPL", 150, n=120)
+        rows += _make_price_series("MSFT", 300, n=120)
+        rows += _make_price_series("TLT", 90, n=120)
+        prices = pl.DataFrame(rows)
+        result = find_correlated_tickers(prices, "AAPL", candidates=["MSFT"])
+        tickers = result["other_ticker"].to_list()
+        assert "MSFT" in tickers
+        assert "TLT" not in tickers
+
+    def test_empty_prices(self):
+        """Empty prices DataFrame returns empty result."""
+        from ck_trading.portfolio.risk import find_correlated_tickers
+
+        prices = pl.DataFrame()
+        result = find_correlated_tickers(prices, "AAPL")
+        assert result.is_empty()
