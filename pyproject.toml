@@ -18,6 +18,8 @@ dependencies = [
     "pyarrow>=17.0",
     "fredapi>=0.5",
     "httpx>=0.27",
+    "gymnasium>=1.0",
+    "stable-baselines3>=2.3",
 ]
 
 [dependency-groups]

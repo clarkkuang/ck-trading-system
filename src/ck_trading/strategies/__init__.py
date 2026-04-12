@@ -33,3 +33,8 @@ from ck_trading.strategies.short_squeeze import ShortSqueezeStrategy  # noqa: F4
 from ck_trading.strategies.sector_rotation import SectorRotationStrategy  # noqa: F401
 from ck_trading.strategies.earnings_surprise import EarningsSurpriseStrategy  # noqa: F401
 from ck_trading.strategies.ten_bagger import TenBaggerStrategy  # noqa: F401
+
+try:
+    from ck_trading.strategies.rl_strategy import RLStrategy  # noqa: F401
+except ImportError:
+    pass  # stable-baselines3 not installed; RL strategy unavailable
