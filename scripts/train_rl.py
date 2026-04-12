@@ -42,8 +42,10 @@ def main():
     parser.add_argument("--output", type=str, default="models/rl_ppo.zip")
     args = parser.parse_args()
 
+    import csv
+
     from stable_baselines3 import PPO
-    from stable_baselines3.common.callbacks import EvalCallback
+    from stable_baselines3.common.callbacks import BaseCallback, EvalCallback
     from stable_baselines3.common.vec_env import DummyVecEnv
 
     from ck_trading.rl.environment import TradingEnv
@@ -137,6 +139,47 @@ def main():
     output_dir = Path(args.output).parent
     output_dir.mkdir(parents=True, exist_ok=True)
 
+    # --- Custom callback: record training metrics for visualization ---
+    metrics_csv = output_dir / "training_metrics.csv"
+
+    class MetricsCallback(BaseCallback):
+        """Record training metrics to CSV for post-training visualization."""
+
+        def __init__(self, csv_path: Path, verbose=0):
+            super().__init__(verbose)
+            self.csv_path = csv_path
+            self._file = None
+            self._writer = None
+
+        def _on_training_start(self):
+            self._file = open(self.csv_path, "w", newline="")
+            self._writer = csv.writer(self._file)
+            self._writer.writerow([
+                "timesteps", "policy_loss", "value_loss", "entropy_loss",
+                "approx_kl", "clip_fraction", "explained_variance",
+            ])
+
+        def _on_step(self) -> bool:
+            return True
+
+        def _on_rollout_end(self):
+            if self.logger and self._writer:
+                logs = self.logger.name_to_value
+                self._writer.writerow([
+                    self.num_timesteps,
+                    logs.get("train/policy_gradient_loss", ""),
+                    logs.get("train/value_loss", ""),
+                    logs.get("train/entropy_loss", ""),
+                    logs.get("train/approx_kl", ""),
+                    logs.get("train/clip_fraction", ""),
+                    logs.get("train/explained_variance", ""),
+                ])
+                self._file.flush()
+
+        def _on_training_end(self):
+            if self._file:
+                self._file.close()
+
     eval_callback = EvalCallback(
         val_env,
         best_model_save_path=str(output_dir / "best"),
@@ -144,12 +187,13 @@ def main():
         deterministic=True,
         verbose=1,
     )
+    metrics_callback = MetricsCallback(metrics_csv)
 
     # Train
     t0 = time.time()
     model.learn(
         total_timesteps=args.total_timesteps,
-        callback=eval_callback,
+        callback=[eval_callback, metrics_callback],
     )
     elapsed = time.time() - t0
 
@@ -178,8 +222,105 @@ def main():
     print(f"Time: {elapsed:.0f}s ({elapsed / 60:.1f} min)")
     print(f"Model: {args.output}")
     print(f"Config: {config_path}")
+    print(f"Metrics: {metrics_csv}")
+
+    # --- Generate training charts ---
+    _generate_charts(metrics_csv, output_dir)
+
     print(f"\nTo use in screener/backtest:")
     print(f"  Select 'RL PPO' strategy in the dashboard")
+
+
+def _generate_charts(metrics_csv: Path, output_dir: Path):
+    """Generate training visualization charts from metrics CSV."""
+    import plotly.graph_objects as go
+    from plotly.subplots import make_subplots
+
+    if not metrics_csv.exists():
+        print("No metrics CSV found, skipping charts.")
+        return
+
+    rows = []
+    with open(metrics_csv) as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            parsed = {}
+            for k, v in row.items():
+                try:
+                    parsed[k] = float(v) if v else None
+                except ValueError:
+                    parsed[k] = None
+            rows.append(parsed)
+
+    if not rows:
+        print("No training metrics recorded, skipping charts.")
+        return
+
+    timesteps = [r["timesteps"] for r in rows if r.get("timesteps") is not None]
+
+    fig = make_subplots(
+        rows=3, cols=2,
+        subplot_titles=[
+            "Policy Loss", "Value Loss",
+            "Entropy Loss", "KL Divergence",
+            "Clip Fraction", "Explained Variance",
+        ],
+        vertical_spacing=0.08,
+    )
+
+    metrics = [
+        ("policy_loss", 1, 1, "#1f77b4"),
+        ("value_loss", 1, 2, "#ff7f0e"),
+        ("entropy_loss", 2, 1, "#2ca02c"),
+        ("approx_kl", 2, 2, "#d62728"),
+        ("clip_fraction", 3, 1, "#9467bd"),
+        ("explained_variance", 3, 2, "#8c564b"),
+    ]
+
+    for name, row, col, color in metrics:
+        values = [r.get(name) for r in rows]
+        valid_ts = [t for t, v in zip(timesteps, values) if v is not None]
+        valid_vals = [v for v in values if v is not None]
+        if valid_ts:
+            fig.add_trace(
+                go.Scatter(x=valid_ts, y=valid_vals, mode="lines",
+                           name=name, line=dict(color=color)),
+                row=row, col=col,
+            )
+
+    fig.update_layout(
+        title="PPO Training Metrics",
+        height=900, width=1000,
+        showlegend=False,
+    )
+    for i in range(1, 7):
+        fig.update_xaxes(title_text="Timesteps", row=(i - 1) // 2 + 1, col=(i - 1) % 2 + 1)
+
+    chart_path = output_dir / "training_charts.html"
+    fig.write_html(str(chart_path))
+    print(f"Charts: {chart_path}")
+
+    # Also generate a summary PNG-friendly chart (single combined)
+    fig_summary = go.Figure()
+    for name, _, _, color in metrics[:4]:  # top 4 metrics
+        values = [r.get(name) for r in rows]
+        valid_ts = [t for t, v in zip(timesteps, values) if v is not None]
+        valid_vals = [v for v in values if v is not None]
+        if valid_ts:
+            fig_summary.add_trace(
+                go.Scatter(x=valid_ts, y=valid_vals, mode="lines",
+                           name=name.replace("_", " ").title(),
+                           line=dict(color=color)),
+            )
+    fig_summary.update_layout(
+        title="PPO Training Progress",
+        xaxis_title="Timesteps",
+        yaxis_title="Value",
+        height=500,
+    )
+    summary_path = output_dir / "training_summary.html"
+    fig_summary.write_html(str(summary_path))
+    print(f"Summary: {summary_path}")
 
 
 if __name__ == "__main__":
