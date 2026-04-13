@@ -95,9 +95,25 @@ class TestFeatureBuilder:
         shape = fb.observation_shape
         assert shape == (3 * fb.n_features,)
 
-    def test_n_features_is_16(self):
-        """Default feature count should be 16 (10 price + 6 fundamental)."""
+    def test_n_features_is_20(self):
+        """Default feature count should be 20 (10 price + 4 momentum rank + 6 fundamental)."""
         from ck_trading.rl.features import FeatureBuilder
 
         fb = FeatureBuilder(tickers=["AAPL"])
-        assert fb.n_features == 16
+        assert fb.n_features == 20
+
+    def test_momentum_rank_features_in_range(self):
+        """Momentum rank features should be in [0, 1] before z-score."""
+        from ck_trading.rl.features import FeatureBuilder
+
+        tickers = ["AAPL", "MSFT", "NVDA"]
+        fb = FeatureBuilder(tickers=tickers)
+        # Test the raw percentile_rank method
+        values = np.array([0.1, -0.05, 0.3])
+        ranks = fb._percentile_rank(values)
+        assert ranks.min() >= 0.0
+        assert ranks.max() <= 1.0
+        # NVDA (0.3) should have highest rank
+        assert ranks[2] == 1.0
+        # MSFT (-0.05) should have lowest rank
+        assert ranks[1] == 0.0

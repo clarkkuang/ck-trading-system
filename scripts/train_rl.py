@@ -33,12 +33,16 @@ def main():
     parser.add_argument("--val-start", type=str, default="2024-01-01")
     parser.add_argument("--val-end", type=str, default="2024-12-31")
     parser.add_argument("--total-timesteps", type=int, default=500_000)
-    parser.add_argument("--reward", choices=["simple", "sharpe", "risk_adjusted"],
-                        default="risk_adjusted")
+    parser.add_argument("--reward", choices=["simple", "sharpe", "risk_adjusted", "benchmark_relative"],
+                        default="benchmark_relative")
     parser.add_argument("--learning-rate", type=float, default=3e-4)
     parser.add_argument("--n-steps", type=int, default=2048)
     parser.add_argument("--batch-size", type=int, default=64)
     parser.add_argument("--n-epochs", type=int, default=10)
+    parser.add_argument("--ent-coef", type=float, default=0.02,
+                        help="Entropy coefficient — higher = more exploration")
+    parser.add_argument("--walk-forward-months", type=int, default=24,
+                        help="Walk-forward window length in months (0=disabled)")
     parser.add_argument("--output", type=str, default="models/rl_ppo.zip")
     args = parser.parse_args()
 
@@ -51,6 +55,7 @@ def main():
     from ck_trading.rl.environment import TradingEnv
     from ck_trading.rl.features import FeatureBuilder
     from ck_trading.rl.reward import (
+        BenchmarkRelativeReward,
         RiskAdjustedReward,
         SharpeReward,
         SimpleReturnReward,
@@ -89,6 +94,7 @@ def main():
         "simple": SimpleReturnReward(),
         "sharpe": SharpeReward(),
         "risk_adjusted": RiskAdjustedReward(),
+        "benchmark_relative": BenchmarkRelativeReward(),
     }
     reward_fn = reward_map[args.reward]
     print(f"Reward: {args.reward} ({reward_fn.__class__.__name__})")
@@ -103,6 +109,7 @@ def main():
             end_date=train_end,
             feature_builder=feature_builder,
             reward_fn=reward_fn,
+            walk_forward_months=args.walk_forward_months,
         )
 
     def make_val_env():
@@ -127,12 +134,15 @@ def main():
         n_steps=args.n_steps,
         batch_size=args.batch_size,
         n_epochs=args.n_epochs,
+        ent_coef=args.ent_coef,
         verbose=1,
     )
 
     print(f"\nObservation space: {train_env.observation_space.shape}")
     print(f"Action space: {train_env.action_space.shape}")
     print(f"Policy: MlpPolicy [64, 64]")
+    print(f"Entropy coef: {args.ent_coef}")
+    print(f"Walk-forward: {args.walk_forward_months}mo window")
     print()
 
     # Callbacks
@@ -214,6 +224,8 @@ def main():
         "n_features": feature_builder.n_features,
         "total_timesteps": args.total_timesteps,
         "learning_rate": args.learning_rate,
+        "ent_coef": args.ent_coef,
+        "walk_forward_months": args.walk_forward_months,
     }
     with open(config_path, "w") as f:
         json.dump(config, f, indent=2)
@@ -233,6 +245,8 @@ def main():
 
 def _generate_charts(metrics_csv: Path, output_dir: Path):
     """Generate training visualization charts from metrics CSV."""
+    import csv
+
     import plotly.graph_objects as go
     from plotly.subplots import make_subplots
 

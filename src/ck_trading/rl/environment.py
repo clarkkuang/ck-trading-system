@@ -38,6 +38,11 @@ class TradingEnv(gymnasium.Env):
     The environment simulates holding that portfolio until the next
     rebalance date, computes returns, deducts transaction costs,
     and returns the reward.
+
+    Walk-forward mode (walk_forward_months > 0):
+      Each episode uses a random sub-window of the training period.
+      This exposes the agent to different market regimes and prevents
+      overfitting to one specific start-to-end trajectory.
     """
 
     metadata = {"render_modes": []}
@@ -52,6 +57,7 @@ class TradingEnv(gymnasium.Env):
         feature_builder: FeatureBuilder | None = None,
         reward_fn: RewardFunction | None = None,
         transaction_cost_bps: float = 10.0,
+        walk_forward_months: int = 0,
     ):
         super().__init__()
 
@@ -63,11 +69,15 @@ class TradingEnv(gymnasium.Env):
         self.feature_builder = feature_builder or FeatureBuilder(tickers=self.tickers)
         self.reward_fn = reward_fn or RiskAdjustedReward()
         self.tc_rate = transaction_cost_bps / 10_000
+        self.walk_forward_months = walk_forward_months
 
-        # Precompute rebalance dates
-        self.rebalance_dates = _generate_monthly_dates(start_date, end_date)
-        if len(self.rebalance_dates) < 2:
+        # Precompute all rebalance dates in the full window
+        self._all_rebalance_dates = _generate_monthly_dates(start_date, end_date)
+        if len(self._all_rebalance_dates) < 2:
             raise ValueError("Need at least 2 rebalance dates")
+
+        # Active rebalance dates for current episode (may be subset if walk-forward)
+        self.rebalance_dates = self._all_rebalance_dates
 
         n_tickers = len(self.tickers)
         n_features = self.feature_builder.n_features
@@ -100,6 +110,16 @@ class TradingEnv(gymnasium.Env):
 
     def reset(self, seed=None, options=None):
         super().reset(seed=seed)
+
+        # Walk-forward: pick a random sub-window for this episode
+        if self.walk_forward_months > 0 and len(self._all_rebalance_dates) > self.walk_forward_months + 1:
+            max_start = len(self._all_rebalance_dates) - self.walk_forward_months - 1
+            start_idx = self.np_random.integers(0, max_start + 1)
+            end_idx = start_idx + self.walk_forward_months + 1
+            self.rebalance_dates = self._all_rebalance_dates[start_idx:end_idx]
+        else:
+            self.rebalance_dates = self._all_rebalance_dates
+
         self._step_idx = 0
         self._weights = np.ones(len(self.tickers), dtype=np.float32) / len(self.tickers)
         obs = self._get_observation()

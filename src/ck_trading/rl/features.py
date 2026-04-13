@@ -15,9 +15,11 @@ import polars as pl
 class FeatureBuilder:
     """Build observation vectors from raw price and fundamental data.
 
-    Per-ticker features (16 total):
+    Per-ticker features (20 total):
       Price-derived (10): 1M/3M/6M/12M returns, 21d/63d volatility,
         RSI-14, SMA ratio, volume ratio, drawdown from 63d high.
+      Momentum rank (4): cross-sectional percentile rank of 1M/3M/6M/12M
+        returns. Rank in [0, 1] where 1 = strongest momentum.
       Fundamental-derived (6): PE (log), ROE, log(market_cap),
         D/E, gross_margin, operating_margin.
 
@@ -26,6 +28,7 @@ class FeatureBuilder:
     """
 
     N_PRICE_FEATURES = 10
+    N_MOMENTUM_RANK_FEATURES = 4
     N_FUND_FEATURES = 6
 
     def __init__(self, tickers: list[str], lookback_window: int = 252):
@@ -34,7 +37,7 @@ class FeatureBuilder:
 
     @property
     def n_features(self) -> int:
-        return self.N_PRICE_FEATURES + self.N_FUND_FEATURES
+        return self.N_PRICE_FEATURES + self.N_MOMENTUM_RANK_FEATURES + self.N_FUND_FEATURES
 
     @property
     def observation_shape(self) -> tuple[int, ...]:
@@ -70,7 +73,17 @@ class FeatureBuilder:
             price_feats = self._price_features(hist, ticker)
             fund_feats = self._fundamental_features(fund, ticker)
             matrix[i, :self.N_PRICE_FEATURES] = price_feats
-            matrix[i, self.N_PRICE_FEATURES:] = fund_feats
+            # Momentum rank features are filled after all price features are computed
+            fund_start = self.N_PRICE_FEATURES + self.N_MOMENTUM_RANK_FEATURES
+            matrix[i, fund_start:] = fund_feats
+
+        # Compute cross-sectional momentum rank features (percentile of returns)
+        # Uses the raw return features (indices 0-3: 1M/3M/6M/12M returns)
+        rank_start = self.N_PRICE_FEATURES
+        for feat_idx in range(4):  # 1M, 3M, 6M, 12M returns
+            raw_returns = matrix[:, feat_idx]
+            ranks = self._percentile_rank(raw_returns)
+            matrix[:, rank_start + feat_idx] = ranks
 
         # Cross-sectional z-score normalization (per feature across tickers)
         matrix = self._z_score(matrix)
@@ -185,6 +198,23 @@ class FeatureBuilder:
             feats[5] = float(np.clip(om, -1, 1))
 
         return feats
+
+    @staticmethod
+    def _percentile_rank(values: np.ndarray) -> np.ndarray:
+        """Convert values to percentile ranks in [0, 1].
+
+        Rank 1.0 = highest value (strongest momentum).
+        Ties get the average rank. All-zero or single-element → 0.5.
+        """
+        n = len(values)
+        if n <= 1:
+            return np.full(n, 0.5, dtype=np.float32)
+        # argsort of argsort gives rank (0-based)
+        order = values.argsort().argsort().astype(np.float32)
+        # Normalize to [0, 1]
+        if n > 1:
+            return order / (n - 1)
+        return np.full(n, 0.5, dtype=np.float32)
 
     @staticmethod
     def _z_score(matrix: np.ndarray) -> np.ndarray:

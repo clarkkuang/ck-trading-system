@@ -2,7 +2,12 @@
 
 import numpy as np
 
-from ck_trading.rl.reward import RiskAdjustedReward, SharpeReward, SimpleReturnReward
+from ck_trading.rl.reward import (
+    BenchmarkRelativeReward,
+    RiskAdjustedReward,
+    SharpeReward,
+    SimpleReturnReward,
+)
 
 
 class TestSimpleReturnReward:
@@ -51,3 +56,36 @@ class TestRiskAdjustedReward:
 
 
 import pytest
+
+
+class TestBenchmarkRelativeReward:
+    def test_outperform_eq_weight_positive(self):
+        """Reward should be positive when outperforming equal weight."""
+        r = BenchmarkRelativeReward(risk_aversion=0.0, turnover_penalty=0.0)
+        # Portfolio: 70% in winner, 30% in loser
+        w = np.array([0.7, 0.3])
+        prev_w = np.array([0.5, 0.5])
+        asset_ret = np.array([0.10, -0.02])  # first asset is winner
+        port_ret = float(np.sum(w * asset_ret))  # 0.064
+        reward = r.compute(port_ret, w, prev_w, asset_ret)
+        assert reward > 0  # Beat equal weight (0.04)
+
+    def test_underperform_eq_weight_negative(self):
+        """Reward should be negative when underperforming equal weight."""
+        r = BenchmarkRelativeReward(risk_aversion=0.0, turnover_penalty=0.0)
+        # Portfolio: 70% in loser, 30% in winner
+        w = np.array([0.3, 0.7])
+        prev_w = np.array([0.5, 0.5])
+        asset_ret = np.array([0.10, -0.02])
+        port_ret = float(np.sum(w * asset_ret))  # 0.016
+        reward = r.compute(port_ret, w, prev_w, asset_ret)
+        assert reward < 0  # Worse than equal weight (0.04)
+
+    def test_equal_weight_gives_zero_alpha(self):
+        """Equal weight allocation → zero alpha (before penalties)."""
+        r = BenchmarkRelativeReward(risk_aversion=0.0, turnover_penalty=0.0)
+        w = np.array([0.5, 0.5])
+        asset_ret = np.array([0.05, -0.01])
+        port_ret = float(np.sum(w * asset_ret))
+        reward = r.compute(port_ret, w, w, asset_ret)
+        assert reward == pytest.approx(0.0, abs=0.001)

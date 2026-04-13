@@ -44,7 +44,7 @@ class SharpeReward(RewardFunction):
 class RiskAdjustedReward(RewardFunction):
     """Reward = return - risk_aversion * variance - turnover_penalty * |Δw|.
 
-    Default reward function. Penalizes concentration and excessive trading.
+    Penalizes concentration and excessive trading.
     """
 
     def __init__(self, risk_aversion: float = 1.0, turnover_penalty: float = 0.001):
@@ -64,5 +64,56 @@ class RiskAdjustedReward(RewardFunction):
         return (
             portfolio_return
             - self.risk_aversion * port_var
+            - self.turnover_penalty * turnover
+        )
+
+
+class BenchmarkRelativeReward(RewardFunction):
+    """Reward = excess return over equal-weight benchmark.
+
+    The model is penalized for every stock that underperforms the equal-weight
+    allocation. This prevents the model from concentrating on stocks that
+    happened to do well in training history but may not persist.
+
+    reward = alpha - risk_aversion * tracking_var - turnover_penalty * |Δw|
+
+    where alpha = portfolio_return - equal_weight_return
+    """
+
+    def __init__(
+        self,
+        risk_aversion: float = 0.5,
+        turnover_penalty: float = 0.001,
+        alpha_scale: float = 5.0,
+    ):
+        self.risk_aversion = risk_aversion
+        self.turnover_penalty = turnover_penalty
+        self.alpha_scale = alpha_scale  # amplify alpha signal
+
+    def compute(self, portfolio_return, weights, prev_weights, asset_returns):
+        n = len(asset_returns)
+        if n == 0:
+            return 0.0
+
+        # Equal-weight benchmark return
+        eq_weight = np.ones(n) / n
+        benchmark_return = float(np.sum(eq_weight * asset_returns))
+
+        # Alpha = excess return over benchmark
+        alpha = portfolio_return - benchmark_return
+
+        # Tracking variance: variance of (w - eq_w) * returns
+        active_weights = weights - eq_weight
+        if len(asset_returns) > 0:
+            tracking_var = np.var(active_weights * asset_returns)
+        else:
+            tracking_var = 0.0
+
+        # Turnover penalty
+        turnover = np.sum(np.abs(weights - prev_weights))
+
+        return (
+            self.alpha_scale * alpha
+            - self.risk_aversion * tracking_var
             - self.turnover_penalty * turnover
         )

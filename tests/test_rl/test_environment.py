@@ -48,7 +48,7 @@ class TestTradingEnv:
             start_date=date(2020, 6, 1), end_date=date(2022, 6, 30),
         )
         assert env.action_space.shape == (2,)
-        assert env.observation_space.shape == (2 * 16,)
+        assert env.observation_space.shape == (2 * 20,)
 
     def test_reset_returns_valid_obs(self):
         tickers = ["AAPL", "MSFT"]
@@ -124,3 +124,34 @@ class TestTradingEnv:
         )
         # check_env raises on failure
         check_env(env, skip_render_check=True)
+
+    def test_walk_forward_episodes_differ(self):
+        """Walk-forward mode should produce episodes with different date ranges."""
+        tickers = ["AAPL"]
+        prices, fund = _make_env_data(tickers, date(2018, 1, 1), date(2022, 12, 31))
+        env = TradingEnv(
+            prices=prices, fundamentals=fund, tickers=tickers,
+            start_date=date(2018, 6, 1), end_date=date(2022, 6, 30),
+            reward_fn=SimpleReturnReward(),
+            walk_forward_months=12,
+        )
+        # Run two episodes and check that the date ranges differ (probabilistic)
+        starts = set()
+        for _ in range(10):
+            env.reset()
+            starts.add(env.rebalance_dates[0])
+        # With 10 resets and ~36 possible start dates, we should get multiple
+        assert len(starts) > 1, "Walk-forward should produce different episode windows"
+
+    def test_walk_forward_episode_length(self):
+        """Walk-forward episode should be walk_forward_months + 1 dates."""
+        tickers = ["AAPL"]
+        prices, fund = _make_env_data(tickers, date(2018, 1, 1), date(2022, 12, 31))
+        env = TradingEnv(
+            prices=prices, fundamentals=fund, tickers=tickers,
+            start_date=date(2018, 6, 1), end_date=date(2022, 6, 30),
+            reward_fn=SimpleReturnReward(),
+            walk_forward_months=12,
+        )
+        env.reset()
+        assert len(env.rebalance_dates) == 13  # 12 months + 1
