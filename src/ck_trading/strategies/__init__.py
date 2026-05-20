@@ -6,6 +6,7 @@ via the :func:`ck_trading.strategies.registry.register` decorator.
 
 # Import strategy modules to trigger @register side-effects
 from ck_trading.strategies import (  # noqa: F401
+    buy_the_dip,
     composite_value,
     dcf_intrinsic,
     dual_momentum,
@@ -26,6 +27,7 @@ from ck_trading.strategies import (  # noqa: F401
     earnings_surprise,
     ten_bagger,
 )
+from ck_trading.strategies.buy_the_dip import BuyTheDipStrategy  # noqa: F401
 
 from ck_trading.strategies.low_volatility import LowVolatilityStrategy  # noqa: F401
 from ck_trading.strategies.insider_following import InsiderFollowingStrategy  # noqa: F401
