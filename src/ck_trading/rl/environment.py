@@ -58,6 +58,8 @@ class TradingEnv(gymnasium.Env):
         reward_fn: RewardFunction | None = None,
         transaction_cost_bps: float = 10.0,
         walk_forward_months: int = 0,
+        drift_mode: bool = False,
+        conviction_threshold: float = 0.02,
     ):
         super().__init__()
 
@@ -70,6 +72,8 @@ class TradingEnv(gymnasium.Env):
         self.reward_fn = reward_fn or RiskAdjustedReward()
         self.tc_rate = transaction_cost_bps / 10_000
         self.walk_forward_months = walk_forward_months
+        self.drift_mode = drift_mode
+        self.conviction_threshold = conviction_threshold
 
         # Precompute all rebalance dates in the full window
         self._all_rebalance_dates = _generate_monthly_dates(start_date, end_date)
@@ -126,9 +130,9 @@ class TradingEnv(gymnasium.Env):
         return obs, {}
 
     def step(self, action: np.ndarray):
-        # Normalize action to weights via softmax
+        # Normalize action to target weights via softmax
         exp_a = np.exp(action - np.max(action))
-        new_weights = (exp_a / exp_a.sum()).astype(np.float32)
+        target_weights = (exp_a / exp_a.sum()).astype(np.float32)
 
         # Current and next rebalance dates
         current_date = self.rebalance_dates[self._step_idx]
@@ -138,6 +142,28 @@ class TradingEnv(gymnasium.Env):
 
         # Compute asset returns between current_date and next_date
         asset_returns = self._compute_period_returns(current_date, next_date)
+
+        if self.drift_mode:
+            # Natural drift: only trade the delta between drifted weights and target
+            # First, compute where current weights would drift to based on returns
+            drifted = self._weights * (1 + asset_returns)
+            drift_sum = drifted.sum()
+            if drift_sum > 0:
+                drifted_weights = (drifted / drift_sum).astype(np.float32)
+            else:
+                drifted_weights = self._weights.copy()
+
+            # Apply conviction threshold: only trade if delta > threshold
+            delta = target_weights - drifted_weights
+            # Zero out small adjustments (model learns to "hold")
+            delta = np.where(np.abs(delta) > self.conviction_threshold, delta, 0.0)
+            new_weights = (drifted_weights + delta).astype(np.float32)
+            # Re-normalize
+            w_sum = new_weights.sum()
+            if w_sum > 0:
+                new_weights = new_weights / w_sum
+        else:
+            new_weights = target_weights
 
         # Portfolio return (weighted sum of asset returns)
         portfolio_return = float(np.sum(new_weights * asset_returns))

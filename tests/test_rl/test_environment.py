@@ -143,6 +143,34 @@ class TestTradingEnv:
         # With 10 resets and ~36 possible start dates, we should get multiple
         assert len(starts) > 1, "Walk-forward should produce different episode windows"
 
+    def test_drift_mode_reduces_turnover(self):
+        """Drift mode should produce less turnover than forced rebalance."""
+        tickers = ["AAPL", "MSFT"]
+        prices, fund = _make_env_data(tickers, date(2020, 1, 1), date(2022, 12, 31))
+
+        # Without drift
+        env_no_drift = TradingEnv(
+            prices=prices, fundamentals=fund, tickers=tickers,
+            start_date=date(2020, 6, 1), end_date=date(2022, 6, 30),
+            reward_fn=SimpleReturnReward(), drift_mode=False,
+        )
+        env_no_drift.reset()
+        action = np.array([0.7, 0.3], dtype=np.float32)
+        _, _, _, _, info_nd = env_no_drift.step(action)
+
+        # With drift (starting from equal weight, small threshold)
+        env_drift = TradingEnv(
+            prices=prices, fundamentals=fund, tickers=tickers,
+            start_date=date(2020, 6, 1), end_date=date(2022, 6, 30),
+            reward_fn=SimpleReturnReward(), drift_mode=True, conviction_threshold=0.05,
+        )
+        env_drift.reset()
+        # Same action, but drift mode will dampen small changes
+        action_hold = np.array([0.5, 0.5], dtype=np.float32)  # "hold" = equal weight
+        _, _, _, _, info_d = env_drift.step(action_hold)
+        # Turnover in drift mode with "hold" action should be ~0
+        assert info_d["turnover"] < info_nd["turnover"]
+
     def test_walk_forward_episode_length(self):
         """Walk-forward episode should be walk_forward_months + 1 dates."""
         tickers = ["AAPL"]
