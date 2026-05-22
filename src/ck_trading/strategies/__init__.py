@@ -17,6 +17,7 @@ from ck_trading.strategies import (  # noqa: F401
     mean_reversion,
     momentum,
     piotroski_f_score,
+    portfolio_dip,
     quality_factor,
     risk_parity,
     trend_following,
