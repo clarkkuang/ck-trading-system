@@ -33,7 +33,7 @@ def main():
     parser.add_argument("--val-start", type=str, default="2024-01-01")
     parser.add_argument("--val-end", type=str, default="2024-12-31")
     parser.add_argument("--total-timesteps", type=int, default=500_000)
-    parser.add_argument("--reward", choices=["simple", "sharpe", "risk_adjusted", "benchmark_relative"],
+    parser.add_argument("--reward", choices=["simple", "sharpe", "risk_adjusted", "benchmark_relative", "momentum_conviction"],
                         default="benchmark_relative")
     parser.add_argument("--learning-rate", type=float, default=3e-4)
     parser.add_argument("--n-steps", type=int, default=2048)
@@ -43,6 +43,10 @@ def main():
                         help="Entropy coefficient — higher = more exploration")
     parser.add_argument("--walk-forward-months", type=int, default=24,
                         help="Walk-forward window length in months (0=disabled)")
+    parser.add_argument("--drift-mode", action="store_true",
+                        help="Enable natural drift (let winners run)")
+    parser.add_argument("--conviction-threshold", type=float, default=0.02,
+                        help="Min weight change to trigger trade in drift mode")
     parser.add_argument("--output", type=str, default="models/rl_ppo.zip")
     args = parser.parse_args()
 
@@ -56,6 +60,7 @@ def main():
     from ck_trading.rl.features import FeatureBuilder
     from ck_trading.rl.reward import (
         BenchmarkRelativeReward,
+        MomentumConvictionReward,
         RiskAdjustedReward,
         SharpeReward,
         SimpleReturnReward,
@@ -95,6 +100,7 @@ def main():
         "sharpe": SharpeReward(),
         "risk_adjusted": RiskAdjustedReward(),
         "benchmark_relative": BenchmarkRelativeReward(),
+        "momentum_conviction": MomentumConvictionReward(),
     }
     reward_fn = reward_map[args.reward]
     print(f"Reward: {args.reward} ({reward_fn.__class__.__name__})")
@@ -110,6 +116,8 @@ def main():
             feature_builder=feature_builder,
             reward_fn=reward_fn,
             walk_forward_months=args.walk_forward_months,
+            drift_mode=args.drift_mode,
+            conviction_threshold=args.conviction_threshold,
         )
 
     def make_val_env():
@@ -226,6 +234,8 @@ def main():
         "learning_rate": args.learning_rate,
         "ent_coef": args.ent_coef,
         "walk_forward_months": args.walk_forward_months,
+        "drift_mode": args.drift_mode,
+        "conviction_threshold": args.conviction_threshold,
     }
     with open(config_path, "w") as f:
         json.dump(config, f, indent=2)
