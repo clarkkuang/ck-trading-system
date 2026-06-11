@@ -56,6 +56,12 @@ def _refresh_holdings_prices(tickers: list[str], days_back: int = 14) -> dict:
     if df.is_empty():
         return {"updated": [], "failed": tickers, "latest_date": None}
 
+    # Drop rows with null/NaN close — yfinance returns a partial bar for the
+    # current (not-yet-closed) trading day that pollutes downstream max()/min().
+    df = df.filter(pl.col("close").is_not_null() & pl.col("close").is_not_nan())
+    if df.is_empty():
+        return {"updated": [], "failed": tickers, "latest_date": None}
+
     store.save_prices(df, "us")
     updated = df["ticker"].unique().to_list()
     failed = [t for t in tickers if t not in set(updated)]
@@ -199,7 +205,14 @@ st.caption(f"Data as-of: **{as_of}** · Tickers in portfolio: **{len(us_tickers)
 # Compute per-ticker signal status
 # --------------------------------------------------------------------------
 def compute_status(ticker: str, df: pl.DataFrame) -> dict | None:
-    closes = df.sort("date")["close"].to_list()
+    # Drop rows with null/NaN close — yfinance can return a partial bar for
+    # the current (not-yet-closed) day, which would break max()/min().
+    closes = (
+        df.sort("date")
+        .filter(pl.col("close").is_not_null() & pl.col("close").is_not_nan())
+        ["close"]
+        .to_list()
+    )
     n = len(closes)
     if n < max(lookback, trend_period if require_uptrend else 0, reversal_window) + 1:
         return None
@@ -307,17 +320,21 @@ VERDICT_COLOR = {
 }
 
 
+high_col = f"{lookback}d High"
+sma_col = f"SMA{trend_period}" if require_uptrend else "SMA"
+
+
 def _format_row(r):
     if r["current"] is None:
         return {
             "Ticker": r["ticker"],
             "Verdict": r["verdict"],
             "Price": "n/a",
-            "60d High": "n/a",
+            high_col: "n/a",
             "Dip": "n/a",
             "Threshold": f"{r['threshold']:.1%}",
             "Dip ÷ Thr": "n/a",
-            "SMA200": "n/a",
+            sma_col: "n/a",
             "Trend": "n/a",
             "Reversal": "n/a",
         }
@@ -325,11 +342,11 @@ def _format_row(r):
         "Ticker": r["ticker"],
         "Verdict": r["verdict"],
         "Price": f"${r['current']:.2f}",
-        "60d High": f"${r['high_60d']:.2f}",
+        high_col: f"${r['high_60d']:.2f}",
         "Dip": f"{r['dip_pct']:.1%}",
         "Threshold": f"{r['threshold']:.1%}",
         "Dip ÷ Thr": f"{r['dip_vs_threshold']:.2f}×",
-        "SMA200": f"${r['sma']:.2f}" if r["sma"] is not None else "—",
+        sma_col: f"${r['sma']:.2f}" if r["sma"] is not None else "—",
         "Trend": "↑ up" if r["in_uptrend"] else "↓ down",
         "Reversal": "✓ stabilized" if r["stabilized"] else "✗ still down",
     }
@@ -377,7 +394,7 @@ if plot_rows:
     ))
     fig.update_layout(
         height=max(300, 30 * len(plot_rows)),
-        xaxis_title="Dip from 60-day high (%)",
+        xaxis_title=f"Dip from {lookback}-day high (%)",
         yaxis_title="",
         showlegend=True,
         bargap=0.3,
@@ -466,7 +483,7 @@ if select_options:
             cc1.metric("Current", f"${cur:.2f}")
             cc2.metric(f"{lookback}d High", f"${high60:.2f}")
             cc3.metric("Buy zone trigger", f"≤ ${buy_zone:.2f}",
-                       help=f"Threshold: {thr:.1%} dip from 60d high")
+                       help=f"Threshold: {thr:.1%} dip from {lookback}d high")
             cc4.metric(
                 "Distance to trigger",
                 f"{distance:+.1f}%",
