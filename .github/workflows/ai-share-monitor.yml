@@ -29,12 +29,13 @@ jobs:
       - uses: astral-sh/setup-uv@v5
         with:
           python-version: "3.12"
+          enable-cache: false # uv.lock is untracked; nothing stable to key on
 
       # uv.lock is intentionally gitignored, and the full project deps pull
       # torch (via stable-baselines3). The monitoring pipeline only needs:
       - name: Install minimal deps
         run: |
-          uv venv
+          uv venv --clear
           uv pip install httpx polars pyarrow pydantic pydantic-settings
 
       - name: Run collection
