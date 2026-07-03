@@ -49,18 +49,19 @@ class PipelineResult:
     as_of: date
     outcomes: list[ComponentOutcome] = field(default_factory=list)
     rule_results: list[EvalResult] = field(default_factory=list)
+    title: str = "AI share monitor"
+    collection_sections: tuple[str, ...] = ("pricing", "rankings", "npm", "pypi")
 
     @property
     def total_failure(self) -> bool:
         collection = [
             o for o in self.outcomes
-            if o.name in ("pricing", "rankings", "npm", "pypi")
-            and o.status != "skipped"
+            if o.name in self.collection_sections and o.status != "skipped"
         ]
         return bool(collection) and all(o.status == "failed" for o in collection)
 
     def summary(self) -> str:
-        lines = [f"AI share monitor — {self.as_of}"]
+        lines = [f"{self.title} — {self.as_of}"]
         for o in self.outcomes:
             line = f"  {o.name:10} {o.status}"
             if o.rows:

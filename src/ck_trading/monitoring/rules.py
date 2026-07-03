@@ -27,6 +27,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import date, timedelta
+from functools import partial
 from typing import Any, Callable, Sequence
 
 import polars as pl
@@ -42,6 +43,7 @@ class AlertRule:
     consecutive_periods: int = 1
     window_days: int | None = None
     max_gap_days: int = 14
+    inclusive: bool = False  # >= / <= for the threshold-streak comparators
     fallback_dimensions: tuple[dict[str, str], ...] = ()
     guard_dimensions: tuple[dict[str, str], ...] = ()
     action_label: str = ""
@@ -74,11 +76,13 @@ SeriesProvider = Callable[[str, dict[str, str]], pl.DataFrame]
 
 
 def _streak_info(
-    series: pl.DataFrame, threshold: float, max_gap_days: int
+    series: pl.DataFrame,
+    breach: Callable[[float], bool],
+    max_gap_days: int,
 ) -> tuple[int, str | None]:
     """Length of the newest-backwards breach streak and its first period_key.
 
-    Counts from the newest row backwards while (a) value > threshold and
+    Counts from the newest row backwards while (a) breach(value) holds and
     (b) the gap to the previously counted (newer) row <= max_gap_days.
     """
     rows = series.sort("period_start", descending=True).rows(named=True)
@@ -86,7 +90,7 @@ def _streak_info(
     first_key: str | None = None
     prev_start: date | None = None
     for row in rows:
-        if row["value"] is None or row["value"] <= threshold:
+        if row["value"] is None or not breach(row["value"]):
             break
         if prev_start is not None:
             gap = (prev_start - row["period_start"]).days
@@ -98,8 +102,16 @@ def _streak_info(
     return streak, first_key
 
 
-def _eval_gt_consecutive(
-    rule: AlertRule, provider: SeriesProvider
+def _breach_predicate(rule: AlertRule, direction: str) -> Callable[[float], bool]:
+    """Threshold predicate: gt / lt, strict unless rule.inclusive."""
+    t = rule.threshold
+    if direction == "gt":
+        return (lambda v: v >= t) if rule.inclusive else (lambda v: v > t)
+    return (lambda v: v <= t) if rule.inclusive else (lambda v: v < t)
+
+
+def _eval_threshold_streak(
+    rule: AlertRule, provider: SeriesProvider, *, direction: str
 ) -> EvalResult:
     dims_chain = (rule.dimensions, *rule.fallback_dimensions)
     last_nonempty: tuple[pl.DataFrame, dict[str, str]] | None = None
@@ -122,7 +134,9 @@ def _eval_gt_consecutive(
 
     series, dims_used = last_nonempty
     latest = series.sort("period_start").tail(1).row(0, named=True)
-    streak, first_key = _streak_info(series, rule.threshold, rule.max_gap_days)
+    streak, first_key = _streak_info(
+        series, _breach_predicate(rule, direction), rule.max_gap_days
+    )
     fallback_used = dims_used is not rule.dimensions
 
     if series.height < rule.consecutive_periods:
@@ -255,10 +269,74 @@ def _eval_decline_with_competitor(
     )
 
 
+def _eval_monotonic_streak(
+    rule: AlertRule, provider: SeriesProvider, *, step_holds: Callable[[float, float], bool]
+) -> EvalResult:
+    """Streak of period-over-period comparisons on the primary series.
+
+    N = rule.consecutive_periods comparisons require N+1 contiguous points.
+    step_holds(newer, older) defines the step: rising -> newer > older;
+    non-increasing -> newer <= older (flat counts). Gaps > max_gap_days
+    break the streak (missing periods never imputed). Streak counted
+    newest-backwards so partial streaks report correctly.
+    """
+    n = rule.consecutive_periods
+    series = provider(rule.metric_key, rule.dimensions).sort("period_start")
+    if series.height < n + 1:
+        return EvalResult(
+            rule_id=rule.rule_id, status="insufficient_data",
+            threshold=rule.threshold, required=n,
+            action_label=rule.action_label, severity=rule.severity,
+            details={
+                "reason": "insufficient_history",
+                "periods_available": series.height,
+                "periods_needed": n + 1,
+            },
+        )
+
+    rows = series.rows(named=True)
+    # count qualifying steps from the newest comparison backwards
+    streak = 0
+    first_key: str | None = None
+    for i in range(len(rows) - 1, 0, -1):
+        newer, older = rows[i], rows[i - 1]
+        if newer["value"] is None or older["value"] is None:
+            break
+        gap = (newer["period_start"] - older["period_start"]).days
+        if gap > rule.max_gap_days:
+            break
+        if not step_holds(newer["value"], older["value"]):
+            break
+        streak += 1
+        first_key = older["period_key"]
+        if streak >= len(rows) - 1:
+            break
+
+    fired = streak >= n
+    latest = rows[-1]
+    return EvalResult(
+        rule_id=rule.rule_id,
+        status="triggered" if fired else "ok",
+        metric_value=latest["value"], threshold=rule.threshold,
+        period_key=latest["period_key"],
+        first_period_key=first_key if fired else None,
+        streak=streak, required=n,
+        action_label=rule.action_label, severity=rule.severity,
+        details={},
+    )
+
+
 _COMPARATORS: dict[str, Callable[[AlertRule, SeriesProvider], EvalResult]] = {
-    "gt_consecutive": _eval_gt_consecutive,
+    "gt_consecutive": partial(_eval_threshold_streak, direction="gt"),
+    "lt_consecutive": partial(_eval_threshold_streak, direction="lt"),
     "pct_drop_from_trailing_max": _eval_pct_drop,
     "decline_streak_with_competitor_growth": _eval_decline_with_competitor,
+    "rising_streak": partial(
+        _eval_monotonic_streak, step_holds=lambda newer, older: newer > older
+    ),
+    "non_increasing_streak": partial(
+        _eval_monotonic_streak, step_holds=lambda newer, older: newer <= older
+    ),
 }
 
 

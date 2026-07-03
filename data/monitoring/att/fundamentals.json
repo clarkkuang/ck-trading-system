@@ -1,0 +1,15 @@
+{
+  "quarters": [
+    {
+      "capex_billions": null,
+      "churn_pct": 0.83,
+      "convergence_pct": 45.0,
+      "fcf_billions": 4.8,
+      "net_debt_ebitda": 3.2,
+      "notes": "\u62a5\u544a v3 \u5df2\u77e5\u503c: churn 0.83%(\u9636\u68af\u57fa\u7ebf), \u878d\u5408\u7387\u8fd145%\u521b\u6700\u5feb\u589e\u901f, \u8425\u6536$315\u4ebf(+2.9%); \u51c0\u503a\u52a1/EBITDA\u7ea63.2x(Lumen+EchoStar\u4ea4\u6613\u540e)",
+      "quarter": "2026Q1"
+    }
+  ],
+  "updated_at": "2026-07-03T22:01:46Z",
+  "version": 1
+}

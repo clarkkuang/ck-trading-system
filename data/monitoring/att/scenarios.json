@@ -1,0 +1,38 @@
+{
+  "scenarios": [
+    {
+      "id": "base",
+      "implied_price": 28.0,
+      "label": "\u57fa\u51c6: SpaceX \u5a01\u80c1\u6709\u9650,\u6307\u5f15\u5151\u73b0",
+      "price_high": 30.0,
+      "price_low": 26.0,
+      "probability_pct": 45.0
+    },
+    {
+      "id": "mild_bear",
+      "implied_price": 23.0,
+      "label": "\u6e29\u548c\u60b2\u89c2: \u8def\u5f84A + \u9632\u5fa1\u6027 CAPEX \u6e29\u548c\u589e\u52a0",
+      "price_high": 24.0,
+      "price_low": 22.0,
+      "probability_pct": 30.0
+    },
+    {
+      "id": "structural_decline",
+      "implied_price": 16.0,
+      "label": "\u7ed3\u6784\u8870\u9000: \u8def\u5f84B \u5151\u73b0,\u519c\u6751\u6d41\u5931 + CAPEX \u5927\u589e",
+      "price_high": 17.0,
+      "price_low": 15.0,
+      "probability_pct": 20.0
+    },
+    {
+      "id": "extreme_tail",
+      "implied_price": 12.0,
+      "label": "\u6781\u7aef\u5c3e\u90e8: \u76f4\u8425\u6210\u529f+\u5149\u7ea4\u505c\u6ede+\u53bb\u6760\u6746\u5931\u8d25",
+      "price_high": 13.0,
+      "price_low": 11.0,
+      "probability_pct": 5.0
+    }
+  ],
+  "updated_at": "2026-07-03T22:01:46Z",
+  "version": 1
+}

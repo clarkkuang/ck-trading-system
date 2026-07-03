@@ -38,9 +38,28 @@ _HISTORY_CAP = 52  # weeks of per-rule history kept in alerts.json
 
 
 class MonitoringStore:
-    def __init__(self, base_dir: Path | None = None):
+    def __init__(
+        self,
+        base_dir: Path | None = None,
+        *,
+        dedupe_keys: dict[str, list[str]] | None = None,
+        checklist_seed: tuple[dict, ...] | list[dict] | None = None,
+    ):
+        """A monitor's storage root.
+
+        Args:
+            base_dir: storage directory (default: settings.monitoring_dir).
+                Sub-monitors pass a subdirectory, e.g. monitoring_dir/"att".
+            dedupe_keys: per-table dedupe keys; None falls back to the
+                module-level DEDUPE_KEYS (the AI share monitor tables).
+            checklist_seed: default checklist items seeded by
+                load_checklist() when no file exists; None falls back to
+                rules_config.DEFAULT_CHECKLIST.
+        """
         self.base_dir = Path(base_dir) if base_dir else settings.monitoring_dir
         self.base_dir.mkdir(parents=True, exist_ok=True)
+        self._dedupe_keys = dedupe_keys if dedupe_keys is not None else DEDUPE_KEYS
+        self._checklist_seed = checklist_seed
 
     # ------------------------------------------------------------------
     # Parquet
@@ -52,7 +71,7 @@ class MonitoringStore:
         """Merge-dedupe into {name}.parquet (keep latest row per key)."""
         if df.is_empty():
             return
-        keys = DEDUPE_KEYS.get(name)
+        keys = self._dedupe_keys.get(name)
         path = self._path(name)
         if path.exists():
             existing = pl.read_parquet(path)
@@ -157,21 +176,41 @@ class MonitoringStore:
         return self.base_dir / "checklist.json"
 
     def load_checklist(self) -> list[dict]:
-        """Load checklist items, seeding defaults on first use."""
+        """Load checklist items, seeding defaults on first use (never writes)."""
         if self.checklist_path.exists():
             try:
                 return json.loads(self.checklist_path.read_text())
             except (json.JSONDecodeError, OSError):
                 pass
-        from ck_trading.monitoring.rules_config import DEFAULT_CHECKLIST
+        seed = self._checklist_seed
+        if seed is None:
+            from ck_trading.monitoring.rules_config import DEFAULT_CHECKLIST
 
-        items = [
-            {**item, "last_checked": None, "notes": ""}
-            for item in DEFAULT_CHECKLIST
-        ]
-        return items
+            seed = DEFAULT_CHECKLIST
+        return [{**item, "last_checked": None, "notes": ""} for item in seed]
 
     def save_checklist(self, items: list[dict]) -> None:
         self.checklist_path.write_text(
             json.dumps(items, indent=2, sort_keys=True, default=str) + "\n"
+        )
+
+    # ------------------------------------------------------------------
+    # Generic JSON documents (e.g. fundamentals.json, scenarios.json)
+    # ------------------------------------------------------------------
+    def load_json(self, name: str, default=None):
+        """Read {name}.json; `default` on missing/corrupt (same tolerance
+        as load_alerts)."""
+        path = self.base_dir / f"{name}.json"
+        if not path.exists():
+            return default
+        try:
+            return json.loads(path.read_text())
+        except (json.JSONDecodeError, OSError):
+            return default
+
+    def save_json(self, name: str, obj) -> None:
+        """Deterministic write: indent=2, sorted keys, trailing newline."""
+        path = self.base_dir / f"{name}.json"
+        path.write_text(
+            json.dumps(obj, indent=2, sort_keys=True, default=str) + "\n"
         )

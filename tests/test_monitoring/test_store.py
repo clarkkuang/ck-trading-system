@@ -131,6 +131,51 @@ class TestAlerts:
         assert store.load_alerts() == {}
 
 
+class TestStoreParams:
+    def test_dedupe_keys_override(self, tmp_path):
+        store = MonitoringStore(
+            tmp_path, dedupe_keys={"prices": ["ticker", "iso_week"]}
+        )
+        df1 = pl.DataFrame({"ticker": ["T"], "iso_week": ["2026-W27"], "close": [20.7]})
+        df2 = pl.DataFrame({"ticker": ["T"], "iso_week": ["2026-W27"], "close": [20.9]})
+        store.save("prices", df1)
+        store.save("prices", df2)
+        out = store.load("prices")
+        assert out.height == 1
+        assert out["close"][0] == 20.9
+
+    def test_default_dedupe_keys_still_work(self, tmp_path):
+        # No params -> module DEDUPE_KEYS (AI monitor behavior unchanged)
+        store = MonitoringStore(tmp_path)
+        store.save("openrouter_daily_tokens", _tokens_df(date(2026, 6, 29), "a/b", 1))
+        store.save("openrouter_daily_tokens", _tokens_df(date(2026, 6, 29), "a/b", 2))
+        assert store.load("openrouter_daily_tokens").height == 1
+
+    def test_checklist_seed_injection(self, tmp_path):
+        seed = ({"id": "x1", "label": "Custom item", "url": "", "cadence_days": 7},)
+        store = MonitoringStore(tmp_path, checklist_seed=seed)
+        items = store.load_checklist()
+        assert len(items) == 1
+        assert items[0]["id"] == "x1"
+        assert items[0]["last_checked"] is None
+        assert not store.checklist_path.exists()  # seeding never writes
+
+    def test_load_json_default_on_missing_and_corrupt(self, tmp_path):
+        store = MonitoringStore(tmp_path)
+        assert store.load_json("nope") is None
+        assert store.load_json("nope", default={}) == {}
+        (tmp_path / "bad.json").write_text("{corrupt")
+        assert store.load_json("bad", default=[]) == []
+
+    def test_save_json_deterministic(self, tmp_path):
+        store = MonitoringStore(tmp_path)
+        store.save_json("doc", {"b": 2, "a": 1})
+        raw = (tmp_path / "doc.json").read_text()
+        assert raw.endswith("\n")
+        assert raw.index('"a"') < raw.index('"b"')  # sorted keys
+        assert store.load_json("doc") == {"a": 1, "b": 2}
+
+
 class TestChecklist:
     def test_seeds_defaults(self, tmp_path):
         store = MonitoringStore(tmp_path)

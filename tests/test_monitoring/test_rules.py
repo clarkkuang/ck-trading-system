@@ -218,6 +218,163 @@ class TestDeclineWithCompetitor:
         assert r.status == "insufficient_data"
 
 
+class TestLtConsecutive:
+    def _rule(self, **overrides) -> AlertRule:
+        base = dict(
+            rule_id="price_low", metric_key="p", dimensions={"ticker": "T"},
+            comparator="lt_consecutive", threshold=16.0,
+            consecutive_periods=1, action_label="structural zone",
+        )
+        base.update(overrides)
+        return AlertRule(**base)
+
+    def test_below_fires(self):
+        s = _series([18.0, 15.5])
+        r = evaluate_rules(
+            [self._rule()], _provider({_key("p", ticker="T"): s})
+        )[0]
+        assert r.status == "triggered"
+        assert r.metric_value == pytest.approx(15.5)
+
+    def test_above_ok(self):
+        s = _series([18.0, 17.0])
+        r = evaluate_rules(
+            [self._rule()], _provider({_key("p", ticker="T"): s})
+        )[0]
+        assert r.status == "ok"
+
+    def test_equal_strict_does_not_fire(self):
+        s = _series([16.0])
+        r = evaluate_rules(
+            [self._rule()], _provider({_key("p", ticker="T"): s})
+        )[0]
+        assert r.status == "ok"
+
+    def test_equal_inclusive_fires(self):
+        s = _series([16.0])
+        r = evaluate_rules(
+            [self._rule(inclusive=True)], _provider({_key("p", ticker="T"): s})
+        )[0]
+        assert r.status == "triggered"
+
+    def test_multiweek_streak_with_gap_break(self):
+        rule = self._rule(consecutive_periods=3)
+        gaps = [7, 21, 7]  # 21d gap between points 1 and 2
+        s = _series([15.0, 15.0, 15.0, 15.0], gap_days=[0] + gaps)
+        r = evaluate_rules([rule], _provider({_key("p", ticker="T"): s}))[0]
+        # only the newest 2 count past the 21d break
+        assert r.status == "ok"
+        assert r.streak == 2
+
+
+class TestInclusiveGt:
+    def test_churn_at_exact_threshold(self):
+        rule = AlertRule(
+            rule_id="churn", metric_key="f", dimensions={"field": "churn_pct"},
+            comparator="gt_consecutive", threshold=0.95, inclusive=True,
+            consecutive_periods=1, max_gap_days=120,
+        )
+        s = _series([0.83, 0.95], gap_days=[0, 91])
+        r = evaluate_rules([rule], _provider({_key("f", field="churn_pct"): s}))[0]
+        assert r.status == "triggered"
+        # strict version must NOT fire at exactly 0.95
+        strict = AlertRule(
+            rule_id="churn2", metric_key="f", dimensions={"field": "churn_pct"},
+            comparator="gt_consecutive", threshold=0.95,
+            consecutive_periods=1, max_gap_days=120,
+        )
+        r2 = evaluate_rules([strict], _provider({_key("f", field="churn_pct"): s}))[0]
+        assert r2.status == "ok"
+
+
+class TestRisingStreak:
+    def _rule(self, n=3, max_gap=120) -> AlertRule:
+        return AlertRule(
+            rule_id="churn_rising", metric_key="f",
+            dimensions={"field": "churn_pct"},
+            comparator="rising_streak", threshold=0.0,
+            consecutive_periods=n, max_gap_days=max_gap,
+        )
+
+    def _qseries(self, values):
+        # quarterly spacing (91 days)
+        return _series(values, gap_days=[0] + [91] * (len(values) - 1))
+
+    def test_three_rises_fires(self):
+        s = self._qseries([0.80, 0.83, 0.90, 0.95])
+        r = evaluate_rules(
+            [self._rule()], _provider({_key("f", field="churn_pct"): s})
+        )[0]
+        assert r.status == "triggered"
+        assert r.streak == 3
+        assert r.first_period_key == "P0"
+
+    def test_two_rises_not_enough(self):
+        s = self._qseries([0.90, 0.83, 0.90, 0.95])  # dip then 2 rises
+        r = evaluate_rules(
+            [self._rule()], _provider({_key("f", field="churn_pct"): s})
+        )[0]
+        assert r.status == "ok"
+        assert r.streak == 2
+
+    def test_equal_value_breaks(self):
+        s = self._qseries([0.80, 0.83, 0.83, 0.95])  # flat in the middle
+        r = evaluate_rules(
+            [self._rule()], _provider({_key("f", field="churn_pct"): s})
+        )[0]
+        assert r.status == "ok"
+
+    def test_gap_over_120d_breaks(self):
+        s = _series([0.80, 0.83, 0.90, 0.95], gap_days=[0, 91, 200, 91])
+        r = evaluate_rules(
+            [self._rule()], _provider({_key("f", field="churn_pct"): s})
+        )[0]
+        assert r.status == "ok"
+
+    def test_n_points_insufficient(self):
+        s = self._qseries([0.83, 0.90, 0.95])  # only 3 points, need 4
+        r = evaluate_rules(
+            [self._rule()], _provider({_key("f", field="churn_pct"): s})
+        )[0]
+        assert r.status == "insufficient_data"
+        assert r.details["periods_needed"] == 4
+
+
+class TestNonIncreasingStreak:
+    def _rule(self) -> AlertRule:
+        return AlertRule(
+            rule_id="conv_stall", metric_key="f",
+            dimensions={"field": "convergence_pct"},
+            comparator="non_increasing_streak", threshold=0.0,
+            consecutive_periods=2, max_gap_days=120,
+        )
+
+    def _qseries(self, values):
+        return _series(values, gap_days=[0] + [91] * (len(values) - 1))
+
+    def test_flat_then_down_fires(self):
+        s = self._qseries([45.0, 45.0, 44.5])  # flat counts, then down
+        r = evaluate_rules(
+            [self._rule()], _provider({_key("f", field="convergence_pct"): s})
+        )[0]
+        assert r.status == "triggered"
+
+    def test_two_flats_fire(self):
+        s = self._qseries([45.0, 45.0, 45.0])
+        r = evaluate_rules(
+            [self._rule()], _provider({_key("f", field="convergence_pct"): s})
+        )[0]
+        assert r.status == "triggered"
+
+    def test_rise_breaks(self):
+        s = self._qseries([45.0, 44.0, 45.5])  # newest step is a rise
+        r = evaluate_rules(
+            [self._rule()], _provider({_key("f", field="convergence_pct"): s})
+        )[0]
+        assert r.status == "ok"
+        assert r.streak == 0
+
+
 class TestEngineRobustness:
     def test_unknown_comparator(self):
         rule = AlertRule(

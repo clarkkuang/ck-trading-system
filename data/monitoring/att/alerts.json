@@ -1,0 +1,206 @@
+{
+  "rules": [
+    {
+      "action_label": "\u8bba\u70b9\u6076\u5316: \u8fdb\u5165\u7ed3\u6784\u8870\u9000\u5e26 ($15-17)",
+      "details": {
+        "dimensions_used": {
+          "ticker": "T"
+        },
+        "fallback_used": false
+      },
+      "episode_started": null,
+      "fired": false,
+      "first_period_key": null,
+      "history": [
+        {
+          "period_key": "2026-W27",
+          "status": "ok",
+          "value": 20.579999923706055
+        }
+      ],
+      "metric_value": 20.579999923706055,
+      "period_key": "2026-W27",
+      "required": 1,
+      "resolved_at": null,
+      "rule_id": "att_price_below_16_structural",
+      "severity": "trigger",
+      "status": "ok",
+      "streak": 0,
+      "threshold": 16.0,
+      "triggered_at": null
+    },
+    {
+      "action_label": "\u8fdb\u5165\u6781\u7aef\u5c3e\u90e8\u5e26 ($11-13) \u2014 \u590d\u6838\u8bba\u70b9/\u6b62\u635f",
+      "details": {
+        "dimensions_used": {
+          "ticker": "T"
+        },
+        "fallback_used": false
+      },
+      "episode_started": null,
+      "fired": false,
+      "first_period_key": null,
+      "history": [
+        {
+          "period_key": "2026-W27",
+          "status": "ok",
+          "value": 20.579999923706055
+        }
+      ],
+      "metric_value": 20.579999923706055,
+      "period_key": "2026-W27",
+      "required": 1,
+      "resolved_at": null,
+      "rule_id": "att_price_below_12_tail",
+      "severity": "trigger",
+      "status": "ok",
+      "streak": 0,
+      "threshold": 12.0,
+      "triggered_at": null
+    },
+    {
+      "action_label": "\u6d41\u5931\u722c\u5761 \u22650.95% \u2014 \u590d\u6838\u8def\u5f84B\u6982\u7387",
+      "details": {
+        "dimensions_used": {
+          "field": "churn_pct"
+        },
+        "fallback_used": false
+      },
+      "episode_started": null,
+      "fired": false,
+      "first_period_key": null,
+      "history": [
+        {
+          "period_key": "2026Q1",
+          "status": "ok",
+          "value": 0.83
+        }
+      ],
+      "metric_value": 0.83,
+      "period_key": "2026Q1",
+      "required": 1,
+      "resolved_at": null,
+      "rule_id": "att_churn_ge_095",
+      "severity": "advisory",
+      "status": "ok",
+      "streak": 0,
+      "threshold": 0.95,
+      "triggered_at": null
+    },
+    {
+      "action_label": "\u6d41\u5931\u8b66\u62a5 \u22651.10% \u2014 \u4e0a\u8c03\u7ed3\u6784\u8870\u9000\u6982\u7387",
+      "details": {
+        "dimensions_used": {
+          "field": "churn_pct"
+        },
+        "fallback_used": false
+      },
+      "episode_started": null,
+      "fired": false,
+      "first_period_key": null,
+      "history": [
+        {
+          "period_key": "2026Q1",
+          "status": "ok",
+          "value": 0.83
+        }
+      ],
+      "metric_value": 0.83,
+      "period_key": "2026Q1",
+      "required": 1,
+      "resolved_at": null,
+      "rule_id": "att_churn_ge_110",
+      "severity": "trigger",
+      "status": "ok",
+      "streak": 0,
+      "threshold": 1.1,
+      "triggered_at": null
+    },
+    {
+      "action_label": "\u6d41\u5931\u8fde\u53473\u5b63 \u2014 \u7ed3\u6784\u6027\u6076\u5316\u786e\u8ba4",
+      "details": {
+        "periods_available": 1,
+        "periods_needed": 4,
+        "reason": "insufficient_history"
+      },
+      "episode_started": null,
+      "fired": false,
+      "first_period_key": null,
+      "history": [
+        {
+          "period_key": null,
+          "status": "insufficient_data",
+          "value": null
+        }
+      ],
+      "metric_value": null,
+      "period_key": null,
+      "required": 3,
+      "resolved_at": null,
+      "rule_id": "att_churn_rising_3q",
+      "severity": "trigger",
+      "status": "insufficient_data",
+      "streak": 0,
+      "threshold": 0.0,
+      "triggered_at": null
+    },
+    {
+      "action_label": "\u6346\u7ed1\u89c1\u9876 \u2014 \u878d\u5408\u7387\u8fde\u7eed\u4e24\u5b63\u8d70\u5e73/\u4e0b\u964d",
+      "details": {
+        "periods_available": 1,
+        "periods_needed": 3,
+        "reason": "insufficient_history"
+      },
+      "episode_started": null,
+      "fired": false,
+      "first_period_key": null,
+      "history": [
+        {
+          "period_key": null,
+          "status": "insufficient_data",
+          "value": null
+        }
+      ],
+      "metric_value": null,
+      "period_key": null,
+      "required": 2,
+      "resolved_at": null,
+      "rule_id": "att_convergence_stalled_2q",
+      "severity": "trigger",
+      "status": "insufficient_data",
+      "streak": 0,
+      "threshold": 0.0,
+      "triggered_at": null
+    },
+    {
+      "action_label": "\u7a7a\u5934\u83b7\u5b9e\u8bc1 \u2014 \u5b63\u5ea6FCF\u4f4e\u4e8e$4.0B",
+      "details": {
+        "dimensions_used": {
+          "field": "fcf_billions"
+        },
+        "fallback_used": false
+      },
+      "episode_started": null,
+      "fired": false,
+      "first_period_key": null,
+      "history": [
+        {
+          "period_key": "2026Q1",
+          "status": "ok",
+          "value": 4.8
+        }
+      ],
+      "metric_value": 4.8,
+      "period_key": "2026Q1",
+      "required": 1,
+      "resolved_at": null,
+      "rule_id": "att_fcf_below_4b",
+      "severity": "trigger",
+      "status": "ok",
+      "streak": 0,
+      "threshold": 4.0,
+      "triggered_at": null
+    }
+  ],
+  "updated_at": "2026-07-03T22:01:58Z"
+}

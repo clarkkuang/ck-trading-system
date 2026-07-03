@@ -12,6 +12,9 @@ Quantitative value investing system for US and HK stocks.
 - **AI Model Share Monitor**: Weekly GitHub Action tracking open-source/Chinese-lab
   competitive threat to Anthropic (dollar-weighted OpenRouter share, npm/PyPI
   adoption, flagship price cuts) → [docs](docs/ai_model_share_monitoring.md)
+- **AT&T vs SpaceX Monitor**: Weekly telecom-threat tracker (T price vs valuation
+  scenario bands, churn/FCF threshold rules on quarterly inputs, editable
+  scenario probabilities) → [docs](docs/att_spacex_monitoring.md)
 
 ## Tech Stack
 
