@@ -137,8 +137,14 @@ class TestDollarShare:
         # ghost has no price ever -> its dollar_volume is null; CN takes 100%
         assert cn["dollar_share"] == pytest.approx(1.0)
 
-    def test_price_asof_join_uses_earlier_snapshot(self):
-        """Mid-week price change: days before the change use the old price."""
+    def test_uses_latest_snapshot_price(self):
+        """The dollar SHARE weights by the latest listed price per model.
+
+        (Per-date as-of pricing was dropped: the fuzzy family/org-median
+        fallback can't be applied per-date, and share is insensitive to slow
+        price drift. Price-CUT detection uses flagship_price_series() which
+        DOES track the time series.)
+        """
         tokens = _tokens_df(_full_week_tokens("openai/gpt-x", "western_closed", 1_000_000))
         pricing = _pricing_df([
             {"snapshot_date": date(2026, 6, 1), "model_id": "openai/gpt-x",
@@ -148,8 +154,8 @@ class TestDollarShare:
         ])
         out = compute_weekly_bloc_share(tokens, pricing)
         row = out.row(0, named=True)
-        # Jun 1-3 @ $10 (3 days) + Jun 4-5 @ $5 (2 days), 1 Mtok/day
-        assert row["dollar_volume_usd"] == pytest.approx(3 * 10 + 2 * 5)
+        # latest snapshot ($5) applied to all 5 days, 1 Mtok/day
+        assert row["dollar_volume_usd"] == pytest.approx(5 * 1.0 * 5.0)
 
     def test_incomplete_week_flagged(self):
         # only 4 observed days < MIN_DAYS_PER_WEEK
@@ -165,6 +171,67 @@ class TestDollarShare:
         out = compute_weekly_bloc_share(tokens, pricing)
         assert MIN_DAYS_PER_WEEK == 5
         assert not out.row(0, named=True)["is_complete"]
+
+    def test_family_fallback_matches_permaslug(self):
+        """Rankings permaslug prices off the pricing-endpoint family key."""
+        tokens = _tokens_df(_full_week_tokens(
+            "anthropic/claude-4.7-opus-20260416", "anthropic", 1_000_000
+        ))
+        pricing = _pricing_df([
+            # pricing uses the /models id format (different word order)
+            {"snapshot_date": date(2026, 6, 1),
+             "model_id": "anthropic/claude-opus-4.7", "bloc": "anthropic",
+             "prompt_usd_per_mtok": 15.0, "completion_usd_per_mtok": 75.0},
+        ])
+        out = compute_weekly_bloc_share(tokens, pricing)
+        row = out.row(0, named=True)
+        # matched via family key -> priced, not zero
+        assert row["dollar_share"] == pytest.approx(1.0)
+        assert row["dollar_volume_usd"] is not None
+        assert row["dollar_volume_usd"] > 0
+
+    def test_org_median_fallback(self):
+        """A ranked SKU with no exact/family match uses its org median price."""
+        tokens = _tokens_df(_full_week_tokens(
+            "deepseek/deepseek-v9-brandnew-20260701", "chinese", 1_000_000
+        ))
+        pricing = _pricing_df([
+            {"snapshot_date": date(2026, 6, 1), "model_id": "deepseek/deepseek-chat",
+             "bloc": "chinese", "prompt_usd_per_mtok": 1.0,
+             "completion_usd_per_mtok": 1.0},
+            {"snapshot_date": date(2026, 6, 1), "model_id": "deepseek/deepseek-r1",
+             "bloc": "chinese", "prompt_usd_per_mtok": 3.0,
+             "completion_usd_per_mtok": 3.0},
+        ])
+        out = compute_weekly_bloc_share(tokens, pricing)
+        row = out.row(0, named=True)
+        # org median blended = median(1.0, 3.0) = 2.0; still priced (non-zero)
+        assert row["dollar_share"] == pytest.approx(1.0)
+        assert row["dollar_volume_usd"] == pytest.approx(5 * 1.0 * 2.0)
+
+    def test_anthropic_not_zeroed_regression(self):
+        """Regression: Anthropic ranked models must not drop to 0 dollar share
+        just because rankings/pricing id formats differ."""
+        tokens = _tokens_df(
+            _full_week_tokens("anthropic/claude-4.7-opus-20260416", "anthropic", 100_000_000)
+            + _full_week_tokens("deepseek/deepseek-v4-pro-20260423", "chinese", 100_000_000)
+        )
+        pricing = _pricing_df([
+            {"snapshot_date": date(2026, 6, 1),
+             "model_id": "anthropic/claude-opus-4.7", "bloc": "anthropic",
+             "prompt_usd_per_mtok": 15.0, "completion_usd_per_mtok": 75.0},
+            {"snapshot_date": date(2026, 6, 1), "model_id": "deepseek/deepseek-v4",
+             "bloc": "chinese", "prompt_usd_per_mtok": 0.5,
+             "completion_usd_per_mtok": 1.5},
+        ])
+        out = compute_weekly_bloc_share(tokens, pricing)
+        an = out.filter(pl.col("bloc") == "anthropic").row(0, named=True)
+        cn = out.filter(pl.col("bloc") == "chinese").row(0, named=True)
+        # both priced; Anthropic (expensive) should DOMINATE dollar share
+        # despite equal token volume
+        assert an["dollar_share"] > 0.5
+        assert cn["dollar_share"] > 0
+        assert an["dollar_share"] + cn["dollar_share"] == pytest.approx(1.0)
 
     def test_empty_inputs(self):
         out = compute_weekly_bloc_share(

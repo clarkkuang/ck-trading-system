@@ -16,17 +16,12 @@
       "first_period_key": null,
       "history": [
         {
-          "period_key": null,
-          "status": "insufficient_data",
-          "value": null
-        },
-        {
           "period_key": "2026-W26",
           "status": "insufficient_data",
-          "value": 0.0
+          "value": 0.06277656647088013
         }
       ],
-      "metric_value": 0.0,
+      "metric_value": 0.06277656647088013,
       "period_key": "2026-W26",
       "required": 8,
       "resolved_at": null,
@@ -118,5 +113,5 @@
       "triggered_at": null
     }
   ],
-  "updated_at": "2026-07-03T19:55:17Z"
+  "updated_at": "2026-07-03T20:08:14Z"
 }

@@ -187,3 +187,74 @@ def family_key(model_id: str) -> str:
         prev = name
         name = _FAMILY_STRIP_RE.sub("", name)
     return f"{org}/{name}" if org else name
+
+
+# Generic qualifier tokens dropped from the canonical key — they describe a
+# SKU variant (speed/size/modality/mode), not the model family identity.
+_GENERIC_TOKENS = frozenset({
+    "pro", "flash", "lite", "max", "plus", "mini", "nano", "micro",
+    "thinking", "instruct", "chat", "preview", "latest", "code", "coder",
+    "fast", "turbo", "vl", "image", "multi", "agent", "it", "base", "exp",
+    "beta", "edge", "small", "medium", "large", "xl", "ultra", "high", "low",
+    "air", "standard", "reasoner", "distill", "online", "vision", "audio",
+})
+
+# A version-ish token: digits with optional dots, optional leading 'v',
+# e.g. "4", "4.7", "v3", "3.2". Pure date stamps handled separately.
+_VERSION_RE = re.compile(r"^v?\d+(\.\d+)*$")
+# Date-stamp fragments appended by the rankings permaslug format.
+_DATE_TOKEN_RE = re.compile(r"^(\d{8}|\d{6}|\d{4}|\d{2}-\d{2})$")
+
+
+def canonical_family_key(model_id: str) -> str:
+    """Order-insensitive family key that matches across OpenRouter's two id
+    formats (rankings permaslug vs /models id).
+
+        'anthropic/claude-4.7-opus-20260416' -> 'anthropic|claude-opus|4.7'
+        'anthropic/claude-opus-4.7'           -> 'anthropic|claude-opus|4.7'
+        'anthropic/claude-sonnet-5-20260630'  -> 'anthropic|claude-sonnet|5'
+
+    Word tokens (family identity) are sorted so word order doesn't matter;
+    generic SKU qualifiers and date stamps are dropped; the largest version
+    number is kept as the version component. Embedded-number model names
+    (qwen3, gpt-4o) keep the token verbatim as a word so they still group.
+    """
+    org = org_of(model_id)
+    base = strip_variant(model_id).lower()
+    name = base.split("/", 1)[1] if "/" in base else base
+
+    words: list[str] = []
+    versions: list[float] = []
+    raw_versions: list[str] = []
+    i = 0
+    parts = name.replace("_", "-").split("-")
+    while i < len(parts):
+        tok = parts[i]
+        # rejoin "MM-DD" style date fragments
+        if _DATE_TOKEN_RE.match(tok):
+            i += 1
+            continue
+        if i + 1 < len(parts) and re.match(r"^\d{2}$", tok) and re.match(r"^\d{2}$", parts[i + 1]):
+            # e.g. "04-02" trailing date
+            i += 2
+            continue
+        if _VERSION_RE.match(tok):
+            num = tok.lstrip("v")
+            try:
+                versions.append(float(num))
+                raw_versions.append(num)
+            except ValueError:
+                words.append(tok)
+        elif tok in _GENERIC_TOKENS:
+            pass
+        elif tok:
+            words.append(tok)
+        i += 1
+
+    word_part = "-".join(sorted(words)) if words else name.split("-")[0]
+    if versions:
+        # keep the raw string of the max version to preserve "4.7" vs "4"
+        vmax = raw_versions[versions.index(max(versions))]
+    else:
+        vmax = ""
+    return f"{org}|{word_part}|{vmax}"

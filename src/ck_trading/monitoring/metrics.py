@@ -19,12 +19,16 @@ rebuild of weekly_bloc_share (which is fully derivable from the raw tables).
 from __future__ import annotations
 
 import datetime as dt
-import warnings
 from typing import Final
 
 import polars as pl
 
-from ck_trading.monitoring.blocs import OTHER_MODEL_ID, strip_variant
+from ck_trading.monitoring.blocs import (
+    OTHER_MODEL_ID,
+    canonical_family_key,
+    org_of,
+    strip_variant,
+)
 
 # ---- frozen conventions (change => full series rebuild) --------------------
 PROMPT_TOKEN_FRACTION: Final[float] = 0.70
@@ -48,6 +52,83 @@ def _with_iso_week(df: pl.DataFrame, date_col: str = "date") -> pl.DataFrame:
         (pl.col(date_col) - pl.duration(days=pl.col(date_col).dt.weekday() - 1))
         .alias("week_start"),
     )
+
+
+def _attach_blended_price(
+    daily_tokens: pl.DataFrame, pricing_snapshots: pl.DataFrame
+) -> pl.DataFrame:
+    """Assign each daily-token row a blended list price via a 3-tier cascade.
+
+    OpenRouter's rankings permaslug (``claude-4.7-opus-20260416``) and its
+    /models id (``claude-opus-4.7``) don't match directly, and many ranked
+    SKUs have no exact listed price. To keep the dollar-share metric from
+    zeroing out whole blocs we cascade:
+
+        1. exact base model_id (``:variant`` stripped)
+        2. canonical family key (order-insensitive, date-stamp stripped) —
+           median blended price across matching priced models
+        3. org median blended price
+
+    Adds columns ``blended`` (USD/Mtok, null only if the org has no priced
+    model at all) and ``price_match`` in {exact, family, org, none}. Uses the
+    latest price per model — the dollar SHARE is insensitive to slow price
+    drift, and price-CUT detection uses flagship_price_series() separately.
+    """
+    # Derive matching keys from model_id directly (don't trust upstream cols).
+    tokens = daily_tokens.with_columns(
+        pl.col("model_id").map_elements(strip_variant, return_dtype=pl.Utf8)
+        .alias("base_model_id"),
+        pl.col("model_id").map_elements(canonical_family_key, return_dtype=pl.Utf8)
+        .alias("fam_key"),
+        pl.col("model_id").map_elements(org_of, return_dtype=pl.Utf8)
+        .alias("_org_key"),
+    )
+
+    if pricing_snapshots.is_empty():
+        return tokens.with_columns(
+            pl.lit(None, dtype=pl.Float64).alias("blended"),
+            pl.lit("none").alias("price_match"),
+        )
+
+    prices = pricing_snapshots.with_columns(
+        pl.col("model_id").map_elements(strip_variant, return_dtype=pl.Utf8)
+        .alias("base_model_id"),
+        pl.col("model_id").map_elements(canonical_family_key, return_dtype=pl.Utf8)
+        .alias("fam_key"),
+        pl.col("model_id").map_elements(org_of, return_dtype=pl.Utf8).alias("org2"),
+        blended_usd_per_mtok(
+            pl.col("prompt_usd_per_mtok"), pl.col("completion_usd_per_mtok")
+        ).alias("blended"),
+    ).drop_nulls("blended")
+
+    # Three price lookups as small frames, joined (order-safe) onto tokens.
+    exact_df = (
+        prices.sort("snapshot_date")
+        .unique(subset=["base_model_id"], keep="last")
+        .select("base_model_id", pl.col("blended").alias("_p_exact"))
+    )
+    fam_df = (
+        prices.group_by("fam_key")
+        .agg(pl.col("blended").median().alias("_p_fam"))
+    )
+    org_df = (
+        prices.group_by("org2")
+        .agg(pl.col("blended").median().alias("_p_org"))
+        .rename({"org2": "_org_key"})
+    )
+
+    joined = (
+        tokens.join(exact_df, on="base_model_id", how="left")
+        .join(fam_df, on="fam_key", how="left")
+        .join(org_df, on="_org_key", how="left")
+    )
+    return joined.with_columns(
+        pl.coalesce("_p_exact", "_p_fam", "_p_org").alias("blended"),
+        pl.when(pl.col("_p_exact").is_not_null()).then(pl.lit("exact"))
+        .when(pl.col("_p_fam").is_not_null()).then(pl.lit("family"))
+        .when(pl.col("_p_org").is_not_null()).then(pl.lit("org"))
+        .otherwise(pl.lit("none")).alias("price_match"),
+    ).drop("_p_exact", "_p_fam", "_p_org")
 
 
 def compute_weekly_bloc_share(
@@ -88,63 +169,7 @@ def compute_weekly_bloc_share(
     if daily_tokens.is_empty():
         return empty
 
-    tokens = daily_tokens.with_columns(
-        pl.col("model_id").map_elements(strip_variant, return_dtype=pl.Utf8)
-        .alias("base_model_id")
-    )
-
-    # ---- as-of price join (backward: latest snapshot <= date) --------------
-    if pricing_snapshots.is_empty():
-        priced = tokens.with_columns(pl.lit(None, dtype=pl.Float64).alias("blended"))
-    else:
-        prices = (
-            pricing_snapshots.with_columns(
-                pl.col("model_id")
-                .map_elements(strip_variant, return_dtype=pl.Utf8)
-                .alias("base_model_id"),
-                blended_usd_per_mtok(
-                    pl.col("prompt_usd_per_mtok"), pl.col("completion_usd_per_mtok")
-                ).alias("blended"),
-            )
-            .select("base_model_id", "snapshot_date", "blended")
-            .drop_nulls("blended")
-            # keep one price per (model, snapshot_date)
-            .unique(subset=["base_model_id", "snapshot_date"], keep="last")
-            .sort("snapshot_date")
-        )
-        tokens_sorted = tokens.sort("date")
-        with warnings.catch_warnings():
-            # polars cannot verify per-group sortedness on by-grouped asof
-            # joins; inputs ARE sorted on the asof keys above.
-            warnings.filterwarnings(
-                "ignore", message="Sortedness of columns cannot be checked"
-            )
-            priced = tokens_sorted.join_asof(
-                prices,
-                left_on="date",
-                right_on="snapshot_date",
-                by="base_model_id",
-                strategy="backward",
-            )
-            # Forward fallback for rows older than the first snapshot
-            if priced["blended"].null_count() > 0:
-                fwd = tokens_sorted.join_asof(
-                    prices,
-                    left_on="date",
-                    right_on="snapshot_date",
-                    by="base_model_id",
-                    strategy="forward",
-                ).select(
-                    "date", "model_id", "scope",
-                    pl.col("blended").alias("blended_fwd"),
-                )
-                priced = priced.join(
-                    fwd, on=["date", "model_id", "scope"], how="left"
-                ).with_columns(
-                    pl.coalesce(pl.col("blended"), pl.col("blended_fwd"))
-                    .alias("blended")
-                ).drop("blended_fwd")
-
+    priced = _attach_blended_price(daily_tokens, pricing_snapshots)
     priced = priced.with_columns(
         (pl.col("tokens_total") / 1e6 * pl.col("blended")).alias("dollar_volume_usd"),
         (pl.col("model_id") == OTHER_MODEL_ID).alias("is_other"),

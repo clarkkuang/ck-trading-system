@@ -12,6 +12,7 @@ from ck_trading.monitoring.blocs import (
     MODEL_BLOC_OVERRIDES,
     ORG_BLOC_MAP,
     OTHER_MODEL_ID,
+    canonical_family_key,
     classify_model_id,
     family_key,
     org_of,
@@ -115,3 +116,53 @@ class TestHelpers:
         assert family_key("anthropic/claude-opus-4") != family_key(
             "anthropic/claude-sonnet-4"
         )
+
+
+class TestCanonicalFamilyKey:
+    """Cross-format matching: rankings permaslug vs /models id."""
+
+    def test_anthropic_word_order_and_datestamp(self):
+        # rankings permaslug vs pricing id must produce the same key
+        assert (
+            canonical_family_key("anthropic/claude-4.7-opus-20260416")
+            == canonical_family_key("anthropic/claude-opus-4.7")
+        )
+        assert (
+            canonical_family_key("anthropic/claude-4.5-sonnet-20250929")
+            == canonical_family_key("anthropic/claude-sonnet-4.5")
+        )
+
+    def test_sonnet_5_matches(self):
+        assert (
+            canonical_family_key("anthropic/claude-sonnet-5-20260630")
+            == canonical_family_key("anthropic/claude-sonnet-5")
+        )
+
+    def test_kimi_matches_across_datestamp(self):
+        assert (
+            canonical_family_key("moonshotai/kimi-k2.6-20260420")
+            == canonical_family_key("moonshotai/kimi-k2.6")
+        )
+
+    def test_generic_qualifier_dropped(self):
+        # 'fast' is a SKU qualifier, not family identity
+        assert (
+            canonical_family_key("anthropic/claude-opus-4.7-fast")
+            == canonical_family_key("anthropic/claude-opus-4.7")
+        )
+
+    def test_different_tiers_distinct(self):
+        assert (
+            canonical_family_key("anthropic/claude-4.7-opus-20260416")
+            != canonical_family_key("anthropic/claude-4.7-sonnet-20260416")
+        )
+
+    def test_different_versions_distinct(self):
+        assert (
+            canonical_family_key("anthropic/claude-opus-4.7")
+            != canonical_family_key("anthropic/claude-opus-4.6")
+        )
+
+    def test_includes_org(self):
+        # same family name, different org -> different key
+        assert canonical_family_key("a/model-1") != canonical_family_key("b/model-1")
