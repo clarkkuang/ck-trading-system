@@ -1,0 +1,50 @@
+[
+  {
+    "cadence_days": 182,
+    "id": "menlo_report",
+    "label": "Menlo Ventures enterprise LLM report \u2014 Anthropic still #1 share?",
+    "last_checked": "2026-07-03",
+    "notes": "\u652f\u6301\u8bba\u70b9(as of Menlo 2025 mid-year, \u53d1\u5e03 2025-07-31): Anthropic 40% \u4f01\u4e1a LLM spend(2024:24%, 2023:12%),\u5df2\u53cd\u8d85 OpenAI(27%,2023 \u66fe 50%);\u7f16\u7801\u5e02\u573a Anthropic 54% vs OpenAI 21%\u3002\u4f01\u4e1a\u603b\u652f\u51fa $8.4B\u3002\u2192 \u4e0b\u4e00\u7248\u534a\u5e74\u62a5\u5e94\u5728 2026 \u5e74\u4e2d\u53d1\u5e03,\u76ef Anthropic \u4efd\u989d\u662f\u5426\u5b88\u4f4f #1\u3001\u5f00\u6e90\u7cfb\u662f\u5426\u9996\u6b21\u8fdb\u699c >10%\u3002",
+    "url": "https://menlovc.com/perspective/"
+  },
+  {
+    "cadence_days": 365,
+    "id": "a16z_survey",
+    "label": "a16z enterprise AI survey \u2014 spend intentions vs Anthropic",
+    "last_checked": "2026-07-03",
+    "notes": "\u6df7\u5408\u4fe1\u53f7(a16z \u53e3\u5f84\u4e0e Menlo/Ramp \u4e0d\u540c,\u6309 wallet share): OpenAI \u4ecd\u7ea6 56% \u94b1\u5305\u4efd\u989d\u9886\u5148,CIO \u9884\u6d4b 2026 OpenAI 53% / Anthropic 18% / Google 18%\u3002\u4f46 Anthropic \u5728\u8f6f\u4ef6\u5f00\u53d1/\u6570\u636e\u5206\u6790\u7528\u4f8b\u9886\u5148,75% \u5ba2\u6237\u8dd1 Sonnet4.5/Opus4.5\u3002\u591a\u6a21\u578b\u6210\u5e38\u6001: 81% \u7528 \u22653 \u4e2a\u6a21\u578b\u5bb6\u65cf(\u53bb\u5e74 68%)\u3002\u2192 \u6ce8\u610f\u65b9\u6cd5\u8bba\u5dee\u5f02\u5bfc\u81f4\u7684\u4efd\u989d\u5206\u6b67: Ramp(\u5ba2\u6237\u6570)/Menlo(API spend)\u8bf4 Anthropic #1,a16z(wallet share)\u8bf4 OpenAI \u4ecd\u9886\u5148\u3002\u4ea4\u53c9\u770b,\u522b\u88ab\u5355\u4e00\u53e3\u5f84\u5e26\u504f\u3002",
+    "url": "https://a16z.com/enterprise/"
+  },
+  {
+    "cadence_days": 92,
+    "id": "edgar_s1",
+    "label": "EDGAR full-text search: AI lab S-1 filings (NRR / Claude Code revenue share)",
+    "last_checked": "2026-07-03",
+    "notes": "\u5173\u952e\u7a97\u53e3\u4e34\u8fd1: Anthropic 2026-06-01 \u5df2\u5411 SEC \u4fdd\u5bc6\u9012\u4ea4 S-1 \u8349\u6848(confidential, EDGAR \u5c1a\u4e0d\u53ef\u89c1);run-rate ~$47B,\u76ee\u6807 7 \u6708\u5e95 >$50B;\u4e0a\u8f6e $965B \u4f30\u503c\u3002OpenAI \u7ea6 05-22 \u4fdd\u5bc6\u9012\u4ea4,\u76ee\u6807 2026-10 \u4e0a\u5e02\u3002\u2192 \u4e00\u65e6 S-1 \u8f6c\u516c\u5f00(\u9884\u8ba1\u590f\u672b/\u521d\u79cb),\u7acb\u5373\u8bfb 5 \u4e2a\u5b57\u6bb5: NRR\u3001Claude Code \u6536\u5165\u5360\u6bd4\u3001Top10 \u5ba2\u6237\u96c6\u4e2d\u5ea6\u3001compute purchase obligations\u3001\u5b63\u5ea6 GM \u659c\u7387\u3002\u8fd9\u662f L3 \u6700\u786c\u7684\u8bc1\u636e\u3002",
+    "url": "https://efts.sec.gov/LATEST/search-index?q=%22Anthropic%22&dateRange=custom&forms=S-1"
+  },
+  {
+    "cadence_days": 31,
+    "id": "ramp_ai_index",
+    "label": "Ramp AI Index \u2014 Anthropic paid-adoption curve still rising?",
+    "last_checked": "2026-07-03",
+    "notes": "\u652f\u6301\u8bba\u70b9(Ramp, 2026-04 \u6570\u636e, \u62a5\u9053 2026-05-13): Anthropic 34.4% \u9996\u8d85 OpenAI 32.3%(\u4e00\u5e74 +26pp,OpenAI \u4ec5 +0.3pp);\u6574\u4f53\u4f01\u4e1a AI \u91c7\u7528\u7387 50.6%\u3002\u5f15\u64ce\u662f Claude Code\u3002\u53e3\u5f84=Ramp 7\u4e07+ \u4f01\u4e1a\u5361/\u8d26\u5355\u6570\u636e,\u504f\u7f8e\u56fd\u4e2d\u5e02\u573a,\u975e\u5168\u7403\u3002\u2192 \u76ef Anthropic \u66f2\u7ebf\u662f\u5426\u8fde\u7eed 3 \u4e2a\u6708\u8d70\u5e73(\u90a3\u662f\u589e\u901f\u8870\u51cf\u4fe1\u53f7);VentureBeat \u63d0\u793a 3 \u5927\u5a01\u80c1\u53ef\u80fd\u62b9\u5e73\u9886\u5148\u3002",
+    "url": "https://ramp.com/data"
+  },
+  {
+    "cadence_days": 31,
+    "id": "swe_bench_gap",
+    "label": "SWE-bench Pro \u2014 Claude best vs open-source best gap (pp)",
+    "last_checked": "2026-07-03",
+    "notes": "\u62a4\u57ce\u6cb3\u5b8c\u597d,\u8fdc\u672a\u89e6\u53ca Bear \u7ebf(<3pp): SWE-bench Verified \u2014 Claude Mythos5 95.5% / Fable5 95% / Opus4.8 88.6%;\u6700\u5f3a\u5f00\u6e90 DeepSeek-V4-Pro-Max 80.6%(MiniMax M3 80.5%, Qwen3.7 Max 80.4%, Kimi K2.6 80.2%)\u3002\u95ed\u6e90\u6700\u4f18 vs \u5f00\u6e90\u6700\u4f18\u5dee ~8-15pp\u3002SWE-bench Pro \u4e0a Opus 4.8 active \u699c\u9996 69.2%\u3002\u2192 \u5dee\u8ddd >3pp \u6301\u7eed,\u8bba\u70b9\u91cc\u7684\u80fd\u529b\u62a4\u57ce\u6cb3\u6210\u7acb;\u76ef\u8fd9\u4e2a gap \u662f\u5426\u6536\u7a84\u5230 3pp \u5185\u4e24\u4e2a\u5b63\u5ea6\u3002",
+    "url": "https://www.swebench.com/"
+  },
+  {
+    "cadence_days": 31,
+    "id": "aa_price_intel",
+    "label": "Artificial Analysis price-intelligence frontier \u2014 frontier line shift",
+    "last_checked": "2026-07-03",
+    "notes": "\u7559\u610f\u964d\u4ef7\u538b\u529b: Opus 4.8 $5/$25(input/output per M),Fast Mode $10/$50 \u2014\u2014 \u8f83 Opus 4.7 Fast \u7684 $30/$150 \u5927\u780d\u7ea6 67%(\u6807\u51c6\u6863 $5/$25 \u57fa\u672c\u6301\u5e73)\u3002\u5f00\u6e90\u7ea6 54x \u4fbf\u5b9c: DeepSeek V4 Flash $0.139/$0.278\u3002Sonnet4.6 $3/$15, Haiku4.5 $1/$5\u3002\u2192 Fast \u6863\u5927\u5e45\u964d\u4ef7\u503c\u5f97\u8b66\u60d5,\u4f46\u6807\u51c6\u65d7\u8230\u6863\u672a\u7834 30% \u5e74\u964d\u7ebf;\u672c\u7cfb\u7edf\u7684 claude_opus_price_cut_gt30_365d \u89c4\u5219\u4f1a\u81ea\u52a8\u76ef completion \u4ef7,\u4ea4\u53c9\u5370\u8bc1\u3002",
+    "url": "https://artificialanalysis.ai/models"
+  }
+]
