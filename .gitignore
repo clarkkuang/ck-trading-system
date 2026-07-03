@@ -16,6 +16,8 @@ data/macro/
 data/alternative/
 data/*.duckdb
 data/*.db
+# NOTE: data/monitoring/ is intentionally TRACKED — small weekly parquet/JSON
+# time series committed by the ai-share-monitor GitHub Action.
 
 # Claude Code – ignore everything except skills/
 .claude/*

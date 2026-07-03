@@ -1,0 +1,65 @@
+name: AI Model Share Monitor
+
+on:
+  schedule:
+    - cron: "17 6 * * 1" # Mondays 06:17 UTC (14:17 Beijing); off-hour dodges cron congestion
+  workflow_dispatch:
+    inputs:
+      skip_rankings:
+        description: "Skip the OpenRouter rankings dataset"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ai-share-monitor
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.12"
+
+      # uv.lock is intentionally gitignored, and the full project deps pull
+      # torch (via stable-baselines3). The monitoring pipeline only needs:
+      - name: Install minimal deps
+        run: |
+          uv venv
+          uv pip install httpx polars pyarrow pydantic pydantic-settings
+
+      - name: Run collection
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          FLAGS=""
+          if [ "${{ inputs.skip_rankings }}" = "true" ]; then
+            FLAGS="--skip-rankings"
+          fi
+          .venv/bin/python scripts/ai_share_update.py $FLAGS
+
+      - name: Commit & push time series
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/monitoring
+          if git diff --cached --quiet; then
+            echo "No data changes; skipping commit."
+            exit 0
+          fi
+          git commit -m "chore(monitoring): weekly AI model share update $(date -u +%Y-%m-%d)"
+          # Concurrent-push safety: rebase onto anything landed since checkout
+          for i in 1 2; do
+            git pull --rebase origin main && git push origin main && exit 0
+            sleep 5
+          done
+          exit 1

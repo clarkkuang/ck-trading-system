@@ -9,6 +9,9 @@ Quantitative value investing system for US and HK stocks.
 - **Backtesting Engine**: Vectorized backtesting optimized for monthly/quarterly rebalancing
 - **Signal Generation**: Automated screening with notifications via email/Telegram
 - **Dashboard**: Streamlit-based portfolio monitoring and analysis
+- **AI Model Share Monitor**: Weekly GitHub Action tracking open-source/Chinese-lab
+  competitive threat to Anthropic (dollar-weighted OpenRouter share, npm/PyPI
+  adoption, flagship price cuts) → [docs](docs/ai_model_share_monitoring.md)
 
 ## Tech Stack
 

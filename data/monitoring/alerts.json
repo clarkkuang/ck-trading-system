@@ -1,0 +1,111 @@
+{
+  "rules": [
+    {
+      "action_label": "Bear 25%\u219230%",
+      "details": {
+        "reason": "no_data"
+      },
+      "episode_started": null,
+      "fired": false,
+      "first_period_key": null,
+      "history": [
+        {
+          "period_key": null,
+          "status": "insufficient_data",
+          "value": null
+        }
+      ],
+      "metric_value": null,
+      "period_key": null,
+      "required": 8,
+      "resolved_at": null,
+      "rule_id": "or_cn_dollar_share_gt35_8w",
+      "severity": "trigger",
+      "status": "insufficient_data",
+      "streak": 0,
+      "threshold": 0.35,
+      "triggered_at": null
+    },
+    {
+      "action_label": "Cut GM tier",
+      "details": {
+        "reason": "single_point"
+      },
+      "episode_started": null,
+      "fired": false,
+      "first_period_key": null,
+      "history": [
+        {
+          "period_key": null,
+          "status": "insufficient_data",
+          "value": null
+        }
+      ],
+      "metric_value": null,
+      "period_key": null,
+      "required": 1,
+      "resolved_at": null,
+      "rule_id": "claude_opus_price_cut_gt30_365d",
+      "severity": "trigger",
+      "status": "insufficient_data",
+      "streak": 0,
+      "threshold": 0.3,
+      "triggered_at": null
+    },
+    {
+      "action_label": "Cut GM tier",
+      "details": {
+        "reason": "single_point"
+      },
+      "episode_started": null,
+      "fired": false,
+      "first_period_key": null,
+      "history": [
+        {
+          "period_key": null,
+          "status": "insufficient_data",
+          "value": null
+        }
+      ],
+      "metric_value": null,
+      "period_key": null,
+      "required": 1,
+      "resolved_at": null,
+      "rule_id": "claude_sonnet_price_cut_gt30_365d",
+      "severity": "trigger",
+      "status": "insufficient_data",
+      "streak": 0,
+      "threshold": 0.3,
+      "triggered_at": null
+    },
+    {
+      "action_label": "Advisory: dev adoption slipping vs competitor CLI",
+      "details": {
+        "periods_available": 1,
+        "periods_needed": 4,
+        "reason": "insufficient_history"
+      },
+      "episode_started": null,
+      "fired": false,
+      "first_period_key": null,
+      "history": [
+        {
+          "period_key": null,
+          "status": "insufficient_data",
+          "value": null
+        }
+      ],
+      "metric_value": null,
+      "period_key": null,
+      "required": 3,
+      "resolved_at": null,
+      "rule_id": "claude_code_npm_decline_3w",
+      "severity": "advisory",
+      "status": "insufficient_data",
+      "streak": 0,
+      "threshold": 0.0,
+      "triggered_at": null
+    }
+  ],
+  "updated_at": "2026-07-03T19:13:39Z"
+}

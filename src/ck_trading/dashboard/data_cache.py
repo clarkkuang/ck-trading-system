@@ -37,6 +37,20 @@ def load_macro() -> pl.DataFrame:
 
 
 @st.cache_data(ttl=_TTL, show_spinner=False)
+def load_monitoring(name: str) -> pl.DataFrame:
+    from ck_trading.monitoring.store import MonitoringStore
+
+    return MonitoringStore().load(name)
+
+
+@st.cache_data(ttl=_TTL, show_spinner=False)
+def load_monitoring_alerts() -> dict:
+    from ck_trading.monitoring.store import MonitoringStore
+
+    return MonitoringStore().load_alerts()
+
+
+@st.cache_data(ttl=_TTL, show_spinner=False)
 def price_count(market: str) -> int:
     """Return row count without materialising the full DataFrame."""
     from pathlib import Path

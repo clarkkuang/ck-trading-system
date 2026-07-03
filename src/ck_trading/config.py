@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     # API keys
     fmp_api_key: str = ""
     fred_api_key: str = ""
+    openrouter_api_key: str = ""  # optional; enables OpenRouter rankings collection
 
     # Notification URLs (comma-separated Apprise URLs)
     notification_urls: str = ""
@@ -38,6 +39,11 @@ class Settings(BaseSettings):
     @property
     def macro_dir(self) -> Path:
         return self.data_dir / "macro"
+
+    @property
+    def monitoring_dir(self) -> Path:
+        """Git-tracked time series for the AI model share monitor."""
+        return self.data_dir / "monitoring"
 
     @property
     def duckdb_path(self) -> Path:
