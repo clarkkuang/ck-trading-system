@@ -3,7 +3,13 @@
     {
       "action_label": "Bear 25%\u219230%",
       "details": {
-        "reason": "no_data"
+        "dimensions_used": {
+          "bloc": "chinese",
+          "scope": "programming:unverified"
+        },
+        "fallback_used": true,
+        "periods_available": 4,
+        "reason": "insufficient_history"
       },
       "episode_started": null,
       "fired": false,
@@ -13,10 +19,15 @@
           "period_key": null,
           "status": "insufficient_data",
           "value": null
+        },
+        {
+          "period_key": "2026-W26",
+          "status": "insufficient_data",
+          "value": 0.0
         }
       ],
-      "metric_value": null,
-      "period_key": null,
+      "metric_value": 0.0,
+      "period_key": "2026-W26",
       "required": 8,
       "resolved_at": null,
       "rule_id": "or_cn_dollar_share_gt35_8w",
@@ -107,5 +118,5 @@
       "triggered_at": null
     }
   ],
-  "updated_at": "2026-07-03T19:24:51Z"
+  "updated_at": "2026-07-03T19:55:17Z"
 }
