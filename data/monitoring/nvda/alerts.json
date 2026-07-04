@@ -1,0 +1,236 @@
+{
+  "rules": [
+    {
+      "action_label": "\u6280\u672f\u4e70\u70b9: \u4e0a\u5347\u8d8b\u52bf\u4e2d\u56de\u64a4\u226512.7% \u2014 \u6309\u7eaa\u5f8b\u5206\u6279\u4e70\u5165",
+      "details": {
+        "dimensions_used": {
+          "ticker": "NVDA"
+        },
+        "fallback_used": false
+      },
+      "episode_started": "2026-W26",
+      "fired": true,
+      "first_period_key": "2026-W26",
+      "history": [
+        {
+          "period_key": "2026-W27",
+          "status": "triggered",
+          "value": 0.17353865575987557
+        }
+      ],
+      "metric_value": 0.17353865575987557,
+      "period_key": "2026-W27",
+      "required": 1,
+      "resolved_at": null,
+      "rule_id": "nvda_buy_dip_gated",
+      "severity": "trigger",
+      "status": "triggered",
+      "streak": 2,
+      "threshold": 0.127,
+      "triggered_at": "2026-07-04T07:08:47Z"
+    },
+    {
+      "action_label": "\u4f30\u503c\u4e70\u70b9: forward P/E<25x \u2014 \u5b89\u5168\u8fb9\u9645\u533a",
+      "details": {
+        "dimensions_used": {
+          "ticker": "NVDA"
+        },
+        "fallback_used": false
+      },
+      "episode_started": null,
+      "fired": false,
+      "first_period_key": null,
+      "history": [
+        {
+          "period_key": "2026-W27",
+          "status": "ok",
+          "value": 27.832857404436385
+        }
+      ],
+      "metric_value": 27.832857404436385,
+      "period_key": "2026-W27",
+      "required": 1,
+      "resolved_at": null,
+      "rule_id": "nvda_buy_pe_below_25",
+      "severity": "advisory",
+      "status": "ok",
+      "streak": 0,
+      "threshold": 25.0,
+      "triggered_at": null
+    },
+    {
+      "action_label": "\u4f30\u503c\u5356\u70b9: forward P/E>45x \u2014 \u5386\u53f2\u51cf\u4ed3\u533a",
+      "details": {
+        "dimensions_used": {
+          "ticker": "NVDA"
+        },
+        "fallback_used": false
+      },
+      "episode_started": null,
+      "fired": false,
+      "first_period_key": null,
+      "history": [
+        {
+          "period_key": "2026-W27",
+          "status": "ok",
+          "value": 27.832857404436385
+        }
+      ],
+      "metric_value": 27.832857404436385,
+      "period_key": "2026-W27",
+      "required": 1,
+      "resolved_at": null,
+      "rule_id": "nvda_sell_pe_above_45",
+      "severity": "advisory",
+      "status": "ok",
+      "streak": 0,
+      "threshold": 45.0,
+      "triggered_at": null
+    },
+    {
+      "action_label": "\u6280\u672f\u5356\u70b9: \u8fde\u7eed4\u5468\u4f4e\u4e8e200\u65e5\u7ebf \u2014 \u8d8b\u52bf\u7834\u4f4d",
+      "details": {
+        "dimensions_used": {
+          "ticker": "NVDA"
+        },
+        "fallback_used": false
+      },
+      "episode_started": null,
+      "fired": false,
+      "first_period_key": null,
+      "history": [
+        {
+          "period_key": "2026-W27",
+          "status": "ok",
+          "value": 0.019907119780472327
+        }
+      ],
+      "metric_value": 0.019907119780472327,
+      "period_key": "2026-W27",
+      "required": 4,
+      "resolved_at": null,
+      "rule_id": "nvda_sell_below_200dma_4w",
+      "severity": "trigger",
+      "status": "ok",
+      "streak": 0,
+      "threshold": 0.0,
+      "triggered_at": null
+    },
+    {
+      "action_label": "\u8bba\u70b9\u5356\u70b9: DC\u589e\u901f\u8fde\u7eed\u4e24\u5b63\u4e0d\u5347 \u2014 \u51cf\u901f\u786e\u8ba4",
+      "details": {
+        "periods_available": 2,
+        "periods_needed": 3,
+        "reason": "insufficient_history"
+      },
+      "episode_started": null,
+      "fired": false,
+      "first_period_key": null,
+      "history": [
+        {
+          "period_key": null,
+          "status": "insufficient_data",
+          "value": null
+        }
+      ],
+      "metric_value": null,
+      "period_key": null,
+      "required": 2,
+      "resolved_at": null,
+      "rule_id": "nvda_sell_dc_decel_2q",
+      "severity": "trigger",
+      "status": "insufficient_data",
+      "streak": 0,
+      "threshold": 0.0,
+      "triggered_at": null
+    },
+    {
+      "action_label": "\u8bba\u70b9\u5356\u70b9: \u6307\u5f15\u4f4e\u4e8e\u5171\u8bc6 \u2014 \u9700\u6c42\u53ef\u89c1\u6027\u8f6c\u5f31",
+      "details": {
+        "dimensions_used": {
+          "field": "guide_vs_consensus_pct"
+        },
+        "fallback_used": false
+      },
+      "episode_started": null,
+      "fired": false,
+      "first_period_key": null,
+      "history": [
+        {
+          "period_key": "2026Q2",
+          "status": "ok",
+          "value": 4.6
+        }
+      ],
+      "metric_value": 4.6,
+      "period_key": "2026Q2",
+      "required": 1,
+      "resolved_at": null,
+      "rule_id": "nvda_sell_guide_miss",
+      "severity": "trigger",
+      "status": "ok",
+      "streak": 0,
+      "threshold": 0.0,
+      "triggered_at": null
+    },
+    {
+      "action_label": "\u8bba\u70b9\u5356\u70b9: ASIC\u4efd\u989d\u226535% \u2014 \u7ed3\u6784\u66ff\u4ee3\u786e\u8ba4(\u5148\u6838\u6570\u518d\u884c\u52a8)",
+      "details": {
+        "dimensions_used": {
+          "field": "asic_server_share_pct"
+        },
+        "fallback_used": false
+      },
+      "episode_started": null,
+      "fired": false,
+      "first_period_key": null,
+      "history": [
+        {
+          "period_key": "2026Q2",
+          "status": "ok",
+          "value": 27.8
+        }
+      ],
+      "metric_value": 27.8,
+      "period_key": "2026Q2",
+      "required": 1,
+      "resolved_at": null,
+      "rule_id": "nvda_sell_asic_share_35",
+      "severity": "trigger",
+      "status": "ok",
+      "streak": 0,
+      "threshold": 35.0,
+      "triggered_at": null
+    },
+    {
+      "action_label": "\u8bba\u70b9\u5356\u70b9: \u6bdb\u5229\u7387<70% \u2014 \u5b9a\u4ef7\u6743\u4fb5\u8680",
+      "details": {
+        "dimensions_used": {
+          "field": "gross_margin_pct"
+        },
+        "fallback_used": false
+      },
+      "episode_started": null,
+      "fired": false,
+      "first_period_key": null,
+      "history": [
+        {
+          "period_key": "2026Q2",
+          "status": "ok",
+          "value": 75.0
+        }
+      ],
+      "metric_value": 75.0,
+      "period_key": "2026Q2",
+      "required": 1,
+      "resolved_at": null,
+      "rule_id": "nvda_sell_gm_below_70",
+      "severity": "trigger",
+      "status": "ok",
+      "streak": 0,
+      "threshold": 70.0,
+      "triggered_at": null
+    }
+  ],
+  "updated_at": "2026-07-04T07:08:47Z"
+}

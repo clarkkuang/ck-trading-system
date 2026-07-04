@@ -15,6 +15,10 @@ Quantitative value investing system for US and HK stocks.
 - **AT&T vs SpaceX Monitor**: Weekly telecom-threat tracker (T price vs valuation
   scenario bands, churn/FCF threshold rules on quarterly inputs, editable
   scenario probabilities) → [docs](docs/att_spacex_monitoring.md)
+- **NVDA Framework Monitor**: Three-layer buy/sell signal system (calibrated
+  12.7% dip + 200dma technicals, weekly auto forward P/E, quarterly thesis
+  rules) with verdict banner → [report](docs/nvda_analysis_report.md) ·
+  [docs](docs/nvda_monitoring.md)
 
 ## Tech Stack
 

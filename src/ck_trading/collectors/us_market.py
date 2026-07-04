@@ -2,6 +2,7 @@
 
 from datetime import date
 
+import pandas as pd
 import polars as pl
 import yfinance as yf
 
@@ -34,7 +35,19 @@ class USMarketCollector(BaseCollector):
 
         frames = []
         if len(tickers) == 1:
-            df = _pandas_to_polars_ohlcv(raw, tickers[0])
+            # Newer yfinance returns MultiIndex columns (field, ticker) even
+            # for a single ticker with group_by="ticker" — flatten first.
+            single = raw
+            if isinstance(raw.columns, pd.MultiIndex):
+                try:
+                    single = raw[tickers[0]]
+                except KeyError:
+                    single = raw.droplevel(
+                        axis=1,
+                        level=1 if tickers[0] in raw.columns.get_level_values(1)
+                        else 0,
+                    )
+            df = _pandas_to_polars_ohlcv(single.dropna(how="all"), tickers[0])
             frames.append(df)
         else:
             for ticker in tickers:

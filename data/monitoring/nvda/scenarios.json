@@ -1,0 +1,38 @@
+{
+  "scenarios": [
+    {
+      "id": "bull",
+      "implied_price": 315.0,
+      "label": "\u8d85\u7ea7\u725b: Rubin\u8d85\u9884\u671f+capex\u81f32028+\u4e2d\u56fd\u91cd\u5f00 (EPS $9\u00d735x)",
+      "price_high": 330.0,
+      "price_low": 300.0,
+      "probability_pct": 25.0
+    },
+    {
+      "id": "base",
+      "implied_price": 240.0,
+      "label": "\u57fa\u51c6: \u589e\u901f\u964d\u6863\u81f340-50%,\u4efd\u989d\u5b88\u4f4f (EPS $8\u00d730x)",
+      "price_high": 255.0,
+      "price_low": 225.0,
+      "probability_pct": 40.0
+    },
+    {
+      "id": "mild_bear",
+      "implied_price": 154.0,
+      "label": "\u6e29\u548c\u718a: \u4f30\u503c\u538b\u7f29,\u589e\u901f\u964d\u81f325-30% (EPS $7\u00d722x)",
+      "price_high": 165.0,
+      "price_low": 145.0,
+      "probability_pct": 25.0
+    },
+    {
+      "id": "structural_bear",
+      "implied_price": 105.0,
+      "label": "\u7ed3\u6784\u718a: capex 2027\u89c1\u9876+ASIC 35%+ (EPS $5.5\u00d719x)",
+      "price_high": 115.0,
+      "price_low": 95.0,
+      "probability_pct": 10.0
+    }
+  ],
+  "updated_at": "2026-07-04T07:08:47Z",
+  "version": 1
+}
