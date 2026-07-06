@@ -8,7 +8,7 @@
           "scope": "programming:unverified"
         },
         "fallback_used": true,
-        "periods_available": 4,
+        "periods_available": 5,
         "reason": "insufficient_history"
       },
       "episode_started": null,
@@ -19,10 +19,15 @@
           "period_key": "2026-W26",
           "status": "insufficient_data",
           "value": 0.06277656647088013
+        },
+        {
+          "period_key": "2026-W27",
+          "status": "insufficient_data",
+          "value": 0.06420374758096713
         }
       ],
-      "metric_value": 0.06277656647088013,
-      "period_key": "2026-W26",
+      "metric_value": 0.06420374758096713,
+      "period_key": "2026-W27",
       "required": 8,
       "resolved_at": null,
       "rule_id": "or_cn_dollar_share_gt35_8w",
@@ -35,7 +40,12 @@
     {
       "action_label": "Cut GM tier",
       "details": {
-        "reason": "single_point"
+        "current_model_id": "anthropic/claude-opus-4.8-fast",
+        "drop_pct": 0.0,
+        "history_days": 3,
+        "max_model_id": "anthropic/claude-opus-4.8-fast",
+        "max_period": "2026-07-03",
+        "max_value": 50.0
       },
       "episode_started": null,
       "fired": false,
@@ -45,15 +55,20 @@
           "period_key": null,
           "status": "insufficient_data",
           "value": null
+        },
+        {
+          "period_key": "2026-07-06",
+          "status": "ok",
+          "value": 50.0
         }
       ],
-      "metric_value": null,
-      "period_key": null,
+      "metric_value": 50.0,
+      "period_key": "2026-07-06",
       "required": 1,
       "resolved_at": null,
       "rule_id": "claude_opus_price_cut_gt30_365d",
       "severity": "trigger",
-      "status": "insufficient_data",
+      "status": "ok",
       "streak": 0,
       "threshold": 0.3,
       "triggered_at": null
@@ -61,7 +76,12 @@
     {
       "action_label": "Cut GM tier",
       "details": {
-        "reason": "single_point"
+        "current_model_id": "anthropic/claude-sonnet-5",
+        "drop_pct": 0.0,
+        "history_days": 3,
+        "max_model_id": "anthropic/claude-sonnet-5",
+        "max_period": "2026-07-03",
+        "max_value": 10.0
       },
       "episode_started": null,
       "fired": false,
@@ -71,15 +91,20 @@
           "period_key": null,
           "status": "insufficient_data",
           "value": null
+        },
+        {
+          "period_key": "2026-07-06",
+          "status": "ok",
+          "value": 10.0
         }
       ],
-      "metric_value": null,
-      "period_key": null,
+      "metric_value": 10.0,
+      "period_key": "2026-07-06",
       "required": 1,
       "resolved_at": null,
       "rule_id": "claude_sonnet_price_cut_gt30_365d",
       "severity": "trigger",
-      "status": "insufficient_data",
+      "status": "ok",
       "streak": 0,
       "threshold": 0.3,
       "triggered_at": null
@@ -87,7 +112,7 @@
     {
       "action_label": "Advisory: dev adoption slipping vs competitor CLI",
       "details": {
-        "periods_available": 1,
+        "periods_available": 2,
         "periods_needed": 4,
         "reason": "insufficient_history"
       },
@@ -113,5 +138,5 @@
       "triggered_at": null
     }
   ],
-  "updated_at": "2026-07-03T20:08:14Z"
+  "updated_at": "2026-07-06T11:03:57Z"
 }
