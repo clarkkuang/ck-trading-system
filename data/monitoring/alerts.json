@@ -23,10 +23,10 @@
         {
           "period_key": "2026-W27",
           "status": "insufficient_data",
-          "value": 0.06420374758096713
+          "value": 0.07695229267922657
         }
       ],
-      "metric_value": 0.06420374758096713,
+      "metric_value": 0.07695229267922657,
       "period_key": "2026-W27",
       "required": 8,
       "resolved_at": null,
@@ -42,7 +42,7 @@
       "details": {
         "current_model_id": "anthropic/claude-opus-4.8-fast",
         "drop_pct": 0.0,
-        "history_days": 3,
+        "history_days": 10,
         "max_model_id": "anthropic/claude-opus-4.8-fast",
         "max_period": "2026-07-03",
         "max_value": 50.0
@@ -60,10 +60,15 @@
           "period_key": "2026-07-06",
           "status": "ok",
           "value": 50.0
+        },
+        {
+          "period_key": "2026-07-13",
+          "status": "ok",
+          "value": 50.0
         }
       ],
       "metric_value": 50.0,
-      "period_key": "2026-07-06",
+      "period_key": "2026-07-13",
       "required": 1,
       "resolved_at": null,
       "rule_id": "claude_opus_price_cut_gt30_365d",
@@ -78,7 +83,7 @@
       "details": {
         "current_model_id": "anthropic/claude-sonnet-5",
         "drop_pct": 0.0,
-        "history_days": 3,
+        "history_days": 10,
         "max_model_id": "anthropic/claude-sonnet-5",
         "max_period": "2026-07-03",
         "max_value": 10.0
@@ -96,10 +101,15 @@
           "period_key": "2026-07-06",
           "status": "ok",
           "value": 10.0
+        },
+        {
+          "period_key": "2026-07-13",
+          "status": "ok",
+          "value": 10.0
         }
       ],
       "metric_value": 10.0,
-      "period_key": "2026-07-06",
+      "period_key": "2026-07-13",
       "required": 1,
       "resolved_at": null,
       "rule_id": "claude_sonnet_price_cut_gt30_365d",
@@ -112,7 +122,7 @@
     {
       "action_label": "Advisory: dev adoption slipping vs competitor CLI",
       "details": {
-        "periods_available": 2,
+        "periods_available": 3,
         "periods_needed": 4,
         "reason": "insufficient_history"
       },
@@ -138,5 +148,5 @@
       "triggered_at": null
     }
   ],
-  "updated_at": "2026-07-06T11:03:57Z"
+  "updated_at": "2026-07-13T09:50:05Z"
 }
