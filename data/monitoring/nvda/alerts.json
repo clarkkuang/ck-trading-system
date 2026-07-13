@@ -8,26 +8,31 @@
         },
         "fallback_used": false
       },
-      "episode_started": "2026-W26",
-      "fired": true,
-      "first_period_key": "2026-W26",
+      "episode_started": null,
+      "fired": false,
+      "first_period_key": null,
       "history": [
         {
           "period_key": "2026-W27",
           "status": "triggered",
           "value": 0.17353865575987557
+        },
+        {
+          "period_key": "2026-W28",
+          "status": "ok",
+          "value": 0.1051157979209237
         }
       ],
-      "metric_value": 0.17353865575987557,
-      "period_key": "2026-W27",
+      "metric_value": 0.1051157979209237,
+      "period_key": "2026-W28",
       "required": 1,
-      "resolved_at": null,
+      "resolved_at": "2026-07-13T10:35:55Z",
       "rule_id": "nvda_buy_dip_gated",
       "severity": "trigger",
-      "status": "triggered",
-      "streak": 2,
+      "status": "ok",
+      "streak": 0,
       "threshold": 0.127,
-      "triggered_at": "2026-07-04T07:08:47Z"
+      "triggered_at": null
     },
     {
       "action_label": "\u4f30\u503c\u4e70\u70b9: forward P/E<25x \u2014 \u5b89\u5168\u8fb9\u9645\u533a",
@@ -45,10 +50,15 @@
           "period_key": "2026-W27",
           "status": "ok",
           "value": 27.832857404436385
+        },
+        {
+          "period_key": "2026-W28",
+          "status": "ok",
+          "value": 30.13714381626674
         }
       ],
-      "metric_value": 27.832857404436385,
-      "period_key": "2026-W27",
+      "metric_value": 30.13714381626674,
+      "period_key": "2026-W28",
       "required": 1,
       "resolved_at": null,
       "rule_id": "nvda_buy_pe_below_25",
@@ -74,10 +84,15 @@
           "period_key": "2026-W27",
           "status": "ok",
           "value": 27.832857404436385
+        },
+        {
+          "period_key": "2026-W28",
+          "status": "ok",
+          "value": 30.13714381626674
         }
       ],
-      "metric_value": 27.832857404436385,
-      "period_key": "2026-W27",
+      "metric_value": 30.13714381626674,
+      "period_key": "2026-W28",
       "required": 1,
       "resolved_at": null,
       "rule_id": "nvda_sell_pe_above_45",
@@ -103,10 +118,15 @@
           "period_key": "2026-W27",
           "status": "ok",
           "value": 0.019907119780472327
+        },
+        {
+          "period_key": "2026-W28",
+          "status": "ok",
+          "value": 0.10063917641028053
         }
       ],
-      "metric_value": 0.019907119780472327,
-      "period_key": "2026-W27",
+      "metric_value": 0.10063917641028053,
+      "period_key": "2026-W28",
       "required": 4,
       "resolved_at": null,
       "rule_id": "nvda_sell_below_200dma_4w",
@@ -232,5 +252,5 @@
       "triggered_at": null
     }
   ],
-  "updated_at": "2026-07-06T11:44:41Z"
+  "updated_at": "2026-07-13T10:35:55Z"
 }
