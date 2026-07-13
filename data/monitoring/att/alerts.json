@@ -16,10 +16,15 @@
           "period_key": "2026-W27",
           "status": "ok",
           "value": 20.579999923706055
+        },
+        {
+          "period_key": "2026-W28",
+          "status": "ok",
+          "value": 21.1299991607666
         }
       ],
-      "metric_value": 20.579999923706055,
-      "period_key": "2026-W27",
+      "metric_value": 21.1299991607666,
+      "period_key": "2026-W28",
       "required": 1,
       "resolved_at": null,
       "rule_id": "att_price_below_16_structural",
@@ -45,10 +50,15 @@
           "period_key": "2026-W27",
           "status": "ok",
           "value": 20.579999923706055
+        },
+        {
+          "period_key": "2026-W28",
+          "status": "ok",
+          "value": 21.1299991607666
         }
       ],
-      "metric_value": 20.579999923706055,
-      "period_key": "2026-W27",
+      "metric_value": 21.1299991607666,
+      "period_key": "2026-W28",
       "required": 1,
       "resolved_at": null,
       "rule_id": "att_price_below_12_tail",
@@ -202,5 +212,5 @@
       "triggered_at": null
     }
   ],
-  "updated_at": "2026-07-06T11:16:35Z"
+  "updated_at": "2026-07-13T09:59:03Z"
 }
