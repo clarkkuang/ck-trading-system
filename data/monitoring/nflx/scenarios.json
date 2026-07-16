@@ -1,0 +1,30 @@
+{
+  "scenarios": [
+    {
+      "id": "bull",
+      "implied_price": 108.0,
+      "label": "\u725b: \u5e7f\u544a\u63a5\u68d2, FY27 \u6307\u5f15\u91cd\u71c3\u589e\u957f\u53d9\u4e8b",
+      "price_high": 116.0,
+      "price_low": 100.0,
+      "probability_pct": 25.0
+    },
+    {
+      "id": "base",
+      "implied_price": 79.0,
+      "label": "\u57fa\u51c6: \u6210\u719f\u78e8\u5e95, \u5229\u6da6\u7387+\u56de\u8d2d\u625b\u4f4f\u51cf\u901f",
+      "price_high": 85.0,
+      "price_low": 72.0,
+      "probability_pct": 55.0
+    },
+    {
+      "id": "bear",
+      "implied_price": 54.0,
+      "label": "\u718a: \u589e\u957f\u5931\u5b88\u4e2a\u4f4d\u6570 + \u5e7f\u544a\u4e0d\u53ca\u9884\u671f",
+      "price_high": 60.0,
+      "price_low": 48.0,
+      "probability_pct": 20.0
+    }
+  ],
+  "updated_at": "2026-07-16T22:41:09Z",
+  "version": 1
+}

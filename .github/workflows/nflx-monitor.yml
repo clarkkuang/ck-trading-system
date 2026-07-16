@@ -1,0 +1,53 @@
+name: NFLX Framework Monitor
+
+on:
+  schedule:
+    - cron: "47 7 * * 1" # Mondays 07:17 UTC — 30 min after nvda-monitor to avoid push races
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nflx-monitor
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.12"
+          enable-cache: false # uv.lock is untracked; nothing stable to key on
+
+      # Full project deps pull torch (via stable-baselines3); this monitor
+      # only needs yfinance + the storage/config chain:
+      - name: Install minimal deps
+        run: |
+          uv venv --clear
+          uv pip install polars pyarrow pydantic pydantic-settings yfinance
+
+      - name: Run collection
+        run: .venv/bin/python scripts/nflx_monitor_update.py
+
+      - name: Commit & push time series
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/monitoring
+          if git diff --cached --quiet; then
+            echo "No data changes; skipping commit."
+            exit 0
+          fi
+          git commit -m "chore(monitoring): weekly NFLX framework monitor update $(date -u +%Y-%m-%d)"
+          for i in 1 2; do
+            git pull --rebase origin main && git push origin main && exit 0
+            sleep 5
+          done
+          exit 1

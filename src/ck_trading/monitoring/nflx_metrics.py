@@ -1,8 +1,8 @@
-"""NVDA-specific metric functions + re-exports of shared technicals.
+"""NFLX-specific metric functions + re-exports of shared technicals.
 
-The generic price/technical/P-E functions moved to
-ck_trading.monitoring.technicals when the NFLX monitor became the second
-consumer. Re-exported here so existing imports and tests stay valid.
+Everything price/technical is shared (ck_trading.monitoring.technicals);
+this module only owns the NFLX fundamentals validator, whose field list and
+sign rules differ from the other monitors.
 """
 
 from __future__ import annotations
@@ -14,25 +14,19 @@ from ck_trading.monitoring.quarters import (  # noqa: F401
 )
 from ck_trading.monitoring.technicals import (  # noqa: F401
     daily_indicators,
-    forward_pe_series,
-    latest_forward_eps,
     normalize_daily,
     normalized_performance,
     weekly_close_series,
     weekly_sample,
 )
 
-# Fields where a NEGATIVE value is meaningful signal, not bad data.
-_SIGNED_FIELDS = ("dc_qoq_growth_pct", "guide_vs_consensus_pct")
-_NON_NEGATIVE_FIELDS = (
-    "dc_revenue_billions", "total_revenue_billions", "forward_eps_consensus",
-)
-_PCT_RANGE_FIELDS = ("gross_margin_pct", "asic_server_share_pct")
+# revenue growth CAN go negative (that is exactly the bear signal).
+_SIGNED_FIELDS = ("revenue_growth_pct", "next_q_guide_growth_pct")
+_NON_NEGATIVE_FIELDS = ("fcf_billions", "buyback_billions")
+_PCT_RANGE_FIELDS = ("op_margin_pct",)
+_BINARY_FIELDS = ("ads_on_track",)
 
 
-# ---------------------------------------------------------------------------
-# Fundamentals validation (NVDA fields; negative growth values ALLOWED)
-# ---------------------------------------------------------------------------
 def validate_fundamentals(quarters: list[dict]) -> list[str]:
     """Return a list of human-readable problems (empty = valid)."""
     errors: list[str] = []
@@ -46,7 +40,10 @@ def validate_fundamentals(quarters: list[dict]) -> list[str]:
             errors.append(f"季度 {label} 重复")
         seen.add(label)
 
-        all_fields = _SIGNED_FIELDS + _NON_NEGATIVE_FIELDS + _PCT_RANGE_FIELDS
+        all_fields = (
+            _SIGNED_FIELDS + _NON_NEGATIVE_FIELDS
+            + _PCT_RANGE_FIELDS + _BINARY_FIELDS
+        )
         for fld in all_fields:
             val = q.get(fld)
             if val is None:
@@ -60,6 +57,6 @@ def validate_fundamentals(quarters: list[dict]) -> list[str]:
                 errors.append(f"{label}: {fld} 为负数 ({v})")
             if fld in _PCT_RANGE_FIELDS and not 0 <= v <= 100:
                 errors.append(f"{label}: {fld} 超出 [0,100] ({v})")
-            # _SIGNED_FIELDS: negatives are legitimate signal (guide miss /
-            # revenue decline) — no sign check.
+            if fld in _BINARY_FIELDS and v not in (0.0, 1.0):
+                errors.append(f"{label}: {fld} 只能是 0 或 1 ({v})")
     return errors
