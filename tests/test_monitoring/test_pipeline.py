@@ -149,6 +149,58 @@ class TestPipeline:
         assert _outcome(result, "derive").status == "ok"
         assert not store.load("weekly_bloc_share").is_empty()
 
+    def test_anomalous_day_quarantined_not_saved(self, tmp_path, patched_collectors):
+        """A weekly-bucket-sized day is quarantined; normal days still land."""
+        store = MonitoringStore(tmp_path)
+        store.save("openrouter_daily_tokens", _rankings_df())  # 7d x 1M baseline
+
+        bad_day = date(2026, 6, 29)
+        good_day = date(2026, 6, 30)
+        new = pl.DataFrame([
+            {"date": bad_day, "model_id": "deepseek/deepseek-v4",
+             "org": "deepseek", "bloc": "chinese",
+             "tokens_total": 20_000_000, "rank": 1, "scope": "all",
+             "source": "api", "collected_at": NOW},
+            {"date": good_day, "model_id": "anthropic/claude-sonnet-5",
+             "org": "anthropic", "bloc": "anthropic",
+             "tokens_total": 1_100_000, "rank": 1, "scope": "all",
+             "source": "api", "collected_at": NOW},
+        ])
+        patched_collectors["rankings"].return_value = new
+        with patch("ck_trading.monitoring.pipeline.settings") as mock_settings:
+            mock_settings.openrouter_api_key = "sk-or-x"
+            result = run_weekly_update(as_of=AS_OF, store=store)
+
+        outcome = _outcome(result, "rankings")
+        assert outcome.status == "ok"
+        assert outcome.extra["quarantined_days"] == [
+            {"date": "2026-06-29", "scope": "all", "ratio": 20.0}
+        ]
+        stored = store.load("openrouter_daily_tokens")
+        assert good_day in stored["date"].to_list()
+        assert stored.filter(
+            (pl.col("date") == bad_day) & (pl.col("tokens_total") > 10_000_000)
+        ).is_empty()
+
+    def test_all_days_anomalous_fails_section(self, tmp_path, patched_collectors):
+        store = MonitoringStore(tmp_path)
+        store.save("openrouter_daily_tokens", _rankings_df())
+
+        new = _rankings_df().with_columns(
+            (pl.col("tokens_total") * 25).alias("tokens_total")
+        )
+        patched_collectors["rankings"].return_value = new
+        with patch("ck_trading.monitoring.pipeline.settings") as mock_settings:
+            mock_settings.openrouter_api_key = "sk-or-x"
+            result = run_weekly_update(as_of=AS_OF, store=store)
+
+        outcome = _outcome(result, "rankings")
+        assert outcome.status == "failed"
+        assert "sanity check" in outcome.error
+        assert len(outcome.extra["quarantined_days"]) == 7
+        # baseline history untouched
+        assert store.load("openrouter_daily_tokens")["tokens_total"].max() == 1_000_000
+
     def test_summary_readable(self, tmp_path, patched_collectors):
         store = MonitoringStore(tmp_path)
         with patch("ck_trading.monitoring.pipeline.settings") as mock_settings:

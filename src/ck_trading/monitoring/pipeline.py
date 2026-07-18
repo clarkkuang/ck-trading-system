@@ -148,16 +148,41 @@ def run_weekly_update(
             if rankings.is_empty():
                 result.outcomes.append(ComponentOutcome("rankings", "empty"))
             else:
-                unclassified = (
-                    rankings.filter(pl.col("bloc") == "unclassified")["org"]
-                    .unique().to_list()
+                rankings, quarantined = metrics.split_anomalous_days(
+                    rankings, store.load("openrouter_daily_tokens")
                 )
-                if not dry_run:
-                    store.save("openrouter_daily_tokens", rankings)
-                result.outcomes.append(ComponentOutcome(
-                    "rankings", "ok", rows=rankings.height,
-                    extra={"unclassified_orgs": unclassified} if unclassified else {},
-                ))
+                extra: dict = {}
+                if not quarantined.is_empty():
+                    days = [
+                        {"date": str(r["date"]), "scope": r["scope"],
+                         "ratio": round(r["ratio"], 2)}
+                        for r in quarantined.iter_rows(named=True)
+                    ]
+                    extra["quarantined_days"] = days
+                    logger.warning(
+                        "rankings: quarantined %d day(s) with token volume "
+                        ">%.1fx the historical daily median: %s",
+                        len(days), metrics.DAILY_TOKEN_ANOMALY_FACTOR, days,
+                    )
+                if rankings.is_empty():
+                    result.outcomes.append(ComponentOutcome(
+                        "rankings", "failed",
+                        error="all collected days failed the token-volume "
+                              "sanity check (aggregate feed?)",
+                        extra=extra,
+                    ))
+                else:
+                    unclassified = (
+                        rankings.filter(pl.col("bloc") == "unclassified")["org"]
+                        .unique().to_list()
+                    )
+                    if unclassified:
+                        extra["unclassified_orgs"] = unclassified
+                    if not dry_run:
+                        store.save("openrouter_daily_tokens", rankings)
+                    result.outcomes.append(ComponentOutcome(
+                        "rankings", "ok", rows=rankings.height, extra=extra,
+                    ))
         except Exception as e:  # noqa: BLE001
             logger.warning("rankings section failed: %r", e)
             result.outcomes.append(

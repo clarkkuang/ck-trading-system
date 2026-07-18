@@ -74,6 +74,7 @@ Rankings API 的 `category=programming` 过滤支持未确认,每行数据带 sc
 | `openrouter_pricing_snapshots.parquet` | 定价快照 | snapshot_date+model_id |
 | `pkg_downloads.parquet` | npm/pypi 周下载 | registry+package+iso_week |
 | `weekly_bloc_share.parquet` | 派生周度份额(每次全量重建) | — |
+| `openrouter_weekly_buckets_quarantine.parquet` | 2026-07 feed 变更后的周聚合桶(证据留存,pipeline 不读) | — |
 | `alerts.json` | 规则 episode 状态(canonical) | — |
 | `checklist.json` | L2/L3 手动清单(**只有 dashboard 写**,CI 永不碰) | — |
 
@@ -114,6 +115,34 @@ Rankings API 的 `category=programming` 过滤支持未确认,每行数据带 sc
 - **新 org 未分类**:运行日志和 `job_runs.result` 会列出 unclassified org → 在 `blocs.py` 的 `ORG_BLOC_MAP` 补一行。
 - **Rankings API 变形**:解析集中在 `collectors/openrouter.py: _parse_rankings()`,一处修完;临时可用 `--skip-rankings` 或 workflow_dispatch 的 skip 输入。
 - **改阈值/加规则**:只动 `monitoring/rules_config.py`。
+
+### 数据口径防线(2026-07 事故后加固)
+
+两道防线,防止聚合行混入日度表:
+
+1. **Collector 日度契约**:`_fetch_day()` 校验响应内每一行的日期必须等于请求日期,
+   否则抛 `RankingsSchemaError`(rankings 段记 failed,不静默合并)。
+2. **Pipeline 口径守卫**:入库前 `metrics.split_anomalous_days()` 按 scope 比较
+   单日 token 总量与历史日中位数,超 3 倍(`DAILY_TOKEN_ANOMALY_FACTOR`)则隔离
+   该日并在 outcome extra 里记 `quarantined_days`(全部被隔离时该段记 failed)。
+
+## 2026-07 数据事故记录
+
+约 2026-07-07 起,`rankings-daily` 端点悄然从"按请求日期返回日行"变为"无视请求日期,
+返回滚动 ~30 天窗口内按周一分桶的**周聚合行**"(单桶 20-27T tokens,约为正常日量 4 倍)。
+07-13 的采集把这些周桶按 `(date, model_id, scope)` upsert 进日度表,覆盖了
+06-08/06-15/06-22/06-29 的真实日行并伪造了 07-06 一天,导致 W24-W28 口径混合、
+中国阵营 token 份额被系统性高估(W27 虚高至 61.5%,W28 表面 75.4% 实为纯周桶)。
+
+处置(2026-07-18):
+
+- 日度表回滚到最后干净提交 `acff333`(2026-07-06 运行)的内容,真实日行覆盖 06-03 至 07-05;
+- 周桶原样留存在 `openrouter_weekly_buckets_quarantine.parquet`(API 窗口只有 30 天,不留就丢);
+- `weekly_bloc_share` 全量重算:W24-W27 份额已修正,**W28/W29 无日度数据,派生表中不存在
+  —— 这两周的份额解读冻结**,任何引用 75%+ 中国阵营份额的结论作废;
+- 07-07 起的日度数据无法回填(上游已不提供日粒度),是真实缺口。若 feed 恢复日粒度,
+  collector 会自动恢复采集;若确认永久改为周粒度,需显式改造(把周桶作为一等公民入库,
+  重新定义 `weekly_bloc_share` 的 `days_observed`/`is_complete` 语义),不要绕过防线。
 
 ## 已知局限
 

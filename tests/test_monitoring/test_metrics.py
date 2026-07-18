@@ -14,6 +14,7 @@ from ck_trading.monitoring.metrics import (
     compute_weekly_bloc_share,
     flagship_price_series,
     pkg_weekly_series,
+    split_anomalous_days,
 )
 
 NOW = dt.datetime(2026, 7, 1, 0, 0, 0)
@@ -321,3 +322,78 @@ class TestSeriesExtractors:
         s = bloc_share_series(df, "chinese", "all")
         assert s.height == 1
         assert s["value"][0] == pytest.approx(0.4)
+
+
+class TestSplitAnomalousDays:
+    def _history(self, n_days: int = 10, daily: int = 1_000_000) -> pl.DataFrame:
+        rows = [
+            {"date": date(2026, 6, 1) + dt.timedelta(days=i),
+             "model_id": "a/x", "bloc": "chinese", "tokens_total": daily}
+            for i in range(n_days)
+        ]
+        return _tokens_df(rows)
+
+    def test_normal_days_pass(self):
+        new = _tokens_df([
+            {"date": date(2026, 6, 11), "model_id": "a/x", "bloc": "chinese",
+             "tokens_total": 1_200_000},
+        ])
+        accepted, quarantined = split_anomalous_days(new, self._history())
+        assert accepted.height == 1
+        assert quarantined.is_empty()
+
+    def test_weekly_bucket_day_quarantined(self):
+        # ~7x the historical daily median, like the 2026-07 weekly buckets
+        new = _tokens_df([
+            {"date": date(2026, 6, 11), "model_id": "a/x", "bloc": "chinese",
+             "tokens_total": 1_100_000},
+            {"date": date(2026, 6, 15), "model_id": "a/x", "bloc": "chinese",
+             "tokens_total": 7_000_000},
+        ])
+        accepted, quarantined = split_anomalous_days(new, self._history())
+        assert accepted["date"].to_list() == [date(2026, 6, 11)]
+        assert quarantined.height == 1
+        row = quarantined.row(0, named=True)
+        assert row["date"] == date(2026, 6, 15)
+        assert row["ratio"] == pytest.approx(7.0)
+
+    def test_day_total_summed_across_models(self):
+        # each row is under 3x but the day's SUM is not
+        new = _tokens_df([
+            {"date": date(2026, 6, 15), "model_id": f"a/m{i}",
+             "bloc": "chinese", "tokens_total": 2_000_000}
+            for i in range(4)
+        ])
+        _, quarantined = split_anomalous_days(new, self._history())
+        assert quarantined.height == 1
+
+    def test_insufficient_history_passes_through(self):
+        new = _tokens_df([
+            {"date": date(2026, 6, 5), "model_id": "a/x", "bloc": "chinese",
+             "tokens_total": 50_000_000},
+        ])
+        accepted, quarantined = split_anomalous_days(
+            new, self._history(n_days=3)
+        )
+        assert accepted.height == 1
+        assert quarantined.is_empty()
+
+    def test_empty_history_passes_through(self):
+        new = _tokens_df([
+            {"date": date(2026, 6, 5), "model_id": "a/x", "bloc": "chinese",
+             "tokens_total": 50_000_000},
+        ])
+        accepted, quarantined = split_anomalous_days(new, pl.DataFrame())
+        assert accepted.height == 1
+        assert quarantined.is_empty()
+
+    def test_scopes_judged_independently(self):
+        # "all"-scope history says 1M/day; a big day in a scope with no
+        # history must NOT be judged against it
+        new = _tokens_df([
+            {"date": date(2026, 6, 15), "model_id": "a/x", "bloc": "chinese",
+             "tokens_total": 9_000_000},
+        ]).with_columns(pl.lit("programming").alias("scope"))
+        accepted, quarantined = split_anomalous_days(new, self._history())
+        assert accepted.height == 1
+        assert quarantined.is_empty()

@@ -19,6 +19,15 @@ unconfirmed, so every rankings row records a `scope`:
 
 Citation requirement when republishing this data:
 "Source: OpenRouter (openrouter.ai/rankings), as of {as_of}."
+
+Known feed regression (2026-07): around 2026-07-07 the endpoint silently
+switched from per-day rows to a trailing-~30-day window of WEEKLY buckets —
+Monday-dated rows whose tokens are whole-week sums (~4x a normal day),
+returned regardless of the requested ``date``. ``_fetch_day`` therefore
+enforces the daily contract: any response row dated differently from the
+requested day raises RankingsSchemaError instead of ingesting. The pipeline
+additionally quarantines days whose token volume is anomalous vs stored
+history (metrics.split_anomalous_days).
 """
 
 from __future__ import annotations
@@ -200,6 +209,18 @@ class OpenRouterCollector:
                 raise RankingsSchemaError(
                     f"rankings-daily: unrecognized payload shape "
                     f"(keys={list(payload)[:5] if isinstance(payload, dict) else type(payload)})"
+                )
+
+            # Daily contract: every dated row must match the requested day.
+            # The 2026-07 feed regression returns Monday-dated weekly buckets
+            # for any requested date; merging those corrupts the daily table.
+            foreign = sorted({str(r["date"]) for r in rows
+                              if "date" in r and r["date"] != day})
+            if foreign:
+                raise RankingsSchemaError(
+                    f"rankings-daily: requested {day} but response rows are "
+                    f"dated {foreign[:5]} — looks like weekly/aggregate "
+                    f"buckets, refusing to ingest"
                 )
 
             # Determine scope: confirmed only if the response echoes the category

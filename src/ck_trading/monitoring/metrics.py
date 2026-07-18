@@ -35,6 +35,10 @@ PROMPT_TOKEN_FRACTION: Final[float] = 0.70
 COMPLETION_TOKEN_FRACTION: Final[float] = 0.30
 MIN_DAYS_PER_WEEK: Final[int] = 5  # a week needs >=5 observed days to count
 
+# ---- ingest sanity guard ----------------------------------------------------
+DAILY_TOKEN_ANOMALY_FACTOR: Final[float] = 3.0  # vs per-scope median daily total
+MIN_BASELINE_DAYS: Final[int] = 7  # history days needed before the guard judges
+
 
 def blended_usd_per_mtok(prompt: pl.Expr, completion: pl.Expr) -> pl.Expr:
     """Blended list price per Mtok under the frozen 70/30 convention."""
@@ -52,6 +56,66 @@ def _with_iso_week(df: pl.DataFrame, date_col: str = "date") -> pl.DataFrame:
         (pl.col(date_col) - pl.duration(days=pl.col(date_col).dt.weekday() - 1))
         .alias("week_start"),
     )
+
+
+def split_anomalous_days(
+    new_rows: pl.DataFrame,
+    history: pl.DataFrame,
+    *,
+    factor: float = DAILY_TOKEN_ANOMALY_FACTOR,
+    min_baseline_days: int = MIN_BASELINE_DAYS,
+) -> tuple[pl.DataFrame, pl.DataFrame]:
+    """Split freshly collected daily-token rows into (accepted, quarantined).
+
+    A collected (date, scope) is quarantined when its summed tokens exceed
+    ``factor`` x the median daily total of the stored history for that scope.
+    This is the last line of defense against aggregate rows (e.g. the 2026-07
+    weekly-bucket feed regression, ~4x daily volume) reaching the store when
+    an upstream schema check misses them. Scopes with fewer than
+    ``min_baseline_days`` distinct history days pass through unjudged.
+
+    Args:
+        new_rows: openrouter_daily_tokens-schema rows from this collection.
+        history: previously stored openrouter_daily_tokens rows.
+
+    Returns:
+        (accepted_rows, quarantined_days) — quarantined_days is a per-day
+        summary [date, scope, tokens_total, baseline_median, ratio].
+    """
+    empty_summary = pl.DataFrame(schema={
+        "date": pl.Date, "scope": pl.Utf8, "tokens_total": pl.Int64,
+        "baseline_median": pl.Float64, "ratio": pl.Float64,
+    })
+    if new_rows.is_empty() or history.is_empty():
+        return new_rows, empty_summary
+
+    baseline = (
+        history.group_by("date", "scope")
+        .agg(pl.col("tokens_total").sum().alias("_day_total"))
+        .group_by("scope")
+        .agg(
+            pl.col("_day_total").median().alias("baseline_median"),
+            pl.len().alias("_n_days"),
+        )
+    )
+    day_totals = (
+        new_rows.group_by("date", "scope")
+        .agg(pl.col("tokens_total").sum())
+        .join(baseline, on="scope", how="left")
+        .with_columns(
+            (pl.col("tokens_total") / pl.col("baseline_median")).alias("ratio")
+        )
+    )
+    quarantined = day_totals.filter(
+        (pl.col("_n_days") >= min_baseline_days) & (pl.col("ratio") > factor)
+    ).select("date", "scope", "tokens_total", "baseline_median", "ratio").sort("date")
+
+    if quarantined.is_empty():
+        return new_rows, empty_summary
+    accepted = new_rows.join(
+        quarantined.select("date", "scope"), on=["date", "scope"], how="anti"
+    )
+    return accepted, quarantined
 
 
 def _attach_blended_price(

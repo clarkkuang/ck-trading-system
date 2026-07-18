@@ -206,6 +206,56 @@ class TestCollectRankings:
             )
         assert df["date"].n_unique() == 2
 
+    def test_weekly_bucket_payload_rejected(self):
+        # 2026-07 feed regression: any requested date returns Monday-dated
+        # weekly buckets for a trailing ~30-day window
+        weekly = {
+            "data": [
+                {"date": monday, "model_permaslug": "deepseek/deepseek-v4",
+                 "total_tokens": 20_000_000_000_000}
+                for monday in ("2026-06-29", "2026-07-06", "2026-07-13")
+            ],
+            "meta": {"start_date": "2026-06-18", "end_date": "2026-07-17"},
+        }
+        client = _make_mock_client([_resp(json_data=weekly)])
+        with patch("ck_trading.collectors.openrouter.httpx.Client",
+                   return_value=client):
+            with pytest.raises(RankingsSchemaError, match="weekly/aggregate"):
+                self._collector().collect_rankings(
+                    date(2026, 7, 15), date(2026, 7, 15)
+                )
+
+    def test_single_foreign_dated_row_rejected(self):
+        # even one row dated off the requested day breaks the daily contract
+        payload = {
+            "data": RANKINGS_DAY["data"] + [
+                {"date": "2026-06-22", "model_permaslug": "qwen/qwen3-coder",
+                 "total_tokens": 21_000_000_000_000},
+            ]
+        }
+        client = _make_mock_client([_resp(json_data=payload)])
+        with patch("ck_trading.collectors.openrouter.httpx.Client",
+                   return_value=client):
+            with pytest.raises(RankingsSchemaError):
+                self._collector().collect_rankings(
+                    date(2026, 6, 29), date(2026, 6, 29)
+                )
+
+    def test_dateless_rows_inherit_requested_day(self):
+        payload = {
+            "data": [
+                {"model_permaslug": "anthropic/claude-sonnet-5",
+                 "total_tokens": 900_000_000},
+            ]
+        }
+        client = _make_mock_client([_resp(json_data=payload)])
+        with patch("ck_trading.collectors.openrouter.httpx.Client",
+                   return_value=client):
+            df = self._collector().collect_rankings(
+                date(2026, 6, 29), date(2026, 6, 29)
+            )
+        assert df["date"].to_list() == [date(2026, 6, 29)]
+
 
 class TestParsers:
     def test_parse_price(self):
