@@ -92,6 +92,18 @@ class TestValidator:
     def test_bad_label(self):
         assert validate_fundamentals([{"quarter": "FY27Q1"}])
 
+    def test_negative_nielsen_yoy_allowed(self):
+        qs = [{"quarter": "2026Q3", "nielsen_share_yoy_pp": -0.4}]
+        assert validate_fundamentals(qs) == []
+
+    def test_nielsen_share_range(self):
+        assert any(
+            "nielsen_share_pct" in e
+            for e in validate_fundamentals(
+                [{"quarter": "2026Q3", "nielsen_share_pct": 105.0}]
+            )
+        )
+
 
 def _run(tmp_path, price_df, quarters=None, **kwargs):
     store = _store(tmp_path)
@@ -155,6 +167,40 @@ class TestPipeline:
         assert by_id["nflx_sell_guide_below_10"].fired
         assert by_id["nflx_sell_ads_off_track"].fired
         assert by_id["nflx_sell_margin_below_28"].fired
+
+    def test_attention_rule_insufficient_on_prefill(self, tmp_path):
+        # prefill has only one non-null nielsen_share_yoy_pp (2026Q2)
+        # -> the 2-quarter streak rule cannot evaluate yet
+        px = _daily_prices("NFLX", date(2026, 7, 17), 260, lambda i: 90.0)
+        result, _ = _run(tmp_path, px)
+        by_id = {r.rule_id: r for r in result.rule_results}
+        assert by_id["nflx_sell_attention_decline_2q"].status == "insufficient_data"
+
+    def test_attention_rule_fires_on_two_negative_yoy(self, tmp_path):
+        px = _daily_prices("NFLX", date(2026, 7, 17), 260, lambda i: 90.0)
+        bad = list(DEFAULT_FUNDAMENTALS) + [
+            {"quarter": "2026Q3", "nielsen_share_pct": 7.4,
+             "nielsen_share_yoy_pp": -0.2},
+            {"quarter": "2026Q4", "nielsen_share_pct": 7.1,
+             "nielsen_share_yoy_pp": -0.5},
+        ]
+        result, _ = _run(tmp_path, px, quarters=bad)
+        by_id = {r.rule_id: r for r in result.rule_results}
+        assert by_id["nflx_sell_attention_decline_2q"].fired
+        assert by_id["nflx_sell_attention_decline_2q"].streak == 2
+
+    def test_attention_rule_single_negative_does_not_fire(self, tmp_path):
+        # 2026Q2 prefill is +0.3; one negative quarter after it -> streak 1 only
+        px = _daily_prices("NFLX", date(2026, 7, 17), 260, lambda i: 90.0)
+        bad = list(DEFAULT_FUNDAMENTALS) + [
+            {"quarter": "2026Q3", "nielsen_share_pct": 7.6,
+             "nielsen_share_yoy_pp": -0.1},
+        ]
+        result, _ = _run(tmp_path, px, quarters=bad)
+        by_id = {r.rule_id: r for r in result.rule_results}
+        r = by_id["nflx_sell_attention_decline_2q"]
+        assert r.status == "ok"
+        assert r.streak == 1
 
     def test_no_fundamentals_insufficient(self, tmp_path):
         store = _store(tmp_path)  # no fundamentals.json

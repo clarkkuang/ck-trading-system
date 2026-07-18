@@ -13,6 +13,8 @@ BUY LADDER with invalidation rules, not a directional bet:
     | trend repair        | close > 200dma       | system dip-buy eligible |
     | revenue growth <10% | quarterly            | ladder INVALID, reassess|
     | ads off-track       | quarterly (manual)   | ladder INVALID          |
+    | attention declining | Nielsen share YoY <0 | ladder INVALID          |
+    |                     | for 2 quarters       | (AI-bear channel)       |
 
 Scenario seeds (post-Q2'26-earnings probabilities): bull $108/25%,
 base $79/55%, bear $54/20% -> weighted fair ~$80.05.
@@ -117,6 +119,18 @@ NFLX_RULES: tuple[AlertRule, ...] = (
         severity="trigger",
     ),
     AlertRule(
+        rule_id="nflx_sell_attention_decline_2q",
+        description="Nielsen 电视时长份额同比连续两季下滑 — AI 注意力熊案通道确认",
+        metric_key="nflx.fundamental",
+        dimensions={"field": "nielsen_share_yoy_pp"},
+        comparator="lt_consecutive",
+        threshold=0.0,
+        consecutive_periods=2,
+        max_gap_days=120,
+        action_label="失效: 注意力份额连续两季同比下滑 — 分发层迁移确认, 撤买单重审",
+        severity="trigger",
+    ),
+    AlertRule(
         rule_id="nflx_sell_margin_below_28",
         description="季度经营利润率跌破 28% — 利润机器失灵",
         metric_key="nflx.fundamental",
@@ -137,7 +151,8 @@ DEFAULT_FUNDAMENTALS: tuple[dict, ...] = (
     {"quarter": "2025Q2", "revenue_growth_pct": 15.9,
      "next_q_guide_growth_pct": None, "op_margin_pct": 34.1,
      "ads_on_track": 1.0, "fcf_billions": 2.267, "buyback_billions": None,
-     "notes": "历史基线"},
+     "nielsen_share_pct": 7.5, "nielsen_share_yoy_pp": None,
+     "notes": "历史基线; Nielsen Gauge 2025-04 份额 7.5%"},
     {"quarter": "2025Q3", "revenue_growth_pct": 17.2,
      "next_q_guide_growth_pct": None, "op_margin_pct": 28.2,
      "ads_on_track": 1.0, "fcf_billions": 2.660, "buyback_billions": None,
@@ -153,9 +168,11 @@ DEFAULT_FUNDAMENTALS: tuple[dict, ...] = (
     {"quarter": "2026Q2", "revenue_growth_pct": 13.4,
      "next_q_guide_growth_pct": 11.7, "op_margin_pct": 33.4,
      "ads_on_track": 1.0, "fcf_billions": 1.525, "buyback_billions": 4.7,
+     "nielsen_share_pct": 7.8, "nielsen_share_yoy_pp": 0.3,
      "notes": "2026-07-16 财报: Q3指引11.7%首破12%; 全年收窄$51.0-51.4B未上调; "
               "广告on track ~$3B; 史上最大单季回购$4.7B, 剩余授权$27.1B; "
-              "FCF含WBD费税务拖累(一次性); 观看时长披露降为年度"},
+              "FCF含WBD费税务拖累(一次性); 观看时长披露降为年度; "
+              "Nielsen 2026-04 份额 7.8% (+0.3pp YoY)"},
 )
 
 DEFAULT_CHECKLIST: tuple[dict, ...] = (
@@ -165,6 +182,8 @@ DEFAULT_CHECKLIST: tuple[dict, ...] = (
      "url": "https://ir.netflix.net/", "cadence_days": 92},
     {"id": "fy27_guide", "label": "FY27 指引(1月, 头号催化剂): 广告翻倍路径 + 增速是否守住双位数",
      "url": "https://ir.netflix.net/", "cadence_days": 180},
+    {"id": "nielsen_gauge", "label": "Nielsen Gauge 月报: NFLX 电视时长份额及同比 — 注意力失效条件的数据源(管理层已减披露, 只能外部盯)",
+     "url": "https://www.nielsen.com/data-center/the-gauge/", "cadence_days": 31},
     {"id": "pricing_churn", "label": "提价与 churn 动态(Antenna 等第三方数据)— 定价权压力测试",
      "url": "https://www.antenna.live/", "cadence_days": 62},
     {"id": "live_sports", "label": "直播/体育进展: NFL 扩约执行、MLB、拳击 — 广告库存的供给侧",

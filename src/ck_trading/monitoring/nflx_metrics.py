@@ -20,10 +20,13 @@ from ck_trading.monitoring.technicals import (  # noqa: F401
     weekly_sample,
 )
 
-# revenue growth CAN go negative (that is exactly the bear signal).
-_SIGNED_FIELDS = ("revenue_growth_pct", "next_q_guide_growth_pct")
+# revenue growth CAN go negative (that is exactly the bear signal);
+# nielsen_share_yoy_pp likewise (negative YoY share change IS the signal).
+_SIGNED_FIELDS = (
+    "revenue_growth_pct", "next_q_guide_growth_pct", "nielsen_share_yoy_pp",
+)
 _NON_NEGATIVE_FIELDS = ("fcf_billions", "buyback_billions")
-_PCT_RANGE_FIELDS = ("op_margin_pct",)
+_PCT_RANGE_FIELDS = ("op_margin_pct", "nielsen_share_pct")
 _BINARY_FIELDS = ("ads_on_track",)
 
 

@@ -42,7 +42,7 @@ st.title("NFLX 投资框架监控 — 买入阶梯")
 st.caption(
     "**成长→价值换手期的预承诺阶梯**(不看持仓成本)。买点: T1 ≤$70 / T2 ≤$63 "
     "/ 趋势修复(重上200日线)。失效条件(季度录入): 营收增速<10% / 下季指引<10% "
-    "/ 广告偏离$3B路径 / 利润率<28% — 任一触发即撤买单重审。"
+    "/ 广告偏离$3B路径 / 利润率<28% / Nielsen份额同比连负2季 — 任一触发即撤买单重审。"
     "情景: 牛$108(FY27广告接棒) / 基准$79(磨底) / 熊$54(失速)。"
 )
 
@@ -331,9 +331,7 @@ if not indicators.is_empty():
             y=[v * 100 for v in dip_w["value"].to_list()],
             mode="lines", line=dict(color="#d97706"),
         ))
-        f.add_hline(y=DIP_BUY_THRESHOLD * 100, line_dash="dot",
-                    line_color="#16a34a",
-                    annotation_text=f"买点线 {DIP_BUY_THRESHOLD:.1%}")
+        # NFLX 阶梯以绝对价格为准, 无 dip 阈值买点线(区别于 NVDA 页)
         f.update_layout(title="距60日高回撤 %(2年)", height=280,
                         margin=dict(t=40, b=20))
         st.plotly_chart(f, use_container_width=True)
@@ -407,7 +405,9 @@ else:
 st.subheader("季度基本面(手动录入 → 规则自动评估)")
 st.caption(
     "每季财报后录入(下次 **Q3 财报 ~2026-10 中,录成 2026Q3**;NFLX 财季=日历季)。"
-    "负数合法(增速转负正是信号); 广告on-track 填 1(在轨)或 0(偏离)。保存后规则立即重评。"
+    "负数合法(增速转负正是信号); 广告on-track 填 1(在轨)或 0(偏离)。"
+    "尼尔森两列来自 Gauge 月报(季末月打印值 + 同比变化, 管理层已减披露只能外部盯)。"
+    "保存后规则立即重评。"
 )
 
 fund_rows = [
@@ -419,6 +419,8 @@ fund_rows = [
         "广告on-track": q.get("ads_on_track"),
         "FCF $B": q.get("fcf_billions"),
         "回购 $B": q.get("buyback_billions"),
+        "尼尔森份额 %": q.get("nielsen_share_pct"),
+        "份额同比 pp": q.get("nielsen_share_yoy_pp"),
         "备注": q.get("notes", ""),
     }
     for q in quarters
@@ -427,7 +429,8 @@ edited_fund = st.data_editor(
     fund_rows or [{
         "季度": "", "营收增速 %": None, "下季指引 %": None,
         "经营利润率 %": None, "广告on-track": None, "FCF $B": None,
-        "回购 $B": None, "备注": "",
+        "回购 $B": None, "尼尔森份额 %": None, "份额同比 pp": None,
+        "备注": "",
     }],
     num_rows="dynamic", use_container_width=True, hide_index=True,
     column_config={
@@ -439,6 +442,10 @@ edited_fund = st.data_editor(
             format="%.0f", help="1=在轨, 0=偏离", min_value=0, max_value=1),
         "FCF $B": st.column_config.NumberColumn(format="%.2f"),
         "回购 $B": st.column_config.NumberColumn(format="%.1f"),
+        "尼尔森份额 %": st.column_config.NumberColumn(
+            format="%.1f", help="Nielsen Gauge 月报, 取季末月份的美国电视时长份额"),
+        "份额同比 pp": st.column_config.NumberColumn(
+            format="%+.1f", help="vs 去年同月, 百分点; 连续两季<0 → 注意力失效"),
         "备注": st.column_config.TextColumn(width="large"),
     },
     key="nflx_fund_editor",
@@ -458,6 +465,8 @@ if st.button("💾 保存季度数据并重评规则", key="save_nflx_fund"):
             "ads_on_track": row.get("广告on-track"),
             "fcf_billions": row.get("FCF $B"),
             "buyback_billions": row.get("回购 $B"),
+            "nielsen_share_pct": row.get("尼尔森份额 %"),
+            "nielsen_share_yoy_pp": row.get("份额同比 pp"),
             "notes": str(row.get("备注", "") or ""),
         })
     errors = nflx_metrics.validate_fundamentals(new_quarters)
@@ -519,6 +528,34 @@ if quarters:
             f.update_layout(title="季度回购 $B", height=240,
                             margin=dict(t=40, b=20))
             st.plotly_chart(f, use_container_width=True)
+
+    ns = fundamentals_series(quarters, "nielsen_share_pct")
+    nsy = fundamentals_series(quarters, "nielsen_share_yoy_pp")
+    if not ns.is_empty() or not nsy.is_empty():
+        c4, c5, _ = st.columns(3)
+        with c4:
+            if not ns.is_empty():
+                f = go.Figure(go.Scatter(
+                    x=ns["period_key"].to_list(), y=ns["value"].to_list(),
+                    mode="lines+markers", line=dict(color="#9333ea"),
+                ))
+                f.update_layout(title="Nielsen 电视时长份额 %", height=240,
+                                margin=dict(t=40, b=20))
+                st.plotly_chart(f, use_container_width=True)
+        with c5:
+            if not nsy.is_empty():
+                f = go.Figure(go.Bar(
+                    x=nsy["period_key"].to_list(), y=nsy["value"].to_list(),
+                    marker_color=[
+                        "#dc2626" if v < 0 else "#16a34a"
+                        for v in nsy["value"].to_list()
+                    ],
+                ))
+                f.add_hline(y=0, line_dash="dot", line_color="#dc2626")
+                f.update_layout(
+                    title="份额同比 pp(连负2季=注意力失效)", height=240,
+                    margin=dict(t=40, b=20))
+                st.plotly_chart(f, use_container_width=True)
 
 # Scenario probability editor
 # --------------------------------------------------------------------------
@@ -644,7 +681,9 @@ with st.sidebar:
         "- 趋势修复(重上200日线)= dip 门控重开\n\n"
         "**失效条件(任一触发→撤单重审)**\n"
         "- 营收增速 <**10%** / 下季指引 <**10%**\n"
-        "- 广告偏离 **$3B** 路径 / 利润率 <**28%**\n\n"
+        "- 广告偏离 **$3B** 路径 / 利润率 <**28%**\n"
+        "- Nielsen 份额同比**连负 2 季**(注意力失效, AI 熊案唯一\n"
+        "  真实通道; 管理层已减披露, 靠 Gauge 月报外部盯)\n\n"
         "**关键锚点(Q2'26 财报, 7/16)**\n"
         "- 增速轨迹: 17.6→16.2→13.4→**11.7%**(Q3指引)\n"
         "- 利润率 33.4%; 史上最大回购 $4.7B/季, 授权余 $27.1B\n"
