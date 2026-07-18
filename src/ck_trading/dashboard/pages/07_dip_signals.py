@@ -20,7 +20,16 @@ import polars as pl
 import streamlit as st
 
 from ck_trading.collectors.us_market import USMarketCollector
-from ck_trading.dashboard.data_cache import load_prices_for_tickers
+from ck_trading.dashboard.data_cache import (
+    load_nflx_alerts,
+    load_nvda_alerts,
+    load_prices_for_tickers,
+)
+from ck_trading.monitoring.frameworks import (
+    FRAMEWORK_TICKERS,
+    buy_sell_summary,
+    reconcile_verdict,
+)
 from ck_trading.portfolio.tracker import PortfolioTracker
 from ck_trading.storage.metadata_store import MetadataStore
 from ck_trading.storage.parquet_store import ParquetStore
@@ -304,6 +313,54 @@ if buys:
             for b in buys
         )
     )
+
+# --------------------------------------------------------------------------
+# Framework cross-reference — precedence: framework pages win for their tickers
+# --------------------------------------------------------------------------
+st.subheader("专属框架对照(NVDA / NFLX 以框架页为准)")
+st.caption(
+    "框架页 = **仓位授权层**(论点 + 预承诺价位, 回答 WHERE);本页 dip 系统 = "
+    "**时机确认层**(趋势门 + 反弹确认, 回答 WHEN)。两者分歧不是矛盾:框架触发时, "
+    "dip 判定只影响\"现在下单还是等反弹\", 不否决框架。"
+)
+
+_ALERT_LOADERS = {"NVDA": load_nvda_alerts, "NFLX": load_nflx_alerts}
+_by_ticker = {r["ticker"]: r for r in rows}
+_fw_rows = []
+_fw_actions: list[str] = []
+for _tk, _page in FRAMEWORK_TICKERS.items():
+    try:
+        _summary = buy_sell_summary(_ALERT_LOADERS[_tk]())
+    except Exception:  # noqa: BLE001 — missing store must not break the page
+        _summary = {"buy_triggered": [], "sell_triggered": [], "updated_at": None}
+    _dip_v = _by_ticker.get(_tk, {}).get("verdict", "INSUFFICIENT DATA")
+    _head, _why = reconcile_verdict(
+        bool(_summary["buy_triggered"]), bool(_summary["sell_triggered"]), _dip_v
+    )
+    _fw_state = (
+        "🔴 失效: " + ", ".join(
+            r["rule_id"].split("_sell_")[-1] for r in _summary["sell_triggered"])
+        if _summary["sell_triggered"]
+        else "🟢 买点: " + ", ".join(
+            r["rule_id"].split("_buy_")[-1] for r in _summary["buy_triggered"])
+        if _summary["buy_triggered"]
+        else "⚪ 未触发"
+    )
+    _fw_rows.append({
+        "Ticker": _tk,
+        "框架状态": _fw_state,
+        "本页 dip 判定": _dip_v,
+        "组合读法": _head,
+        "说明": _why,
+        "框架页": f"页 {_page.split('_')[0]}",
+    })
+    for _r in _summary["buy_triggered"] + _summary["sell_triggered"]:
+        if _r.get("action_label"):
+            _fw_actions.append(f"**{_tk}** · {_r['action_label']}")
+
+st.dataframe(_fw_rows, use_container_width=True, hide_index=True)
+for _a in _fw_actions:
+    st.info(_a)
 
 # --------------------------------------------------------------------------
 # Detailed table

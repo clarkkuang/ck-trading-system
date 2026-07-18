@@ -19,6 +19,12 @@ Quantitative value investing system for US and HK stocks.
   12.7% dip + 200dma technicals, weekly auto forward P/E, quarterly thesis
   rules) with verdict banner → [report](docs/nvda_analysis_report.md) ·
   [docs](docs/nvda_monitoring.md)
+- **NFLX Framework Monitor**: Pre-committed buy ladder (T1 $70 / T2 $63) with
+  quarterly invalidation rules incl. Nielsen attention share →
+  [docs](docs/nflx_monitoring.md)
+- **Signal semantics**: how the dip system (page 07, timing layer) composes
+  with the framework pages (authorization layer) →
+  [docs](docs/signal_semantics.md)
 
 ## Tech Stack
 
