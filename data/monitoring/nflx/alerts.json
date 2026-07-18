@@ -8,26 +8,26 @@
         },
         "fallback_used": false
       },
-      "episode_started": null,
-      "fired": false,
-      "first_period_key": null,
+      "episode_started": "2026-W29",
+      "fired": true,
+      "first_period_key": "2026-W29",
       "history": [
         {
           "period_key": "2026-W29",
-          "status": "ok",
-          "value": 74.3499984741211
+          "status": "triggered",
+          "value": 68.94999694824219
         }
       ],
-      "metric_value": 74.3499984741211,
+      "metric_value": 68.94999694824219,
       "period_key": "2026-W29",
       "required": 1,
       "resolved_at": null,
       "rule_id": "nflx_buy_ladder_t1",
       "severity": "trigger",
-      "status": "ok",
-      "streak": 0,
+      "status": "triggered",
+      "streak": 1,
       "threshold": 70.0,
-      "triggered_at": null
+      "triggered_at": "2026-07-18T17:08:26Z"
     },
     {
       "action_label": "\u4e70\u70b9T2: $60-63 \u533a\u95f4 \u2014 \u4e8c\u6279 $10-15K",
@@ -44,10 +44,10 @@
         {
           "period_key": "2026-W29",
           "status": "ok",
-          "value": 74.3499984741211
+          "value": 68.94999694824219
         }
       ],
-      "metric_value": 74.3499984741211,
+      "metric_value": 68.94999694824219,
       "period_key": "2026-W29",
       "required": 1,
       "resolved_at": null,
@@ -73,10 +73,10 @@
         {
           "period_key": "2026-W29",
           "status": "ok",
-          "value": -0.20901421126973596
+          "value": -0.2644405868099704
         }
       ],
-      "metric_value": -0.20901421126973596,
+      "metric_value": -0.2644405868099704,
       "period_key": "2026-W29",
       "required": 1,
       "resolved_at": null,
@@ -175,6 +175,37 @@
       "triggered_at": null
     },
     {
+      "action_label": "\u5931\u6548: \u6ce8\u610f\u529b\u4efd\u989d\u8fde\u7eed\u4e24\u5b63\u540c\u6bd4\u4e0b\u6ed1 \u2014 \u5206\u53d1\u5c42\u8fc1\u79fb\u786e\u8ba4, \u64a4\u4e70\u5355\u91cd\u5ba1",
+      "details": {
+        "dimensions_used": {
+          "field": "nielsen_share_yoy_pp"
+        },
+        "fallback_used": false,
+        "periods_available": 1,
+        "reason": "insufficient_history"
+      },
+      "episode_started": null,
+      "fired": false,
+      "first_period_key": null,
+      "history": [
+        {
+          "period_key": "2026Q2",
+          "status": "insufficient_data",
+          "value": 0.3
+        }
+      ],
+      "metric_value": 0.3,
+      "period_key": "2026Q2",
+      "required": 2,
+      "resolved_at": null,
+      "rule_id": "nflx_sell_attention_decline_2q",
+      "severity": "trigger",
+      "status": "insufficient_data",
+      "streak": 0,
+      "threshold": 0.0,
+      "triggered_at": null
+    },
+    {
       "action_label": "\u5931\u6548: \u5229\u6da6\u7387\u5931\u5b88 \u2014 \u57fa\u51c6\u60c5\u666f\u7684\u5730\u677f\u5047\u8bbe\u7834\u574f",
       "details": {
         "dimensions_used": {
@@ -204,5 +235,5 @@
       "triggered_at": null
     }
   ],
-  "updated_at": "2026-07-16T22:43:03Z"
+  "updated_at": "2026-07-18T17:08:26Z"
 }
