@@ -198,8 +198,24 @@ DEFAULT_CHECKLIST: tuple[dict, ...] = (
     },
     {
         "id": "att_quarterly_earnings",
-        "label": "AT&T 季报 — 录入 churn/融合率/FCF 到基本面表格 (Q2'26 约 7/22, FCF 指引 $4.0-4.5B)",
+        "label": "AT&T 季报 — Q3'26 (~10月下旬): hard gate FCF ≈$4.9B(管理层Q3同比持平指引, 显著低于则$18B+路径重新紧绷); "
+                 "融合率务必用有机口径(45→45已走平一格, 再平即触发年内首个黄灯); "
+                 "电话会追问: 光纤存量提价机制(Q2被'artful recalibration'搪塞)",
         "url": "https://investors.att.com/",
+        "cadence_days": 92,
+    },
+    {
+        "id": "cband_spectrum_sept",
+        "label": "C-band 频谱策略 — 9月董事会定调(Q2电话会Moffett之问被推迟); 关联: Q2未解释的频谱资产弃置费 + "
+                 "EchoStar 频谱7月底交割后的杠杆路径(净债回2.5x承诺)",
+        "url": "https://investors.att.com/",
+        "cadence_days": 31,
+    },
+    {
+        "id": "att_10q_check",
+        "label": "10-Q 核对 (~8月初): 频谱弃置费的归因与金额(是否与D2D合资的频谱集中相关) + "
+                 "净债/EBITDA 官方口径(监控里2.66x为估算) + EchoStar交割会计处理",
+        "url": "https://investors.att.com/sec-filings",
         "cadence_days": 92,
     },
     {
