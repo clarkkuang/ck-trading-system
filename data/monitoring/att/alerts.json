@@ -94,10 +94,15 @@
           "period_key": "2026Q1",
           "status": "ok",
           "value": 0.89
+        },
+        {
+          "period_key": "2026Q2",
+          "status": "ok",
+          "value": 0.86
         }
       ],
-      "metric_value": 0.89,
-      "period_key": "2026Q1",
+      "metric_value": 0.86,
+      "period_key": "2026Q2",
       "required": 1,
       "resolved_at": null,
       "rule_id": "att_churn_ge_095",
@@ -123,10 +128,15 @@
           "period_key": "2026Q1",
           "status": "ok",
           "value": 0.89
+        },
+        {
+          "period_key": "2026Q2",
+          "status": "ok",
+          "value": 0.86
         }
       ],
-      "metric_value": 0.89,
-      "period_key": "2026Q1",
+      "metric_value": 0.86,
+      "period_key": "2026Q2",
       "required": 1,
       "resolved_at": null,
       "rule_id": "att_churn_ge_110",
@@ -139,7 +149,7 @@
     {
       "action_label": "\u6d41\u5931\u8fde\u53473\u5b63 \u2014 \u7ed3\u6784\u6027\u6076\u5316\u786e\u8ba4",
       "details": {
-        "periods_available": 1,
+        "periods_available": 2,
         "periods_needed": 4,
         "reason": "insufficient_history"
       },
@@ -167,7 +177,7 @@
     {
       "action_label": "\u6346\u7ed1\u89c1\u9876 \u2014 \u878d\u5408\u7387\u8fde\u7eed\u4e24\u5b63\u8d70\u5e73/\u4e0b\u964d",
       "details": {
-        "periods_available": 1,
+        "periods_available": 2,
         "periods_needed": 3,
         "reason": "insufficient_history"
       },
@@ -200,27 +210,32 @@
         },
         "fallback_used": false
       },
-      "episode_started": "2026Q1",
-      "fired": true,
-      "first_period_key": "2026Q1",
+      "episode_started": null,
+      "fired": false,
+      "first_period_key": null,
       "history": [
         {
           "period_key": "2026Q1",
           "status": "triggered",
           "value": 2.5
+        },
+        {
+          "period_key": "2026Q2",
+          "status": "ok",
+          "value": 4.7
         }
       ],
-      "metric_value": 2.5,
-      "period_key": "2026Q1",
+      "metric_value": 4.7,
+      "period_key": "2026Q2",
       "required": 1,
-      "resolved_at": null,
+      "resolved_at": "2026-07-22T19:57:15Z",
       "rule_id": "att_fcf_below_4b",
       "severity": "trigger",
-      "status": "triggered",
-      "streak": 1,
+      "status": "ok",
+      "streak": 0,
       "threshold": 4.0,
-      "triggered_at": "2026-07-22T04:28:09Z"
+      "triggered_at": null
     }
   ],
-  "updated_at": "2026-07-22T04:29:24Z"
+  "updated_at": "2026-07-22T19:57:15Z"
 }
