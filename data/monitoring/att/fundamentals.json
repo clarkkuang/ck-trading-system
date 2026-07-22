@@ -2,14 +2,14 @@
   "quarters": [
     {
       "capex_billions": null,
-      "churn_pct": 0.83,
+      "churn_pct": 0.89,
       "convergence_pct": 45.0,
-      "fcf_billions": 4.8,
-      "net_debt_ebitda": 3.2,
-      "notes": "\u62a5\u544a v3 \u5df2\u77e5\u503c: churn 0.83%(\u9636\u68af\u57fa\u7ebf), \u878d\u5408\u7387\u8fd145%\u521b\u6700\u5feb\u589e\u901f, \u8425\u6536$315\u4ebf(+2.9%); \u51c0\u503a\u52a1/EBITDA\u7ea63.2x(Lumen+EchoStar\u4ea4\u6613\u540e)",
+      "fcf_billions": 2.5,
+      "net_debt_ebitda": 2.71,
+      "notes": "报告 v3 已知值: churn 0.83%(阶梯基线), 融合率近45%创最快增速, 营收$315亿(+2.9%); 净债务/EBITDA约3.2x(Lumen+EchoStar交易后) | 2026-07-18 勘误: 按官方Q1新闻稿修正 churn 0.83→0.89 / FCF 4.8→2.5 (yoy 3.1) / 净债 3.2→2.71; 原录入为7月初分析时的估计值",
       "quarter": "2026Q1"
     }
   ],
-  "updated_at": "2026-07-03T22:01:46Z",
+  "updated_at": "2026-07-22T04:28:09Z",
   "version": 1
 }
