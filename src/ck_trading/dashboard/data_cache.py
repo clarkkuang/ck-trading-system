@@ -114,6 +114,27 @@ def load_nflx_json(name: str) -> dict:
 
 
 @st.cache_data(ttl=_TTL, show_spinner=False)
+def load_intc_monitoring(name: str) -> pl.DataFrame:
+    from ck_trading.monitoring.intc_pipeline import intc_store
+
+    return intc_store().load(name)
+
+
+@st.cache_data(ttl=_TTL, show_spinner=False)
+def load_intc_alerts() -> dict:
+    from ck_trading.monitoring.intc_pipeline import intc_store
+
+    return intc_store().load_alerts()
+
+
+@st.cache_data(ttl=_TTL, show_spinner=False)
+def load_intc_json(name: str) -> dict:
+    from ck_trading.monitoring.intc_pipeline import intc_store
+
+    return intc_store().load_json(name, default={}) or {}
+
+
+@st.cache_data(ttl=_TTL, show_spinner=False)
 def price_count(market: str) -> int:
     """Return row count without materialising the full DataFrame."""
     from pathlib import Path

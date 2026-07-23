@@ -22,6 +22,10 @@ Quantitative value investing system for US and HK stocks.
 - **NFLX Framework Monitor**: Pre-committed buy ladder (T1 $70 / T2 $63) with
   quarterly invalidation rules incl. Nielsen attention share →
   [docs](docs/nflx_monitoring.md)
+- **INTC Framework Monitor**: Binary foundry-turnaround option — P/B +
+  sum-of-parts valuation (not forward P/E), absolute-price value ladder
+  ($72/$55/$40), foundry-milestone thesis rules →
+  [report](docs/intel_analysis_report.md) · [docs](docs/intc_monitoring.md)
 - **Signal semantics**: how the dip system (page 07, timing layer) composes
   with the framework pages (authorization layer) →
   [docs](docs/signal_semantics.md)

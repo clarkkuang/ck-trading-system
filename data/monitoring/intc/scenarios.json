@@ -1,0 +1,38 @@
+{
+  "scenarios": [
+    {
+      "id": "bull",
+      "implied_price": 170.0,
+      "label": "\u725b/\u5c3e\u90e8\u4e0a\u884c: \u4ee3\u5de5\u5916\u90e8\u8425\u6536\u62d0\u70b9, \u91cd\u4f30\u4e3a'\u7f8e\u56fd\u7248TSMC'",
+      "price_high": 190.0,
+      "price_low": 150.0,
+      "probability_pct": 15.0
+    },
+    {
+      "id": "base",
+      "implied_price": 95.0,
+      "label": "\u57fa\u51c6: AI\u987a\u98ce\u5ef6\u7eed\u4f46\u4ee3\u5de5\u672a\u8bc1\u660e, \u533a\u95f4\u9707\u8361",
+      "price_high": 110.0,
+      "price_low": 80.0,
+      "probability_pct": 35.0
+    },
+    {
+      "id": "bear",
+      "implied_price": 57.0,
+      "label": "\u718a: AI capex\u6d88\u5316+\u4f30\u503c\u538b\u7f29, \u4ee3\u5de5\u4e8f\u635f\u5ef6\u7eed",
+      "price_high": 70.0,
+      "price_low": 45.0,
+      "probability_pct": 35.0
+    },
+    {
+      "id": "tail",
+      "implied_price": 30.0,
+      "label": "\u5c3e\u90e8\u4e0b\u884c: \u4ee3\u5de5\u51cf\u503c, \u6218\u7565/\u653f\u5e9c\u8f6f\u5e95\u6258\u4f4f",
+      "price_high": 40.0,
+      "price_low": 20.0,
+      "probability_pct": 15.0
+    }
+  ],
+  "updated_at": "2026-07-23T23:47:53Z",
+  "version": 1
+}
