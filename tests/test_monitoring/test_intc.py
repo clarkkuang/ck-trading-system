@@ -204,6 +204,24 @@ class TestPipeline:
         assert by_id["intc_sell_dcai_decel_2q"].fired
         assert by_id["intc_sell_dcai_decel_2q"].streak == 2
 
+    def test_build_ahead_tripwire(self, tmp_path):
+        # prefill Q1 $174M (below), Q2 $293M (above) -> streak 0, not tripped now
+        px = _daily_prices("INTC", date(2026, 7, 24), 260, lambda i: 100.0)
+        result, _ = _run(tmp_path, px)
+        by_id = {r.rule_id: r for r in result.rule_results}
+        assert not by_id["intc_sell_build_ahead_tripwire"].fired  # Q2 293 > 250
+        # two consecutive quarters of negligible external rev -> trips
+        stalled = list(DEFAULT_FUNDAMENTALS) + [
+            {"quarter": "2026Q3", "foundry_external_rev_millions": 180.0,
+             "book_value_per_share": 22.5},
+            {"quarter": "2026Q4", "foundry_external_rev_millions": 210.0,
+             "book_value_per_share": 23.0},
+        ]
+        result2, _ = _run(tmp_path, px, quarters=stalled)
+        by_id2 = {r.rule_id: r for r in result2.rule_results}
+        assert by_id2["intc_sell_build_ahead_tripwire"].fired
+        assert by_id2["intc_sell_build_ahead_tripwire"].streak == 2
+
     def test_14a_commitment_fires_buy(self, tmp_path):
         px = _daily_prices("INTC", date(2026, 7, 24), 260, lambda i: 100.0)
         good = list(DEFAULT_FUNDAMENTALS) + [{

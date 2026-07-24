@@ -62,7 +62,7 @@ refresh_col, status_col = st.columns([1, 4])
 with refresh_col:
     run_clicked = st.button(
         "🔄 Run collection now", type="primary", use_container_width=True,
-        help="拉最新日线并重评 14 条规则(约 10 秒)",
+        help="拉最新日线并重评 15 条规则(约 10 秒)",
     )
 with status_col:
     if st.session_state.get("intc_run_summary"):
@@ -180,7 +180,7 @@ elif B > 0 and S > 0:
 else:
     st.info("⚪ **持有/观望 — 无 trigger 级信号**(初始判定: 卖出观察区, 不在现价加仓)")
 if insufficient:
-    st.caption(f"{insufficient}/14 规则数据不足(录入季度数据后自动评估; "
+    st.caption(f"{insufficient}/15 规则数据不足(录入季度数据后自动评估; "
                "18A良率官方未披露, 靠清单人工跟踪)")
 
 # --------------------------------------------------------------------------
@@ -206,6 +206,8 @@ def _fmt_value(rule, value):
         return f"${value:.1f}B"
     if field == "foundry_14a_firm_customers":
         return f"{value:.0f} 家"
+    if field == "foundry_external_rev_millions":
+        return f"${value:.0f}M"
     return f"{value}"
 
 
@@ -527,7 +529,9 @@ with st.sidebar:
         "- 硬地板 $20-25(政府$20.47+账面$22)= 软底非硬底\n\n"
         "**论点层失效条件**\n"
         "- 代工季亏重新走阔 / DCAI增速连2季降 / AMD服务器≥50%\n"
-        "- 18A年底<70%良率 / FCF连2季负\n\n"
+        "- 18A年底<70%良率 / FCF连2季负\n"
+        "- **KILL-tripwire**: capex锁定>$20B 且 外部代工营收连2季<$250M/季"
+        "($1B年化)= 烧钱无外部, bear/tail权重上移\n\n"
         "**关键锚点(Q2'26, 7/23)**\n"
         "- 营收$16.1B(+25%,15年最快); Non-GAAP EPS$0.42(超预期~翻倍)\n"
         "- DCAI$6.26B(+59%); 代工亏-$2.09B(连续收窄)\n"

@@ -178,6 +178,17 @@ INTC_RULES: tuple[AlertRule, ...] = (
         severity="advisory",
     ),
     AlertRule(
+        rule_id="intc_sell_build_ahead_tripwire",
+        description="KILL-tripwire: 外部代工营收连续2季 <$250M/季(<$1B年化), "
+                    "而capex已锁定>$20B — '烧钱但外部不来'(常驻前提: 2026 capex>$20B已由管理层指引)",
+        metric_key="intc.fundamental",
+        dimensions={"field": "foundry_external_rev_millions"},
+        comparator="lt_consecutive", threshold=250.0, consecutive_periods=2,
+        max_gap_days=120,
+        action_label="KILL-tripwire: capex烧钱+外部代工近平连2季 — bear/tail权重上移, 减仓",
+        severity="trigger",
+    ),
+    AlertRule(
         rule_id="intc_sell_amd_server_share_50",
         description="AMD服务器CPU收入份额 >=50%(现46.2%, 过半=x86 DC结构性侵蚀确认)",
         metric_key="intc.fundamental",

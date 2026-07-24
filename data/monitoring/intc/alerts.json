@@ -368,6 +368,35 @@
       "triggered_at": null
     },
     {
+      "action_label": "KILL-tripwire: capex\u70e7\u94b1+\u5916\u90e8\u4ee3\u5de5\u8fd1\u5e73\u8fde2\u5b63 \u2014 bear/tail\u6743\u91cd\u4e0a\u79fb, \u51cf\u4ed3",
+      "details": {
+        "dimensions_used": {
+          "field": "foundry_external_rev_millions"
+        },
+        "fallback_used": false
+      },
+      "episode_started": null,
+      "fired": false,
+      "first_period_key": null,
+      "history": [
+        {
+          "period_key": "2026Q2",
+          "status": "ok",
+          "value": 293.0
+        }
+      ],
+      "metric_value": 293.0,
+      "period_key": "2026Q2",
+      "required": 2,
+      "resolved_at": null,
+      "rule_id": "intc_sell_build_ahead_tripwire",
+      "severity": "trigger",
+      "status": "ok",
+      "streak": 0,
+      "threshold": 250.0,
+      "triggered_at": null
+    },
+    {
       "action_label": "\u8bba\u70b9\u5356\u70b9: AMD\u670d\u52a1\u5668\u4efd\u989d\u8fc7\u534a \u2014 x86\u6570\u636e\u4e2d\u5fc3\u7ed3\u6784\u6027\u4fb5\u8680\u786e\u8ba4",
       "details": {
         "dimensions_used": {
@@ -397,5 +426,5 @@
       "triggered_at": null
     }
   ],
-  "updated_at": "2026-07-24T00:38:21Z"
+  "updated_at": "2026-07-24T00:45:01Z"
 }
