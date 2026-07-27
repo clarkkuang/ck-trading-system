@@ -15,10 +15,10 @@
         {
           "period_key": "2026-W30",
           "status": "ok",
-          "value": 100.2300033569336
+          "value": 92.31999969482422
         }
       ],
-      "metric_value": 100.2300033569336,
+      "metric_value": 92.31999969482422,
       "period_key": "2026-W30",
       "required": 1,
       "resolved_at": null,
@@ -44,10 +44,10 @@
         {
           "period_key": "2026-W30",
           "status": "ok",
-          "value": 100.2300033569336
+          "value": 92.31999969482422
         }
       ],
-      "metric_value": 100.2300033569336,
+      "metric_value": 92.31999969482422,
       "period_key": "2026-W30",
       "required": 1,
       "resolved_at": null,
@@ -73,10 +73,10 @@
         {
           "period_key": "2026-W30",
           "status": "ok",
-          "value": 100.2300033569336
+          "value": 92.31999969482422
         }
       ],
-      "metric_value": 100.2300033569336,
+      "metric_value": 92.31999969482422,
       "period_key": "2026-W30",
       "required": 1,
       "resolved_at": null,
@@ -102,10 +102,10 @@
         {
           "period_key": "2026-W30",
           "status": "triggered",
-          "value": 0.530680083774377
+          "value": 0.403906816328353
         }
       ],
-      "metric_value": 0.530680083774377,
+      "metric_value": 0.403906816328353,
       "period_key": "2026-W30",
       "required": 2,
       "resolved_at": null,
@@ -131,10 +131,10 @@
         {
           "period_key": "2026-W30",
           "status": "ok",
-          "value": 4.518936129708458
+          "value": 4.162308372174221
         }
       ],
-      "metric_value": 4.518936129708458,
+      "metric_value": 4.162308372174221,
       "period_key": "2026-W30",
       "required": 1,
       "resolved_at": null,
@@ -215,10 +215,10 @@
         {
           "period_key": "2026-W30",
           "status": "ok",
-          "value": 0.530680083774377
+          "value": 0.403906816328353
         }
       ],
-      "metric_value": 0.530680083774377,
+      "metric_value": 0.403906816328353,
       "period_key": "2026-W30",
       "required": 4,
       "resolved_at": null,
@@ -244,10 +244,10 @@
         {
           "period_key": "2026-W30",
           "status": "ok",
-          "value": 4.518936129708458
+          "value": 4.162308372174221
         }
       ],
-      "metric_value": 4.518936129708458,
+      "metric_value": 4.162308372174221,
       "period_key": "2026-W30",
       "required": 1,
       "resolved_at": null,
@@ -426,5 +426,5 @@
       "triggered_at": null
     }
   ],
-  "updated_at": "2026-07-24T00:45:01Z"
+  "updated_at": "2026-07-27T11:38:09Z"
 }
