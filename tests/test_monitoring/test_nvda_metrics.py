@@ -177,6 +177,17 @@ class TestForwardPE:
 
 
 class TestValidateFundamentals:
+    def test_negative_ar_days_rejected(self):
+        errs = validate_fundamentals([{"quarter": "2026Q3", "ar_days": -5.0}])
+        assert any("ar_days" in e for e in errs)
+
+    def test_exposure_over_100_allowed(self):
+        # guarantees can exceed 100% of TTM revenue — deliberately not capped
+        errs = validate_fundamentals([
+            {"quarter": "2026Q3", "customer_financing_exposure_pct": 130.0}
+        ])
+        assert errs == []
+
     def test_negative_growth_allowed(self):
         errs = validate_fundamentals([{
             "quarter": "2026Q3",

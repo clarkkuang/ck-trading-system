@@ -36,7 +36,7 @@
       "metric_value": 0.12259272283809068,
       "period_key": "2026-W30",
       "required": 1,
-      "resolved_at": "2026-07-27T10:51:20Z",
+      "resolved_at": "2026-07-28T03:34:21Z",
       "rule_id": "nvda_buy_dip_gated",
       "severity": "trigger",
       "status": "ok",
@@ -290,7 +290,61 @@
       "streak": 0,
       "threshold": 70.0,
       "triggered_at": null
+    },
+    {
+      "action_label": "\u4fe1\u7528\u9884\u8b66: AR\u5929\u6570\u8fde\u53472\u5b63 \u2014 \u6536\u5165\u8d28\u91cf\u6076\u5316, \u6838\u5bf910-Q\u5e94\u6536\u660e\u7ec6",
+      "details": {
+        "periods_available": 0,
+        "periods_needed": 3,
+        "reason": "insufficient_history"
+      },
+      "episode_started": null,
+      "fired": false,
+      "first_period_key": null,
+      "history": [
+        {
+          "period_key": null,
+          "status": "insufficient_data",
+          "value": null
+        }
+      ],
+      "metric_value": null,
+      "period_key": null,
+      "required": 2,
+      "resolved_at": null,
+      "rule_id": "nvda_sell_ar_days_rising_2q",
+      "severity": "advisory",
+      "status": "insufficient_data",
+      "streak": 0,
+      "threshold": 0.0,
+      "triggered_at": null
+    },
+    {
+      "action_label": "\u4fe1\u7528\u5356\u70b9: \u5ba2\u6237\u878d\u8d44\u655e\u53e3\u226525%\u8425\u6536 \u2014 vendor financing\u665a\u5468\u671f\u6807\u8bb0, \u51cf\u4ed3\u91cd\u5ba1",
+      "details": {
+        "reason": "no_data"
+      },
+      "episode_started": null,
+      "fired": false,
+      "first_period_key": null,
+      "history": [
+        {
+          "period_key": null,
+          "status": "insufficient_data",
+          "value": null
+        }
+      ],
+      "metric_value": null,
+      "period_key": null,
+      "required": 1,
+      "resolved_at": null,
+      "rule_id": "nvda_sell_financing_exposure_25",
+      "severity": "trigger",
+      "status": "insufficient_data",
+      "streak": 0,
+      "threshold": 25.0,
+      "triggered_at": null
     }
   ],
-  "updated_at": "2026-07-27T10:51:20Z"
+  "updated_at": "2026-07-28T03:34:21Z"
 }

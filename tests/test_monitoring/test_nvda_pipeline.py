@@ -246,6 +246,43 @@ class TestThesisRules:
         r = _by_id(self._run_with_quarters(tmp_path, quarters))
         assert r["nvda_sell_gm_below_70"].status == "triggered"
 
+    # ---- credit channel (added after the 2026-07-27 circular-financing rout)
+    def test_financing_exposure_25_inclusive(self, tmp_path):
+        quarters = [{"quarter": "2026Q3", "customer_financing_exposure_pct": 25.0}]
+        r = _by_id(self._run_with_quarters(tmp_path, quarters))
+        assert r["nvda_sell_financing_exposure_25"].status == "triggered"
+
+    def test_financing_exposure_below_ok(self, tmp_path):
+        quarters = [{"quarter": "2026Q3", "customer_financing_exposure_pct": 8.0}]
+        r = _by_id(self._run_with_quarters(tmp_path, quarters))
+        assert r["nvda_sell_financing_exposure_25"].status == "ok"
+
+    def test_ar_days_rising_2q_fires(self, tmp_path):
+        quarters = [
+            {"quarter": "2026Q1", "ar_days": 53.0},
+            {"quarter": "2026Q2", "ar_days": 58.0},
+            {"quarter": "2026Q3", "ar_days": 64.0},
+        ]
+        r = _by_id(self._run_with_quarters(tmp_path, quarters))
+        assert r["nvda_sell_ar_days_rising_2q"].status == "triggered"
+        assert r["nvda_sell_ar_days_rising_2q"].streak == 2
+
+    def test_ar_days_one_rise_not_enough(self, tmp_path):
+        quarters = [
+            {"quarter": "2026Q1", "ar_days": 53.0},
+            {"quarter": "2026Q2", "ar_days": 50.0},
+            {"quarter": "2026Q3", "ar_days": 56.0},
+        ]
+        r = _by_id(self._run_with_quarters(tmp_path, quarters))
+        assert r["nvda_sell_ar_days_rising_2q"].status == "ok"
+        assert r["nvda_sell_ar_days_rising_2q"].streak == 1
+
+    def test_credit_fields_insufficient_on_prefill(self, tmp_path):
+        # prefill leaves both credit fields null until the 8/26 10-Q
+        r = _by_id(self._run_with_quarters(tmp_path, None))
+        assert r["nvda_sell_ar_days_rising_2q"].status == "insufficient_data"
+        assert r["nvda_sell_financing_exposure_25"].status == "insufficient_data"
+
 
 class TestInfrastructure:
     def test_dry_run_writes_nothing(self, tmp_path, steady_prices):

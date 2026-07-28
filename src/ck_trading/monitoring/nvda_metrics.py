@@ -23,9 +23,12 @@ from ck_trading.monitoring.technicals import (  # noqa: F401
 )
 
 # Fields where a NEGATIVE value is meaningful signal, not bad data.
+# exposure ratio deliberately NOT range-capped: guarantees can exceed 100%
+# of TTM revenue (the OpenAI $250B talks alone imply ~77%).
 _SIGNED_FIELDS = ("dc_qoq_growth_pct", "guide_vs_consensus_pct")
 _NON_NEGATIVE_FIELDS = (
     "dc_revenue_billions", "total_revenue_billions", "forward_eps_consensus",
+    "ar_days", "customer_financing_exposure_pct",
 )
 _PCT_RANGE_FIELDS = ("gross_margin_pct", "asic_server_share_pct")
 

@@ -112,10 +112,14 @@ DEFAULT_FUNDAMENTALS: tuple[dict, ...] = (
         "gross_margin_pct": 75.0,
         "asic_server_share_pct": 27.8,
         "forward_eps_consensus": 7.0,
+        "ar_days": None,
+        "customer_financing_exposure_pct": None,
         "notes": (
             "FY27Q1(截至2026-04-26, 2026-05-20发布)。营收+85% YoY/+20% QoQ;"
             "DC +92% YoY/+21% QoQ;Q2指引$91B vs 共识$87B(+4.6%);毛利率75.0%"
             "(non-GAAP);ASIC份额27.8%为TrendForce 2026全年预测;指引不含中国DC。"
+            "信用通道字段(ar_days/敞口比)自8/26的10-Q起回填——2026-07-27循环融资"
+            "抛售(OpenAI $250B担保谈判+SK $500B, NVDA CDS单日+14bp创纪录)后新增。"
         ),
     },
 )
@@ -221,6 +225,32 @@ NVDA_RULES: tuple[AlertRule, ...] = (
         action_label="论点卖点: 毛利率<70% — 定价权侵蚀",
         severity="trigger",
     ),
+    # ---- 信用通道(2026-07-27 循环融资抛售后新增) -------------------------
+    AlertRule(
+        rule_id="nvda_sell_ar_days_rising_2q",
+        description="应收账款天数连续2季上升 — 循环融资的会计指纹(收入质量预警)",
+        metric_key="nvda.fundamental",
+        dimensions={"field": "ar_days"},
+        comparator="rising_streak",
+        threshold=0.0,
+        consecutive_periods=2,
+        max_gap_days=120,
+        action_label="信用预警: AR天数连升2季 — 收入质量恶化, 核对10-Q应收明细",
+        severity="advisory",
+    ),
+    AlertRule(
+        rule_id="nvda_sell_financing_exposure_25",
+        description="客户融资敞口(担保+客户股权+承诺)/TTM营收 ≥ 25% — 朗讯红线在20%+; "
+                    "OpenAI $250B担保若签署将直接击穿",
+        metric_key="nvda.fundamental",
+        dimensions={"field": "customer_financing_exposure_pct"},
+        comparator="gt_consecutive",
+        threshold=25.0,
+        inclusive=True,
+        max_gap_days=120,
+        action_label="信用卖点: 客户融资敞口≥25%营收 — vendor financing晚周期标记, 减仓重审",
+        severity="trigger",
+    ),
 )
 
 # ---------------------------------------------------------------------------
@@ -253,9 +283,18 @@ DEFAULT_CHECKLIST: tuple[dict, ...] = (
     },
     {
         "id": "nvda_earnings_entry",
-        "label": "NVDA 财报录入 — 下次 ~2026-08-26 (FY27Q2→录成2026Q3): DC营收/QoQ/指引差/毛利率/前瞻EPS",
+        "label": "NVDA 财报录入 — 下次 ~2026-08-26 (FY27Q2→录成2026Q3): DC营收/QoQ/指引差/毛利率/前瞻EPS "
+                 "+ 信用通道两项: 10-Q承诺与或有事项(担保/客户股权→敞口比)、应收账款天数",
         "url": "https://investor.nvidia.com/",
         "cadence_days": 92,
+    },
+    {
+        "id": "nvda_credit_conditions",
+        "label": "信用条件月检(2026-07-27循环融资抛售后新增): NVDA 5Y CDS水平+周变速(预警: 单周+10bp或破100bp; "
+                 "7/27曾单日+14bp至82bp创纪录) · Oracle/Meta CDS · AI债IG利差 · OpenAI/neocloud融资新闻 — "
+                 "客户的资金成本=未来订单的贴现率; 数据源ICE无免费feed只能人工",
+        "url": "https://www.bloomberg.com/quote/NVDA:US",
+        "cadence_days": 31,
     },
     {
         "id": "chip_cycle",

@@ -60,7 +60,7 @@ refresh_col, status_col = st.columns([1, 4])
 with refresh_col:
     run_clicked = st.button(
         "🔄 Run collection now", type="primary", use_container_width=True,
-        help="拉最新日线并重评 8 条规则(约 10 秒)",
+        help="拉最新日线并重评 10 条规则(约 10 秒)",
     )
 with status_col:
     if st.session_state.get("nvda_run_summary"):
@@ -172,7 +172,7 @@ elif B > 0 and S > 0:
 else:
     st.info("⚪ **持有/观望 — 无活跃信号**")
 if insufficient:
-    st.caption(f"{insufficient}/8 规则数据不足(录入季度数据后自动评估)")
+    st.caption(f"{insufficient}/10 规则数据不足(录入季度数据后自动评估)")
 
 # --------------------------------------------------------------------------
 # Buy / sell card groups
@@ -194,6 +194,10 @@ def _fmt_value(rule, value):
         return f"{value:.1f}%"
     if field == "asic_server_share_pct":
         return f"{value:.0f}%"
+    if field == "ar_days":
+        return f"{value:.0f} 天"
+    if field == "customer_financing_exposure_pct":
+        return f"{value:.0f}%营收"
     return f"{value}"
 
 
@@ -417,6 +421,8 @@ fund_rows = [
         "毛利率 %": q.get("gross_margin_pct"),
         "ASIC份额 %": q.get("asic_server_share_pct"),
         "前瞻EPS $": q.get("forward_eps_consensus"),
+        "AR天数": q.get("ar_days"),
+        "融资敞口 %营收": q.get("customer_financing_exposure_pct"),
         "备注": q.get("notes", ""),
     }
     for q in quarters
@@ -425,7 +431,7 @@ edited_fund = st.data_editor(
     fund_rows or [{
         "季度": "", "DC营收 $B": None, "DC QoQ %": None, "总营收 $B": None,
         "指引vs共识 %": None, "毛利率 %": None, "ASIC份额 %": None,
-        "前瞻EPS $": None, "备注": "",
+        "前瞻EPS $": None, "AR天数": None, "融资敞口 %营收": None, "备注": "",
     }],
     num_rows="dynamic", use_container_width=True, hide_index=True,
     column_config={
@@ -437,6 +443,10 @@ edited_fund = st.data_editor(
         "毛利率 %": st.column_config.NumberColumn(format="%.1f"),
         "ASIC份额 %": st.column_config.NumberColumn(format="%.1f"),
         "前瞻EPS $": st.column_config.NumberColumn(format="%.2f"),
+        "AR天数": st.column_config.NumberColumn(
+            format="%.0f", help="10-Q应收÷(季营收/91天); 连升2季=收入质量预警"),
+        "融资敞口 %营收": st.column_config.NumberColumn(
+            format="%.0f", help="(担保+客户股权+承诺)÷TTM营收; ≥25%触发(朗讯红线20%+); 可>100"),
         "备注": st.column_config.TextColumn(width="large"),
     },
     key="nvda_fund_editor",
@@ -457,6 +467,8 @@ if st.button("💾 保存季度数据并重评规则", key="save_nvda_fund"):
             "gross_margin_pct": row.get("毛利率 %"),
             "asic_server_share_pct": row.get("ASIC份额 %"),
             "forward_eps_consensus": row.get("前瞻EPS $"),
+            "ar_days": row.get("AR天数"),
+            "customer_financing_exposure_pct": row.get("融资敞口 %营收"),
             "notes": str(row.get("备注", "") or ""),
         })
     errors = nvda_metrics.validate_fundamentals(new_quarters)
@@ -638,10 +650,13 @@ if st.button("💾 保存清单", key="save_nvda_checklist"):
 with st.sidebar:
     st.header("论点速查")
     st.markdown(
-        "**三层阈值**\n"
+        "**三层阈值 + 信用通道**\n"
         "- 技术: 回撤≥**12.7%**且趋势内=买 / 连续**4周**破200日线=卖\n"
         "- 估值: P/E<**25x**买 / >**45x**卖\n"
-        "- 论点: DC减速**2季** / 指引**<0** / ASIC≥**35%** / 毛利<**70%**\n\n"
+        "- 论点: DC减速**2季** / 指引**<0** / ASIC≥**35%** / 毛利<**70%**\n"
+        "- **信用**(7/27循环融资抛售后新增): 客户融资敞口≥**25%**营收=卖"
+        "(朗讯红线20%+) / AR天数连升**2季**=预警; NVDA自身CDS单周+10bp或"
+        "破100bp=清单预警(7/27曾+14bp至82bp创纪录)\n\n"
         "**关键锚点(2026-07)**\n"
         "- Q1 FY27: 营收$81.6B(+85%), DC$75.2B, 毛利75%\n"
         "- Hyperscaler capex 2026: ~$725B(+77%)\n"
