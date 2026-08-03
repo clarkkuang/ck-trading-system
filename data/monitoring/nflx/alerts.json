@@ -8,9 +8,9 @@
         },
         "fallback_used": false
       },
-      "episode_started": "2026-W29",
-      "fired": true,
-      "first_period_key": "2026-W29",
+      "episode_started": null,
+      "fired": false,
+      "first_period_key": null,
       "history": [
         {
           "period_key": "2026-W29",
@@ -21,18 +21,23 @@
           "period_key": "2026-W30",
           "status": "triggered",
           "value": 68.88999938964844
+        },
+        {
+          "period_key": "2026-W31",
+          "status": "ok",
+          "value": 71.70999908447266
         }
       ],
-      "metric_value": 68.88999938964844,
-      "period_key": "2026-W30",
+      "metric_value": 71.70999908447266,
+      "period_key": "2026-W31",
       "required": 1,
-      "resolved_at": null,
+      "resolved_at": "2026-08-03T10:59:42Z",
       "rule_id": "nflx_buy_ladder_t1",
       "severity": "trigger",
-      "status": "triggered",
-      "streak": 2,
+      "status": "ok",
+      "streak": 0,
       "threshold": 70.0,
-      "triggered_at": "2026-07-18T17:08:26Z"
+      "triggered_at": null
     },
     {
       "action_label": "\u4e70\u70b9T2: $60-63 \u533a\u95f4 \u2014 \u4e8c\u6279 $10-15K",
@@ -55,10 +60,15 @@
           "period_key": "2026-W30",
           "status": "ok",
           "value": 68.88999938964844
+        },
+        {
+          "period_key": "2026-W31",
+          "status": "ok",
+          "value": 71.70999908447266
         }
       ],
-      "metric_value": 68.88999938964844,
-      "period_key": "2026-W30",
+      "metric_value": 71.70999908447266,
+      "period_key": "2026-W31",
       "required": 1,
       "resolved_at": null,
       "rule_id": "nflx_buy_ladder_t2",
@@ -89,10 +99,15 @@
           "period_key": "2026-W30",
           "status": "ok",
           "value": -0.25736109494560744
+        },
+        {
+          "period_key": "2026-W31",
+          "status": "ok",
+          "value": -0.21457889650702833
         }
       ],
-      "metric_value": -0.25736109494560744,
-      "period_key": "2026-W30",
+      "metric_value": -0.21457889650702833,
+      "period_key": "2026-W31",
       "required": 1,
       "resolved_at": null,
       "rule_id": "nflx_buy_trend_repair",
@@ -250,5 +265,5 @@
       "triggered_at": null
     }
   ],
-  "updated_at": "2026-07-27T10:56:59Z"
+  "updated_at": "2026-08-03T10:59:42Z"
 }
