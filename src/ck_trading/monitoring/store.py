@@ -175,23 +175,65 @@ class MonitoringStore:
     def checklist_path(self) -> Path:
         return self.base_dir / "checklist.json"
 
-    def load_checklist(self) -> list[dict]:
-        """Load checklist items, seeding defaults on first use (never writes)."""
-        if self.checklist_path.exists():
-            try:
-                return json.loads(self.checklist_path.read_text())
-            except (json.JSONDecodeError, OSError):
-                pass
+    #: keys owned by checklist.json; everything else comes from the config seed
+    CHECKLIST_STATE_KEYS = ("last_checked", "notes")
+
+    def _checklist_seed_items(self) -> tuple[dict, ...] | list[dict]:
         seed = self._checklist_seed
         if seed is None:
             from ck_trading.monitoring.rules_config import DEFAULT_CHECKLIST
 
             seed = DEFAULT_CHECKLIST
-        return [{**item, "last_checked": None, "notes": ""} for item in seed]
+        return seed
+
+    def load_checklist(self) -> list[dict]:
+        """Merge item DEFINITIONS (code) with check STATE (disk).
+
+        Split of ownership, matching what the dashboard already enforces (it
+        renders label/url/cadence_days read-only and only lets you edit the
+        other two):
+
+        * the config seed owns *what an item is* — id, label, url,
+          cadence_days. Editing a ``DEFAULT_CHECKLIST`` entry therefore takes
+          effect even once checklist.json exists.
+        * checklist.json owns *what you did about it* — ``last_checked`` and
+          ``notes`` (see :attr:`CHECKLIST_STATE_KEYS`).
+
+        Persisted rows whose id is absent from the seed are dropped — the seed
+        decides which items exist, so retiring one in code retires it here.
+        Seed order is preserved. Never writes; a corrupt file degrades to
+        "no state recorded" rather than losing the item definitions.
+        """
+        state: dict[str, dict] = {}
+        if self.checklist_path.exists():
+            try:
+                stored = json.loads(self.checklist_path.read_text())
+            except (json.JSONDecodeError, OSError):
+                stored = []
+            if isinstance(stored, list):
+                for row in stored:
+                    if isinstance(row, dict) and row.get("id"):
+                        state[str(row["id"])] = row
+        items = []
+        for item in self._checklist_seed_items():
+            saved = state.get(str(item.get("id")), {})
+            items.append({
+                **item,
+                "last_checked": saved.get("last_checked"),
+                "notes": saved.get("notes") or "",
+            })
+        return items
 
     def save_checklist(self, items: list[dict]) -> None:
+        """Persist check state only — definitions stay in the config seed."""
+        rows = [
+            {"id": it["id"], **{k: it.get(k) or None for k in self.CHECKLIST_STATE_KEYS}}
+            for it in items
+            if it.get("id")
+        ]
         self.checklist_path.write_text(
-            json.dumps(items, indent=2, sort_keys=True, default=str) + "\n"
+            json.dumps(rows, indent=2, sort_keys=True, ensure_ascii=False, default=str)
+            + "\n"
         )
 
     # ------------------------------------------------------------------

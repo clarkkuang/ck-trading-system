@@ -1,58 +1,37 @@
 [
   {
-    "cadence_days": 31,
     "id": "intc_14a_commitment_window",
-    "label": "14A外部firm承诺窗口(最关键向上催化)— 0.9版PDK定于2026-10; 盯2026H2是否出现有量产/预付承诺的先进节点大客户(现0 firm, 2家潜在洽谈; Fortinet仅成熟Intel 4节点不计入)",
     "last_checked": "2026-07-23",
-    "notes": "[2026-08-06 补录] 本项自部署起从未记录核查(att/nflx/intc 三实例的 checklist.json 一直未落地, load_checklist() 每次重置 last_checked=None, 超期标记失效)。此处按部署日回填为基准, 非实际核查日 —— 首次真实复核后请覆盖本行。",
-    "url": "https://www.intc.com/news-events"
+    "notes": "[2026-08-06 补录] 本项自部署起从未记录核查(att/nflx/intc 三实例的 checklist.json 一直未落地, load_checklist() 每次重置 last_checked=None, 超期标记失效)。此处按部署日回填为基准, 非实际核查日 —— 首次真实复核后请覆盖本行。"
   },
   {
-    "cadence_days": 31,
     "id": "intc_18a_yield_redline",
-    "label": "18A盈利良率对CFO'2026年底'红线 — 是否达70%+(官方从未披露具体数字, press估~55-65%); 滑入2027=论点延迟加深; 有官方Q4数字后录入fundamentals",
     "last_checked": "2026-07-23",
-    "notes": "[2026-08-06 补录] 本项自部署起从未记录核查(att/nflx/intc 三实例的 checklist.json 一直未落地, load_checklist() 每次重置 last_checked=None, 超期标记失效)。此处按部署日回填为基准, 非实际核查日 —— 首次真实复核后请覆盖本行。",
-    "url": "https://www.intc.com/news-events"
+    "notes": "[2026-08-06 补录] 本项自部署起从未记录核查(att/nflx/intc 三实例的 checklist.json 一直未落地, load_checklist() 每次重置 last_checked=None, 超期标记失效)。此处按部署日回填为基准, 非实际核查日 —— 首次真实复核后请覆盖本行。"
   },
   {
-    "cadence_days": 31,
     "id": "intc_product_ramp",
-    "label": "Panther Lake(客户端,18A)+ Clearwater Forest(服务器,18A)放量/评测 — 验证内部采用这条腿并填充代工产能",
     "last_checked": "2026-07-23",
-    "notes": "[2026-08-06 补录] 本项自部署起从未记录核查(att/nflx/intc 三实例的 checklist.json 一直未落地, load_checklist() 每次重置 last_checked=None, 超期标记失效)。此处按部署日回填为基准, 非实际核查日 —— 首次真实复核后请覆盖本行。",
-    "url": "https://www.intc.com/news-events"
+    "notes": "[2026-08-06 补录] 本项自部署起从未记录核查(att/nflx/intc 三实例的 checklist.json 一直未落地, load_checklist() 每次重置 last_checked=None, 超期标记失效)。此处按部署日回填为基准, 非实际核查日 —— 首次真实复核后请覆盖本行。"
   },
   {
-    "cadence_days": 92,
     "id": "intc_govt_stake_warrant",
-    "label": "美国政府~10%持股($20.47成本) + $20认股权证(挂钩'代工持股跌破51%'毒丸)状态 — 战略软底与拆分路径约束的变化",
     "last_checked": "2026-07-23",
-    "notes": "[2026-08-06 补录] 本项自部署起从未记录核查(att/nflx/intc 三实例的 checklist.json 一直未落地, load_checklist() 每次重置 last_checked=None, 超期标记失效)。此处按部署日回填为基准, 非实际核查日 —— 首次真实复核后请覆盖本行。",
-    "url": "https://www.intc.com/news-events"
+    "notes": "[2026-08-06 补录] 本项自部署起从未记录核查(att/nflx/intc 三实例的 checklist.json 一直未落地, load_checklist() 每次重置 last_checked=None, 超期标记失效)。此处按部署日回填为基准, 非实际核查日 —— 首次真实复核后请覆盖本行。"
   },
   {
-    "cadence_days": 92,
     "id": "intc_dividend_watch",
-    "label": "股息恢复观察 — 自2024-09暂停; 恢复需产品份额稳定+代工盈利+去杠杆, 现价无收益支撑",
     "last_checked": "2026-07-23",
-    "notes": "[2026-08-06 补录] 本项自部署起从未记录核查(att/nflx/intc 三实例的 checklist.json 一直未落地, load_checklist() 每次重置 last_checked=None, 超期标记失效)。此处按部署日回填为基准, 非实际核查日 —— 首次真实复核后请覆盖本行。",
-    "url": "https://www.intc.com/news-events"
+    "notes": "[2026-08-06 补录] 本项自部署起从未记录核查(att/nflx/intc 三实例的 checklist.json 一直未落地, load_checklist() 每次重置 last_checked=None, 超期标记失效)。此处按部署日回填为基准, 非实际核查日 —— 首次真实复核后请覆盖本行。"
   },
   {
-    "cadence_days": 92,
     "id": "intc_earnings_entry",
-    "label": "INTC财报录入(下次~2026-10 Q3'26): 代工外部营收/季亏、18A良率、DCAI/增速、Non-GAAP EPS、FCF、BVPS(算P/B)、AMD服务器份额",
     "last_checked": "2026-07-23",
-    "notes": "[2026-08-06 补录] 本项自部署起从未记录核查(att/nflx/intc 三实例的 checklist.json 一直未落地, load_checklist() 每次重置 last_checked=None, 超期标记失效)。此处按部署日回填为基准, 非实际核查日 —— 首次真实复核后请覆盖本行。",
-    "url": "https://www.intc.com/news-events"
+    "notes": "[2026-08-06 补录] 本项自部署起从未记录核查(att/nflx/intc 三实例的 checklist.json 一直未落地, load_checklist() 每次重置 last_checked=None, 超期标记失效)。此处按部署日回填为基准, 非实际核查日 —— 首次真实复核后请覆盖本行。"
   },
   {
-    "cadence_days": 92,
     "id": "intc_amd_dc_head2head",
-    "label": "AMD Q2数据中心营收 vs Intel DCAI头对头(AMD~8月初财报)— 核对Q2 +59%反弹是可持续夺回还是一次性AI周期顺风",
     "last_checked": "2026-07-23",
-    "notes": "[2026-08-06 补录] 本项自部署起从未记录核查(att/nflx/intc 三实例的 checklist.json 一直未落地, load_checklist() 每次重置 last_checked=None, 超期标记失效)。此处按部署日回填为基准, 非实际核查日 —— 首次真实复核后请覆盖本行。",
-    "url": "https://ir.amd.com/"
+    "notes": "[2026-08-06 补录] 本项自部署起从未记录核查(att/nflx/intc 三实例的 checklist.json 一直未落地, load_checklist() 每次重置 last_checked=None, 超期标记失效)。此处按部署日回填为基准, 非实际核查日 —— 首次真实复核后请覆盖本行。"
   }
 ]

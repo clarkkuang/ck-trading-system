@@ -1,66 +1,42 @@
 [
   {
-    "cadence_days": 92,
     "id": "hyperscaler_capex",
-    "label": "超大规模云厂商 capex 指引 — MSFT/GOOGL/AMZN/META 财报;盯2027是否兑现$1T",
     "last_checked": "2026-08-06",
-    "notes": "🟢 需求闸门大开(as of 2026 Q2 财报季): 四大 2026 合计 capex ~$725B(+77% YoY),分析师(Evercore/BofA)预计 2027 突破 $1T。Amazon ~$200B/MSFT ~$190B/Google $175-185B/Meta $125-145B(已上调)。反方: 五大经营现金流 +23%/年 vs capex +70%/年,两线约 Q3'26 交叉,capex/收入分歧率 46% > 电信泡沫 32% — 盯 2027 指引是否兑现 $1T,以及是否首次有厂商下调。 [2026-07-29 审判周中场] MSFT=需求确认: FY26 capex $115.9B(+80%), FY27'继续同比增长', FY27Q1>$50B; Azure Q4 +43% 且 Q1 指引 ~45%cc(加速); RPO $678B(+84%, 剔 OpenAI 后 +25%)。口径注意: 使用年限 15→25 年重分类, 2026 日历年名义 capex ~$190B→~$175B, 实际支出不变。信用读数: MSFT capex 全由 OCF($182.9B, +34%)自融但 Q4 FCF $19.6B(-23%)——最强者 FCF 也在被压向零; GOOGL 已上调 $195-205B(7/22); META 同晚下限上调 $135-145B 但 EPS 大 miss(费用+55%, 含第三方 AI token 成本)盘后 -7.5%——'有钱花'与'花得起'分化的首个样本。→ 待 AMZN 7/30。 [2026-08-06 SPCX Q2] 第五个大额资本开支源确认: AI capex 单季$15.8B(年化~$63B, 超共识42%), Colossus 2≈55万块GB200/GB300;资金结构=IPO股权$85.7B+首发IG债$25B(5.855%)现金购卡, 是信用最干净的需求样本。同时SPCX以$14.1B云服务合同(Anthropic $1.25B/月+Google $920M/月+Reflection)成为最大neocloud——对NVDA是需求, 对CoreWeave/Oracle是供给压力。 ⚠️[电话会补充, 财报正文未含] Musk: 2027年底'20GW 电力与散热上线'暂定目标(现1.4GW=14倍); CFO: Q3/Q4 capex'与本季相近'(即~$18B/季)→ FY26 capex ~$65B, 且2027年更高。CFO Johnsen: 12月月度收入年化后达'$100B ARR'(Musk:'不是问号, 什么都不做也能到')——若兑现, SPCX 单家的 AI 资本开支量级将进入四大同一档位, hyperscaler capex 池需从'四大'改为'五家'口径。 [2026-08-06 审判周收官] AMZN Q2: 单季 capex $54.2B(+68%)、TTM $173B(+61%)、AWS +37% 为18季最快。四大全部上调/确认 + SPCX 为第五家 → 需求侧'capex 2027见顶'这条腿已被削弱, structural_bear 概率 10%→9%。",
-    "url": "https://abc.xyz/investor/"
+    "notes": "🟢 需求闸门大开(as of 2026 Q2 财报季): 四大 2026 合计 capex ~$725B(+77% YoY),分析师(Evercore/BofA)预计 2027 突破 $1T。Amazon ~$200B/MSFT ~$190B/Google $175-185B/Meta $125-145B(已上调)。反方: 五大经营现金流 +23%/年 vs capex +70%/年,两线约 Q3'26 交叉,capex/收入分歧率 46% > 电信泡沫 32% — 盯 2027 指引是否兑现 $1T,以及是否首次有厂商下调。 [2026-07-29 审判周中场] MSFT=需求确认: FY26 capex $115.9B(+80%), FY27'继续同比增长', FY27Q1>$50B; Azure Q4 +43% 且 Q1 指引 ~45%cc(加速); RPO $678B(+84%, 剔 OpenAI 后 +25%)。口径注意: 使用年限 15→25 年重分类, 2026 日历年名义 capex ~$190B→~$175B, 实际支出不变。信用读数: MSFT capex 全由 OCF($182.9B, +34%)自融但 Q4 FCF $19.6B(-23%)——最强者 FCF 也在被压向零; GOOGL 已上调 $195-205B(7/22); META 同晚下限上调 $135-145B 但 EPS 大 miss(费用+55%, 含第三方 AI token 成本)盘后 -7.5%——'有钱花'与'花得起'分化的首个样本。→ 待 AMZN 7/30。 [2026-08-06 SPCX Q2] 第五个大额资本开支源确认: AI capex 单季$15.8B(年化~$63B, 超共识42%), Colossus 2≈55万块GB200/GB300;资金结构=IPO股权$85.7B+首发IG债$25B(5.855%)现金购卡, 是信用最干净的需求样本。同时SPCX以$14.1B云服务合同(Anthropic $1.25B/月+Google $920M/月+Reflection)成为最大neocloud——对NVDA是需求, 对CoreWeave/Oracle是供给压力。 ⚠️[电话会补充, 财报正文未含] Musk: 2027年底'20GW 电力与散热上线'暂定目标(现1.4GW=14倍); CFO: Q3/Q4 capex'与本季相近'(即~$18B/季)→ FY26 capex ~$65B, 且2027年更高。CFO Johnsen: 12月月度收入年化后达'$100B ARR'(Musk:'不是问号, 什么都不做也能到')——若兑现, SPCX 单家的 AI 资本开支量级将进入四大同一档位, hyperscaler capex 池需从'四大'改为'五家'口径。 [2026-08-06 审判周收官] AMZN Q2: 单季 capex $54.2B(+68%)、TTM $173B(+61%)、AWS +37% 为18季最快。四大全部上调/确认 + SPCX 为第五家 → 需求侧'capex 2027见顶'这条腿已被削弱, structural_bear 概率 10%→9%。"
   },
   {
-    "cadence_days": 31,
     "id": "rubin_ramp",
-    "label": "Rubin 平台放量/供应链 — CoWoS、HBM4 产能,良率新闻",
     "last_checked": "2026-07-04",
-    "notes": "🟢 供应链紧但对 NVDA 有利(as of Computex 2026-05): Rubin 已 6/1 全面投产,但产能顶限 2026 约 20-30 万颗,云实例 Q4'26 才可用,先供 hyperscaler/前沿实验室。TSMC CoWoS 从 ~3.5万→年底 12-14万片/月(近 4 倍),NVDA 预定了 >50% CoWoS 产能至 2027、2026 booked 80-85 万片 wafer。HBM4 late-2026 ramp,SK 海力士 ~62% 份额供 NVDA 约 2/3,良率仍低于 HBM3e。→ 供应瓶颈=近期营收地板,而非风险;盯良率与 HBM4 是否拖累出货。",
-    "url": "https://nvidianews.nvidia.com/"
+    "notes": "🟢 供应链紧但对 NVDA 有利(as of Computex 2026-05): Rubin 已 6/1 全面投产,但产能顶限 2026 约 20-30 万颗,云实例 Q4'26 才可用,先供 hyperscaler/前沿实验室。TSMC CoWoS 从 ~3.5万→年底 12-14万片/月(近 4 倍),NVDA 预定了 >50% CoWoS 产能至 2027、2026 booked 80-85 万片 wafer。HBM4 late-2026 ramp,SK 海力士 ~62% 份额供 NVDA 约 2/3,良率仍低于 HBM3e。→ 供应瓶颈=近期营收地板,而非风险;盯良率与 HBM4 是否拖累出货。"
   },
   {
-    "cadence_days": 31,
     "id": "asic_competition",
-    "label": "自研 ASIC 竞争: Trainium3/TPU v7/MI 系列采用度 → 更新 ASIC 份额字段",
     "last_checked": "2026-07-04",
-    "notes": "🟡 份额线 27.8%,质变线 35%(as of 2026-05): NVDA 仍握 ~80% 加速器市场。但 Trainium3 12月 GA(AWS 已部署 >100 万颗,Jassy 称'数十亿美元业务');Google TPU v7 Ironwood 占定制云加速器 58%,已控 ~40% NVDA 收入的四家 hyperscaler 全在自研。AMD MI400/MI450 'Helios' 2026 上市。关键瓶颈: TSMC N3 被 Rubin/TPU/Trainium3/MI400 同时挤兑,AI 占 N3 产出约 60%→2027 升至 86%。→ 下季录 ASIC 服务器份额字段;27.8%→35% 是规则触发的质变线。",
-    "url": "https://www.trendforce.com/news/"
+    "notes": "🟡 份额线 27.8%,质变线 35%(as of 2026-05): NVDA 仍握 ~80% 加速器市场。但 Trainium3 12月 GA(AWS 已部署 >100 万颗,Jassy 称'数十亿美元业务');Google TPU v7 Ironwood 占定制云加速器 58%,已控 ~40% NVDA 收入的四家 hyperscaler 全在自研。AMD MI400/MI450 'Helios' 2026 上市。关键瓶颈: TSMC N3 被 Rubin/TPU/Trainium3/MI400 同时挤兑,AI 占 N3 产出约 60%→2027 升至 86%。→ 下季录 ASIC 服务器份额字段;27.8%→35% 是规则触发的质变线。"
   },
   {
-    "cadence_days": 31,
     "id": "china_export",
-    "label": "中国出口政策 — 指引已含零中国DC,政策回摆=纯上行期权",
     "last_checked": "2026-07-04",
-    "notes": "🟢 已转上行期权(as of BIS 2026-01-15 终规): H200 对华从'推定拒绝'改为'逐案审查',附 25% 关税/50% 量上限/第三方测试/KYC。中企已订 >200 万颗 H200(NVDA 库存仅 70 万)。注意: 仅 H200 及以下,Blackwell/Rubin 不在放松名单;NVDA 的 Q2 指引仍不含任何中国 DC 收入。→ 中国 DC 收入回摆是纯上行期权(指引未计入);盯是否有实际许可发放与量。",
-    "url": "https://www.bis.doc.gov/"
+    "notes": "🟢 已转上行期权(as of BIS 2026-01-15 终规): H200 对华从'推定拒绝'改为'逐案审查',附 25% 关税/50% 量上限/第三方测试/KYC。中企已订 >200 万颗 H200(NVDA 库存仅 70 万)。注意: 仅 H200 及以下,Blackwell/Rubin 不在放松名单;NVDA 的 Q2 指引仍不含任何中国 DC 收入。→ 中国 DC 收入回摆是纯上行期权(指引未计入);盯是否有实际许可发放与量。"
   },
   {
-    "cadence_days": 92,
     "id": "nvda_earnings_entry",
-    "label": "NVDA 财报录入 — 下次 ~2026-08-26 (FY27Q2→录成2026Q3): DC营收/QoQ/指引差/毛利率/前瞻EPS + 信用通道两项: 10-Q承诺与或有事项(担保/客户股权→敞口比)、应收账款天数",
     "last_checked": "2026-07-04",
-    "notes": "⏰ 提醒项(非数据): 下次 NVDA 财报约 2026-08-26(FY27Q2,止 ~2026-07-26)。届时在下方季度表格**录成 2026Q3**(财季→日历季约定),录入: DC营收/DC QoQ/总营收/指引vs共识/毛利率/前瞻EPS,并顺手更新 ASIC 服务器份额(TrendForce)。录入后 DC 减速规则(需 3 季)首次可评估。",
-    "url": "https://investor.nvidia.com/"
-  },
-  {
-    "cadence_days": 31,
-    "id": "chip_cycle",
-    "label": "芯片周期: TSMC 月度营收 / SEMI 北美设备 billings — 周期见顶前兆",
-    "last_checked": "2026-07-04",
-    "notes": "🟢 周期仍在上行(as of 2026-05/Q1): TSMC 5月营收 NT$417B(+30% YoY),1-5月累计 +30%,全年指引 USD 收入 +30%+,Q2 指引 $39-40.2B(+32% YoY)。SEMI Q1'26 全球半导体设备 billings $36.55B(+14% YoY,创纪录,AI 驱动)。→ 上游景气无见顶迹象;盯 TSMC 月度营收增速与设备 billings 是否环比转负(周期见顶前兆)。",
-    "url": "https://pr.tsmc.com/english/quarterly-results"
+    "notes": "⏰ 提醒项(非数据): 下次 NVDA 财报约 2026-08-26(FY27Q2,止 ~2026-07-26)。届时在下方季度表格**录成 2026Q3**(财季→日历季约定),录入: DC营收/DC QoQ/总营收/指引vs共识/毛利率/前瞻EPS,并顺手更新 ASIC 服务器份额(TrendForce)。录入后 DC 减速规则(需 3 季)首次可评估。"
   },
   {
     "id": "nvda_credit_conditions",
-    "label": "信用条件月检(2026-07-27循环融资抛售后新增): NVDA 5Y CDS水平+周变速(预警: 单周+10bp或破100bp; 7/27曾单日+14bp至82bp创纪录) · Oracle/Meta CDS · AI债IG利差 · OpenAI/neocloud融资新闻 — 客户的资金成本=未来订单的贴现率",
-    "url": "https://www.bloomberg.com/quote/NVDA:US",
-    "cadence_days": 31,
     "last_checked": "2026-07-27",
     "notes": "7/27: NVDA CDS +14bp至82bp(纪录), ORCL CDS周期新高; OpenAI $250B担保谈判中未签署 [2026-08-06 旁证] SPCX $25B IG债(Baa1/BBB+)发行数周即'trade like junk'(Bloomberg 7/10经转述)——连股权+投资级融资的AI capex都遭信用市场折价, 佐证7/27后信用敏感 regime 未解除; 该债价与NVDA CDS同属月检观察面。"
   },
   {
     "id": "hyperscaler_fcf",
-    "label": "⭐客户自由现金流(本框架最大盲区, 2026-08-06 新增) — 五大 TTM FCF 与 capex/OCF 比。机制: structural_bear 原写'需求见顶', 但活的机制是'客户 FCF 转负→被迫压 capex'。预警线: 任意两家 TTM FCF 同时为负, 或五家合计 TTM FCF 连续两季为负 → 上调 structural_bear",
-    "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany",
-    "cadence_days": 92,
     "last_checked": "2026-08-06",
     "notes": "AMZN TTM FCF 已转负 -$7.6B(去年同期 +$25.9B, -142%), 为第一家。MSFT Q4 FCF $19.6B(-23%), Hood 仅承诺 FY27'保持为正'。GOOGL/META 待核。框架 7/3 预言的现金流/capex 交叉点(约 Q3'26)已到。"
+  },
+  {
+    "id": "chip_cycle",
+    "last_checked": "2026-07-04",
+    "notes": "🟢 周期仍在上行(as of 2026-05/Q1): TSMC 5月营收 NT$417B(+30% YoY),1-5月累计 +30%,全年指引 USD 收入 +30%+,Q2 指引 $39-40.2B(+32% YoY)。SEMI Q1'26 全球半导体设备 billings $36.55B(+14% YoY,创纪录,AI 驱动)。→ 上游景气无见顶迹象;盯 TSMC 月度营收增速与设备 billings 是否环比转负(周期见顶前兆)。"
   }
 ]

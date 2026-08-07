@@ -314,6 +314,15 @@ DEFAULT_CHECKLIST: tuple[dict, ...] = (
         "cadence_days": 31,
     },
     {
+        "id": "hyperscaler_fcf",
+        "label": "⭐客户自由现金流(本框架最大盲区, 2026-08-06 新增) — 五大 TTM FCF 与 capex/OCF 比。"
+                 "机制: structural_bear 情景写的是'需求见顶', 但当前活的机制是"
+                 "'客户 FCF 转负 → 被迫压 capex'。预警线: 任意两家 TTM FCF 同时为负, "
+                 "或五家合计 TTM FCF 连续两季为负 → 上调 structural_bear 概率",
+        "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany",
+        "cadence_days": 92,
+    },
+    {
         "id": "chip_cycle",
         "label": "芯片周期: TSMC 月度营收 / SEMI 北美设备 billings — 周期见顶前兆",
         "url": "https://pr.tsmc.com/english/quarterly-results",

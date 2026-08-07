@@ -196,3 +196,59 @@ class TestChecklist:
         again = store.load_checklist()
         target = next(i for i in again if i["id"] == items[0]["id"])
         assert target["last_checked"] == "2026-07-01"
+
+    # -- definition (code) vs state (disk) ownership ------------------------
+
+    def _seeded(self, tmp_path, label, cadence=7):
+        seed = ({"id": "x1", "label": label, "url": "u", "cadence_days": cadence},)
+        return MonitoringStore(tmp_path, checklist_seed=seed)
+
+    def test_seed_edit_propagates_after_file_exists(self, tmp_path):
+        """The trap this ownership split exists to remove."""
+        store = self._seeded(tmp_path, "old label")
+        items = store.load_checklist()
+        items[0]["last_checked"] = "2026-08-01"
+        items[0]["notes"] = "checked it"
+        store.save_checklist(items)
+
+        # same on-disk state, edited seed -> new label, state untouched
+        reopened = self._seeded(tmp_path, "new label", cadence=45).load_checklist()
+        assert reopened[0]["label"] == "new label"
+        assert reopened[0]["cadence_days"] == 45
+        assert reopened[0]["last_checked"] == "2026-08-01"
+        assert reopened[0]["notes"] == "checked it"
+
+    def test_save_persists_state_only(self, tmp_path):
+        store = self._seeded(tmp_path, "some label")
+        items = store.load_checklist()
+        items[0]["notes"] = "n"
+        store.save_checklist(items)
+        rows = json.loads(store.checklist_path.read_text())
+        assert rows == [{"id": "x1", "last_checked": None, "notes": "n"}]
+
+    def test_retired_item_dropped(self, tmp_path):
+        store = self._seeded(tmp_path, "l")
+        store.save_checklist([
+            {"id": "x1", "last_checked": "2026-08-01", "notes": ""},
+            {"id": "gone", "last_checked": "2026-01-01", "notes": "retired"},
+        ])
+        items = store.load_checklist()
+        assert [i["id"] for i in items] == ["x1"]  # seed decides what exists
+
+    def test_new_seed_item_gets_empty_state(self, tmp_path):
+        store = self._seeded(tmp_path, "l")
+        store.save_checklist(store.load_checklist())
+        grown = MonitoringStore(tmp_path, checklist_seed=(
+            {"id": "x1", "label": "l", "url": "u", "cadence_days": 7},
+            {"id": "x2", "label": "added later", "url": "", "cadence_days": 31},
+        )).load_checklist()
+        assert [i["id"] for i in grown] == ["x1", "x2"]  # seed order preserved
+        assert grown[1]["last_checked"] is None
+        assert grown[1]["notes"] == ""
+
+    def test_corrupt_file_keeps_definitions(self, tmp_path):
+        store = self._seeded(tmp_path, "still here")
+        store.checklist_path.write_text("{not json")
+        items = store.load_checklist()
+        assert items[0]["label"] == "still here"
+        assert items[0]["last_checked"] is None
