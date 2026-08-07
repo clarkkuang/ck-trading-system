@@ -38,28 +38,37 @@ ATT_DEDUPE_KEYS: dict[str, list[str]] = {"prices": ["ticker", "iso_week"]}
 
 # ---------------------------------------------------------------------------
 # Valuation scenarios (seed for scenarios.json; dashboard is the only writer)
-# probability-weighted fair = 0.45*28 + 0.30*23 + 0.20*16 + 0.05*12 = 23.30
+# 2026-08-06 revision: 0.36*29 + 0.39*23 + 0.20*16 + 0.05*12 = 23.21 (prior 23.30)
+#   两股力量几乎对冲, 净值几乎不动, 但构成变了:
+#   (+) Q2 交付超预期(FCF 4.7B vs 指引 4.0-4.5B、churn 0.86%、后付费净增43.2万)、
+#       回购 $8B→~$10B、7/22 与 7/28 两次重申指引 → base 隐含价 28→29
+#   (−) SpaceX 8/4 电话会官宣自营移动网(2027 年底放号、点名抢三大客户)
+#       → "威胁有限"不再能承担 45% 权重, 概率向 mild_bear 迁移
+#   注: $23B EchoStar 收购已于 7/28 交割, 但该事件 7/3 建模时已知(非新信息), 不重复计价;
+#       杠杆自 6/30 的 2.66x 升至约 3.1-3.2x(估算), 2.5x 承诺后移 —— 已计入 mild_bear 不上调
+#   ⚠️设计缺口: 本情景表无时间维度。威胁落点在 2027 年底, 与"当下即发生"同权重,
+#       结构上高估近端风险。若后续要改, 应对 structural_decline 做久期折现而非调概率。
 # ---------------------------------------------------------------------------
 DEFAULT_SCENARIOS: tuple[dict, ...] = (
     {
         "id": "base",
-        "label": "基准: SpaceX 威胁有限,指引兑现",
-        "probability_pct": 45.0,
-        "implied_price": 28.0,
-        "price_low": 26.0,
-        "price_high": 30.0,
+        "label": "基准: 威胁被吸收 — 指引兑现 + 50MHz 频谱防御到位",
+        "probability_pct": 36.0,
+        "implied_price": 29.0,
+        "price_low": 27.0,
+        "price_high": 31.0,
     },
     {
         "id": "mild_bear",
-        "label": "温和悲观: 路径A + 防御性 CAPEX 温和增加",
-        "probability_pct": 30.0,
+        "label": "温和悲观: SpaceX 自营落地为农村/低价第四运营商; T 防御性 CAPEX + 去杠杆推迟",
+        "probability_pct": 39.0,
         "implied_price": 23.0,
         "price_low": 22.0,
         "price_high": 24.0,
     },
     {
         "id": "structural_decline",
-        "label": "结构衰退: 路径B 兑现,农村流失 + CAPEX 大增",
+        "label": "结构衰退: 路径B 兑现,农村流失 + CAPEX 大增 + 杠杆卡在 3x 以上",
         "probability_pct": 20.0,
         "implied_price": 16.0,
         "price_low": 15.0,
@@ -218,15 +227,23 @@ DEFAULT_CHECKLIST: tuple[dict, ...] = (
     },
     {
         "id": "cband_spectrum_sept",
-        "label": "C-band 频谱策略 — 9月董事会定调(Q2电话会Moffett之问被推迟); 关联: Q2未解释的频谱资产弃置费 + "
-                 "EchoStar 频谱7月底交割后的杠杆路径(净债回2.5x承诺)",
+        "label": "C-band 频谱策略 — 9月董事会定调(Q2电话会Moffett之问被推迟)。"
+                 "✅[2026-07-28] EchoStar 50MHz 已交割: $23B 换 30MHz 全国 3.45GHz + 20MHz 全国 600MHz; 同日再次重申指引与资本配置计划。"
+                 "⚠️杠杆: 6/30 净债 $126.4B(总债$143.95B−现金$17.57B), 交割后估算升至约 3.1-3.2x(自 2.66x), 2.5x 承诺后移; "
+                 "8/3 又发行五档 Global Notes 合计约 46.5 亿(2030/2034/2038/2045/2052, 票息 3.60%-7.05%)。"
+                 "→ 9月董事会看两点: C-band 是否再加码(杠杆还能不能承受) / 2.5x 时间表是否正式改口",
         "url": "https://investors.att.com/",
         "cadence_days": 31,
     },
     {
         "id": "att_10q_check",
-        "label": "10-Q 核对 (~8月初): 频谱弃置费的归因与金额(是否与D2D合资的频谱集中相关) + "
-                 "净债/EBITDA 官方口径(监控里2.66x为估算) + EchoStar交割会计处理",
+        "label": "✅[2026-08-06 已结] 10-Q 实际随财报于 7/22 报送(非8月初)。三问答复: "
+                 "①频谱弃置费——10-Q 未单列, 合并科目'资产减值/弃置及重组'6M'26 仅 $286M(6M'25 $504M), "
+                 "全文未归因于频谱或 D2D 合资, 量级不重要, 此线索关闭; "
+                 "②净债 $126.4B 已核实, 但官方仍未披露 净债/EBITDA, 2.66x 维持为本监控估算; "
+                 "③EchoStar 于 6/30 仍为 pending, 7/28 交割(见 cband 项); 3.45GHz 早已通过短期频谱租赁部署至全美约 2/3 基站。"
+                 "🆕新发现: 上半年供应商融资 $1,603M vs 去年同期 $831M(近乎翻倍)——与 NVDA 框架的信用通道同源, 下季追踪。"
+                 "下次核对: Q3 10-Q(~10月下旬), 重点看 EchoStar 交割后的实际杠杆与商誉/频谱资产入账",
         "url": "https://investors.att.com/sec-filings",
         "cadence_days": 92,
     },
@@ -241,7 +258,10 @@ DEFAULT_CHECKLIST: tuple[dict, ...] = (
     },
     {
         "id": "asts_progress",
-        "label": "AST SpaceMobile 进展 — ASTS 起量=D2D 多寡头而非 SpaceX 独占=对 T 反而是缓冲",
+        "label": "AST SpaceMobile 进展 — ASTS 起量=D2D 多寡头而非 SpaceX 独占=对 T 反而是缓冲。"
+                 "⚠️[2026-08-06] 缓冲远弱于预期: ASTS 年中仅约 9 颗在轨(年底目标 45), 对比 Starlink 约 650 颗 D2C 卫星——"
+                 "差约 70 倍。T 的卫星备胎能力显著落后, 这条'多寡头缓冲'论点当前不成立, 不应据此下调威胁权重。"
+                 "另一条对冲是 5/14 三家(T/VZ/TMUS)首次合组的 D2D 合资平台, 但 7 月末仍未定稿、未过审",
         "url": "https://ast-science.com/investors/",
         "cadence_days": 31,
     },

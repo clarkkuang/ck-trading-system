@@ -161,7 +161,9 @@ class TestValidateFundamentals:
 
 class TestScenarios:
     def test_default_weighted_fair(self):
-        assert weighted_fair_value(list(DEFAULT_SCENARIOS)) == pytest.approx(23.30)
+        # 2026-08-06: 45/30/20/5 @ 28/23/16/12 (=23.30) -> 36/39/20/5 @ 29/23/16/12
+        # after SpaceX declared self-operated mobile (prob shift) vs Q2 beat + buyback (price)
+        assert weighted_fair_value(list(DEFAULT_SCENARIOS)) == pytest.approx(23.21)
 
     def test_defaults_valid(self):
         assert validate_scenarios(list(DEFAULT_SCENARIOS)) == []
@@ -174,7 +176,8 @@ class TestScenarios:
 
     def test_low_above_implied_fails(self):
         s = [dict(x) for x in DEFAULT_SCENARIOS]
-        s[0]["price_low"] = 29.0  # > implied 28
+        # derive from the seed so the test survives scenario re-weightings
+        s[0]["price_low"] = s[0]["implied_price"] + 1.0
         errs = validate_scenarios(s)
         assert any("low" in e for e in errs)
 
