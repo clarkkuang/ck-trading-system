@@ -1,0 +1,58 @@
+[
+  {
+    "cadence_days": 21,
+    "id": "ads_upfront",
+    "label": "US 广告 upfront 承诺落地(财报称'数周内'敲定)— 金额与 CPM 方向",
+    "last_checked": "2026-07-16",
+    "notes": "[2026-08-06 补录] 本项自部署起从未记录核查(att/nflx/intc 三实例的 checklist.json 一直未落地, load_checklist() 每次重置 last_checked=None, 超期标记失效)。此处按部署日回填为基准, 非实际核查日 —— 首次真实复核后请覆盖本行。",
+    "url": "https://about.netflix.com/en/newsroom"
+  },
+  {
+    "cadence_days": 92,
+    "id": "q3_earnings_entry",
+    "label": "Q3 财报录入(~10月中): 增速/Q4指引/利润率/广告on-track/回购",
+    "last_checked": "2026-07-16",
+    "notes": "[2026-08-06 补录] 本项自部署起从未记录核查(att/nflx/intc 三实例的 checklist.json 一直未落地, load_checklist() 每次重置 last_checked=None, 超期标记失效)。此处按部署日回填为基准, 非实际核查日 —— 首次真实复核后请覆盖本行。",
+    "url": "https://ir.netflix.net/"
+  },
+  {
+    "cadence_days": 180,
+    "id": "fy27_guide",
+    "label": "FY27 指引(1月, 头号催化剂): 广告翻倍路径 + 增速是否守住双位数",
+    "last_checked": "2026-07-16",
+    "notes": "[2026-08-06 补录] 本项自部署起从未记录核查(att/nflx/intc 三实例的 checklist.json 一直未落地, load_checklist() 每次重置 last_checked=None, 超期标记失效)。此处按部署日回填为基准, 非实际核查日 —— 首次真实复核后请覆盖本行。",
+    "url": "https://ir.netflix.net/"
+  },
+  {
+    "cadence_days": 31,
+    "id": "nielsen_gauge",
+    "label": "Nielsen Gauge 月报: NFLX 电视时长份额及同比 — 注意力失效条件的数据源(管理层已减披露, 只能外部盯)",
+    "last_checked": "2026-07-18",
+    "notes": "[2026-08-06 补录] 本项自部署起从未记录核查(att/nflx/intc 三实例的 checklist.json 一直未落地, load_checklist() 每次重置 last_checked=None, 超期标记失效)。此处按部署日回填为基准, 非实际核查日 —— 首次真实复核后请覆盖本行。",
+    "url": "https://www.nielsen.com/data-center/the-gauge/"
+  },
+  {
+    "cadence_days": 62,
+    "id": "pricing_churn",
+    "label": "提价与 churn 动态(Antenna 等第三方数据)— 定价权压力测试",
+    "last_checked": "2026-07-16",
+    "notes": "[2026-08-06 补录] 本项自部署起从未记录核查(att/nflx/intc 三实例的 checklist.json 一直未落地, load_checklist() 每次重置 last_checked=None, 超期标记失效)。此处按部署日回填为基准, 非实际核查日 —— 首次真实复核后请覆盖本行。",
+    "url": "https://www.antenna.live/"
+  },
+  {
+    "cadence_days": 62,
+    "id": "live_sports",
+    "label": "直播/体育进展: NFL 扩约执行、MLB、拳击 — 广告库存的供给侧",
+    "last_checked": "2026-07-16",
+    "notes": "[2026-08-06 补录] 本项自部署起从未记录核查(att/nflx/intc 三实例的 checklist.json 一直未落地, load_checklist() 每次重置 last_checked=None, 超期标记失效)。此处按部署日回填为基准, 非实际核查日 —— 首次真实复核后请覆盖本行。",
+    "url": "https://about.netflix.com/en/newsroom"
+  },
+  {
+    "cadence_days": 62,
+    "id": "competitor_moves",
+    "label": "Paramount-WBD 合并体(HBO Max+Paramount+)竞争动作 — 价格战风险",
+    "last_checked": "2026-07-16",
+    "notes": "[2026-08-06 补录] 本项自部署起从未记录核查(att/nflx/intc 三实例的 checklist.json 一直未落地, load_checklist() 每次重置 last_checked=None, 超期标记失效)。此处按部署日回填为基准, 非实际核查日 —— 首次真实复核后请覆盖本行。",
+    "url": "https://www.wbd.com/news"
+  }
+]
