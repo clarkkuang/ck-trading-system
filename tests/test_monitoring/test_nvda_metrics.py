@@ -219,7 +219,10 @@ class TestValidateFundamentals:
 
 class TestScenarios:
     def test_weighted_fair(self):
-        assert weighted_fair_value(list(DEFAULT_SCENARIOS)) == pytest.approx(223.75)
+        # 2026-08-06: 25/40/25/10 (=223.75) -> 24/41/26/9 after the hyperscaler
+        # capex verdicts (demand confirmed) vs AMZN TTM FCF turning negative
+        # (financing risk up). Implied prices unchanged until the 8/26 entry.
+        assert weighted_fair_value(list(DEFAULT_SCENARIOS)) == pytest.approx(223.49)
 
     def test_defaults_valid(self):
         assert validate_scenarios(list(DEFAULT_SCENARIOS)) == []

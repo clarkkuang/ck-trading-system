@@ -50,11 +50,28 @@ DIP_BUY_THRESHOLD = 0.127    # portfolio_dip.py NVDA 75th-pct calibration
 # Valuation scenarios (seed for scenarios.json; dashboard-only writer after)
 # weighted fair = .25*315 + .40*240 + .25*154 + .10*105 = 223.75
 # ---------------------------------------------------------------------------
+# 2026-08-06 revision: 0.24*315 + 0.41*240 + 0.26*154 + 0.09*105 = 223.49 (prior 223.75)
+#   只动概率、不动隐含价 —— 纪律: 价格随"已报数据"变(下一次是 8/26 财报录入),
+#   概率随"新闻"变。本轮无 NVDA 新财报, 故 EPS/倍数假设一律不动。
+#   需求侧确认(利多, 削弱 structural_bear 的"capex 见顶"腿):
+#     AMZN TTM capex $173B(+61%)/Q2单季 $54.2B, AWS +37% 为 18 季最快;
+#     MSFT FY26 $115.9B(+80%)且 FY27"继续增长"; GOOGL 上调 $195-205B; META 下限上调 $135-145B;
+#     ⭐新增第五家 SPCX: Q2 AI capex $15.8B(年化~$63B), 2027 年底 20GW 目标 —— 原不在四大池内
+#   融资/ROI 侧恶化(利空, 支撑 mild_bear 的"估值压缩"腿):
+#     ⚠️AMZN TTM 自由现金流转负 -$7.6B(去年同期 +$25.9B) —— 框架 7/3 预言的
+#       "五大经营现金流+23%/年 vs capex+70%/年, 两线约 Q3'26 交叉"已兑现;
+#     MSFT Q4 FCF -23%; META EPS 大 miss(费用+55%, 含第三方 AI token 成本);
+#     7/27 循环融资抛售 NVDA 5Y CDS 单日 +14bp 创纪录; SPCX $25B 投资级债数周内跌至垃圾价位;
+#     FOMC 9-3 鹰派维持、三票倾向加息, 30Y 5.21% 为 2007 年来最高
+#   净效果: 两侧几乎对冲, 公允值几乎不动, 但风险轴从"需求会不会来"迁移到"客户付不付得起"。
+#   ⚠️框架缺口: structural_bear 的机制写的是"capex 见顶 + ASIC 份额", 而当前活的机制是
+#     "客户自由现金流转负 → 被迫压 capex"。现有规则不监控客户 FCF —— 已加清单项 hyperscaler_fcf。
+# ---------------------------------------------------------------------------
 DEFAULT_SCENARIOS: tuple[dict, ...] = (
     {
         "id": "bull",
         "label": "超级牛: Rubin超预期+capex至2028+中国重开 (EPS $9×35x)",
-        "probability_pct": 25.0,
+        "probability_pct": 24.0,
         "implied_price": 315.0,
         "price_low": 300.0,
         "price_high": 330.0,
@@ -62,7 +79,7 @@ DEFAULT_SCENARIOS: tuple[dict, ...] = (
     {
         "id": "base",
         "label": "基准: 增速降档至40-50%,份额守住 (EPS $8×30x)",
-        "probability_pct": 40.0,
+        "probability_pct": 41.0,
         "implied_price": 240.0,
         "price_low": 225.0,
         "price_high": 255.0,
@@ -70,15 +87,15 @@ DEFAULT_SCENARIOS: tuple[dict, ...] = (
     {
         "id": "mild_bear",
         "label": "温和熊: 估值压缩,增速降至25-30% (EPS $7×22x)",
-        "probability_pct": 25.0,
+        "probability_pct": 26.0,
         "implied_price": 154.0,
         "price_low": 145.0,
         "price_high": 165.0,
     },
     {
         "id": "structural_bear",
-        "label": "结构熊: capex 2027见顶+ASIC 35%+ (EPS $5.5×19x)",
-        "probability_pct": 10.0,
+        "label": "结构熊: capex见顶(需求或客户现金流任一)+ASIC 35%+ (EPS $5.5×19x)",
+        "probability_pct": 9.0,
         "implied_price": 105.0,
         "price_low": 95.0,
         "price_high": 115.0,
