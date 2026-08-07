@@ -186,19 +186,25 @@ DEFAULT_CHECKLIST: tuple[dict, ...] = (
     },
     {
         "id": "tmobile_spacex_direction",
-        "label": "T-Mobile×SpaceX 合作走向 — 续约深化=路径A / 谈崩=路径B 概率上升。"
-                 "[2026-08-06 SPCX Q2 判定] 现状=路径A: Gopalan 7/23称独家'今年不结束'; 国际三单(SoftBank/Docomo/Spark NZ)全部批发结构。"
-                 "但路径B期权在成型: Charter回传谈判(Fortune 6/27)+Starlink Mobile商标+Shotwell'移动终超宽带'表态。"
-                 "盯: 独家条款真实到期日 / Charter是否落地 / 2027-11频谱终割前是否申请地面部署",
+        "label": "SpaceX 路径判定 — 批发(路径A) vs 自营直销(路径B)。"
+                 "⚠️[2026-08-06 重大修正] 路径B 已由 SpaceX 官方宣告, 不再是期权: 8/4 电话会 Shotwell 明确 SpaceX 将"
+                 "自建美国地面移动网(用 EchoStar 交易内含的地面组件, 小型低成本基站配现有 Starlink 天线), 直接对标 T/VZ/TMUS, "
+                 "原话: '我预计我们能抢到他们相当多的客户, 因为我认为我们的服务会更好'。"
+                 "⚠️本规则原设计缺陷: 假定路径B会以'T-Mobile 谈崩'为信号——实际 SpaceX 是在保留批发合作的同时直接宣告自营, "
+                 "触发条件设错。今后判定看'自营时间表与基站部署', 不看 T-Mobile 关系。"
+                 "盯: 地面基站选址/铁塔协议、终端补贴、资费公布、T-Mobile 独家条款如何与自营并存",
         "url": "https://www.t-mobile.com/news",
         "cadence_days": 31,
     },
     {
         "id": "starlink_mobile_pricing",
         "label": "Starlink 移动定价 — $20-30=补充连接 / $60+=正面替代 (T 后付费 ARPU $85+)。"
-                 "[2026-08-06 SPCX Q2 判定] 全球D2D零售价全在$0-10/月(T-Satellite $10、Docomo/KDDI免费内含、Spark NZ$10)=深处互补区。"
-                 "注意: SPCX报表ARPU $66是宽带混合口径(国际mix致$85→$66), 不是移动定价信号, 勿误读。"
-                 "SPCX capex 86%投AI、Connectivity仅+2.6% QoQ——扩张边际不在电信",
+                 "[2026-08-06] 当前所有 D2D 零售价 $0-10/月(T-Satellite $10、Docomo/KDDI 免费内含、Spark NZ $10)=互补区; "
+                 "但那是'运营商批发'时代的价格, 自营 Starlink Mobile 资费尚未公布——这才是本项真正要等的数字。"
+                 "⚠️时间表已提前: Shotwell 8/4 电话会称 V2 移动星 2027 年开始发射、'明年底开始提供服务'(=2027 年底), "
+                 "容量口径 65MHz + 卫星数 10x → 自称'Starlink mobile 好 100 倍'。频谱 2027-11 完成过户。"
+                 "我此前按 FCC 绩效节点(2029-11)推出的'2028-2030 才构成替代'是错的: 那是合规考核期限, 不是放号日期。"
+                 "注意: SPCX 报表 ARPU $66 是宽带混合口径(国际 mix 致 $85→$66), 不是移动定价信号, 勿误读",
         "url": "https://www.starlink.com/",
         "cadence_days": 31,
     },
