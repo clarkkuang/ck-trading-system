@@ -186,13 +186,19 @@ DEFAULT_CHECKLIST: tuple[dict, ...] = (
     },
     {
         "id": "tmobile_spacex_direction",
-        "label": "T-Mobile×SpaceX 合作走向 — 续约深化=路径A / 谈崩=路径B 概率上升",
+        "label": "T-Mobile×SpaceX 合作走向 — 续约深化=路径A / 谈崩=路径B 概率上升。"
+                 "[2026-08-06 SPCX Q2 判定] 现状=路径A: Gopalan 7/23称独家'今年不结束'; 国际三单(SoftBank/Docomo/Spark NZ)全部批发结构。"
+                 "但路径B期权在成型: Charter回传谈判(Fortune 6/27)+Starlink Mobile商标+Shotwell'移动终超宽带'表态。"
+                 "盯: 独家条款真实到期日 / Charter是否落地 / 2027-11频谱终割前是否申请地面部署",
         "url": "https://www.t-mobile.com/news",
         "cadence_days": 31,
     },
     {
         "id": "starlink_mobile_pricing",
-        "label": "Starlink 移动定价 — $20-30=补充连接 / $60+=正面替代 (T 后付费 ARPU $85+)",
+        "label": "Starlink 移动定价 — $20-30=补充连接 / $60+=正面替代 (T 后付费 ARPU $85+)。"
+                 "[2026-08-06 SPCX Q2 判定] 全球D2D零售价全在$0-10/月(T-Satellite $10、Docomo/KDDI免费内含、Spark NZ$10)=深处互补区。"
+                 "注意: SPCX报表ARPU $66是宽带混合口径(国际mix致$85→$66), 不是移动定价信号, 勿误读。"
+                 "SPCX capex 86%投AI、Connectivity仅+2.6% QoQ——扩张边际不在电信",
         "url": "https://www.starlink.com/",
         "cadence_days": 31,
     },
@@ -220,7 +226,10 @@ DEFAULT_CHECKLIST: tuple[dict, ...] = (
     },
     {
         "id": "fcc_antitrust",
-        "label": "FCC/反垄断: SpaceX 绩效义务执法、Warren 施压、频谱备案 (IBFS/ULS)",
+        "label": "FCC/反垄断: SpaceX 绩效义务执法、Warren 施压、频谱备案 (IBFS/ULS)。"
+                 "[2026-08-06 核实] EchoStar 65MHz转让已于2026-05-12获批(局级令DA-26-471, 含地面部署灵活性豁免; 姊妹令同日批准T以~$23B购EchoStar 50MHz)。"
+                 "硬节点: 频谱终割2027-11-30 / FCC首个绩效里程碑2029-11-30(SINR 5dB/70%可用/90% BEA)——路径B最早2028-2030才构成可用替代。"
+                 "T/VZ/TMUS在docket零申报(不阻击、组JV对冲), 5/14三方D2D合资平台7月末仍未定稿",
         "url": "https://www.fcc.gov/news-events",
         "cadence_days": 31,
     },
