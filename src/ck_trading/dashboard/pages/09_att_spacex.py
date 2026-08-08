@@ -458,7 +458,7 @@ for it in items:
             due = True
     cl_rows.append({
         "Due?": "🔔 DUE" if due else "✓",
-        "项目": it["label"],
+        "项目": it.get("label", it.get("id", "?")),
         "链接": it.get("url", ""),
         "周期(天)": it.get("cadence_days", 31),
         "上次核查": str(last) if last else "",

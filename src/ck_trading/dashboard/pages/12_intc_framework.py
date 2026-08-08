@@ -492,7 +492,7 @@ if st.button("💾 保存情景", key="save_intc_scen"):
 # --------------------------------------------------------------------------
 st.subheader("手动检查清单(不可自动化的观测项)")
 items = _store.load_checklist()
-cl_rows = [{"项目": i["label"], "链接": i.get("url", ""),
+cl_rows = [{"项目": i.get("label", i.get("id", "?")), "链接": i.get("url", ""),
             "周期(天)": i.get("cadence_days"),
             "上次核查": i.get("last_checked") or "", "备注": i.get("notes", "")}
            for i in items]
