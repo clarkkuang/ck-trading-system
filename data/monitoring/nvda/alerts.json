@@ -40,10 +40,10 @@
         {
           "period_key": "2026-W32",
           "status": "ok",
-          "value": 0.07105285318441937
+          "value": 0.04997029992704598
         }
       ],
-      "metric_value": 0.07105285318441937,
+      "metric_value": 0.04997029992704598,
       "period_key": "2026-W32",
       "required": 1,
       "resolved_at": "2026-08-07T04:11:56Z",
@@ -94,10 +94,10 @@
         {
           "period_key": "2026-W32",
           "status": "ok",
-          "value": 31.284286499023438
+          "value": 31.994286673409597
         }
       ],
-      "metric_value": 31.284286499023438,
+      "metric_value": 31.994286673409597,
       "period_key": "2026-W32",
       "required": 1,
       "resolved_at": null,
@@ -148,10 +148,10 @@
         {
           "period_key": "2026-W32",
           "status": "ok",
-          "value": 31.284286499023438
+          "value": 31.994286673409597
         }
       ],
-      "metric_value": 31.284286499023438,
+      "metric_value": 31.994286673409597,
       "period_key": "2026-W32",
       "required": 1,
       "resolved_at": null,
@@ -202,10 +202,10 @@
         {
           "period_key": "2026-W32",
           "status": "ok",
-          "value": 0.130143252417541
+          "value": 0.15456097694964321
         }
       ],
-      "metric_value": 0.130143252417541,
+      "metric_value": 0.15456097694964321,
       "period_key": "2026-W32",
       "required": 4,
       "resolved_at": null,
@@ -386,5 +386,5 @@
       "triggered_at": null
     }
   ],
-  "updated_at": "2026-08-07T04:41:25Z"
+  "updated_at": "2026-08-10T08:52:56Z"
 }
