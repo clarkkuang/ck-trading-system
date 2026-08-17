@@ -26,10 +26,15 @@
           "period_key": "2026-W31",
           "status": "ok",
           "value": 71.70999908447266
+        },
+        {
+          "period_key": "2026-W33",
+          "status": "ok",
+          "value": 78.16000366210938
         }
       ],
-      "metric_value": 71.70999908447266,
-      "period_key": "2026-W31",
+      "metric_value": 78.16000366210938,
+      "period_key": "2026-W33",
       "required": 1,
       "resolved_at": "2026-08-03T10:59:42Z",
       "rule_id": "nflx_buy_ladder_t1",
@@ -65,10 +70,15 @@
           "period_key": "2026-W31",
           "status": "ok",
           "value": 71.70999908447266
+        },
+        {
+          "period_key": "2026-W33",
+          "status": "ok",
+          "value": 78.16000366210938
         }
       ],
-      "metric_value": 71.70999908447266,
-      "period_key": "2026-W31",
+      "metric_value": 78.16000366210938,
+      "period_key": "2026-W33",
       "required": 1,
       "resolved_at": null,
       "rule_id": "nflx_buy_ladder_t2",
@@ -104,10 +114,15 @@
           "period_key": "2026-W31",
           "status": "ok",
           "value": -0.21457889650702833
+        },
+        {
+          "period_key": "2026-W33",
+          "status": "ok",
+          "value": -0.1238068990139699
         }
       ],
-      "metric_value": -0.21457889650702833,
-      "period_key": "2026-W31",
+      "metric_value": -0.1238068990139699,
+      "period_key": "2026-W33",
       "required": 1,
       "resolved_at": null,
       "rule_id": "nflx_buy_trend_repair",
@@ -265,5 +280,5 @@
       "triggered_at": null
     }
   ],
-  "updated_at": "2026-08-10T09:01:27Z"
+  "updated_at": "2026-08-17T08:25:30Z"
 }
