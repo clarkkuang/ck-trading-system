@@ -16,10 +16,15 @@
           "period_key": "2026-W33",
           "status": "ok",
           "value": 13.464509898599708
+        },
+        {
+          "period_key": "2026-W34",
+          "status": "ok",
+          "value": 13.715439774804732
         }
       ],
-      "metric_value": 13.464509898599708,
-      "period_key": "2026-W33",
+      "metric_value": 13.715439774804732,
+      "period_key": "2026-W34",
       "required": 1,
       "resolved_at": null,
       "rule_id": "tcnt_exit_accelerate_upper_band",
@@ -45,10 +50,15 @@
           "period_key": "2026-W33",
           "status": "ok",
           "value": 13.464509898599708
+        },
+        {
+          "period_key": "2026-W34",
+          "status": "ok",
+          "value": 13.715439774804732
         }
       ],
-      "metric_value": 13.464509898599708,
-      "period_key": "2026-W33",
+      "metric_value": 13.715439774804732,
+      "period_key": "2026-W34",
       "required": 1,
       "resolved_at": null,
       "rule_id": "tcnt_exit_clear_half_pe23",
@@ -74,10 +84,15 @@
           "period_key": "2026-W33",
           "status": "ok",
           "value": 13.464509898599708
+        },
+        {
+          "period_key": "2026-W34",
+          "status": "ok",
+          "value": 13.715439774804732
         }
       ],
-      "metric_value": 13.464509898599708,
-      "period_key": "2026-W33",
+      "metric_value": 13.715439774804732,
+      "period_key": "2026-W34",
       "required": 1,
       "resolved_at": null,
       "rule_id": "tcnt_exit_clear_all_pe26",
@@ -103,10 +118,15 @@
           "period_key": "2026-W33",
           "status": "ok",
           "value": 13.464509898599708
+        },
+        {
+          "period_key": "2026-W34",
+          "status": "ok",
+          "value": 13.715439774804732
         }
       ],
-      "metric_value": 13.464509898599708,
-      "period_key": "2026-W33",
+      "metric_value": 13.715439774804732,
+      "period_key": "2026-W34",
       "required": 1,
       "resolved_at": null,
       "rule_id": "tcnt_brake_deep_value_pe10",
@@ -153,9 +173,7 @@
         "dimensions_used": {
           "field": "marketing_services_yoy_pct"
         },
-        "fallback_used": false,
-        "periods_available": 1,
-        "reason": "insufficient_history"
+        "fallback_used": false
       },
       "episode_started": null,
       "fired": false,
@@ -163,7 +181,7 @@
       "history": [
         {
           "period_key": "2026Q2",
-          "status": "insufficient_data",
+          "status": "ok",
           "value": 22.0
         }
       ],
@@ -173,7 +191,7 @@
       "resolved_at": null,
       "rule_id": "tcnt_kill_ads_below_10_2q",
       "severity": "trigger",
-      "status": "insufficient_data",
+      "status": "ok",
       "streak": 0,
       "threshold": 10.0,
       "triggered_at": null
@@ -184,9 +202,7 @@
         "dimensions_used": {
           "field": "non_ifrs_profit_yoy_pct"
         },
-        "fallback_used": false,
-        "periods_available": 1,
-        "reason": "insufficient_history"
+        "fallback_used": false
       },
       "episode_started": null,
       "fired": false,
@@ -194,7 +210,7 @@
       "history": [
         {
           "period_key": "2026Q2",
-          "status": "insufficient_data",
+          "status": "ok",
           "value": 9.0
         }
       ],
@@ -204,7 +220,7 @@
       "resolved_at": null,
       "rule_id": "tcnt_kill_profit_decline_2q",
       "severity": "trigger",
-      "status": "insufficient_data",
+      "status": "ok",
       "streak": 0,
       "threshold": 0.0,
       "triggered_at": null
@@ -270,5 +286,5 @@
       "triggered_at": null
     }
   ],
-  "updated_at": "2026-08-17T04:18:47Z"
+  "updated_at": "2026-08-17T07:26:46Z"
 }

@@ -1,6 +1,26 @@
 {
   "quarters": [
     {
+      "net_cash_billions": 102.4,
+      "non_ifrs_profit_billions": 70.551,
+      "non_ifrs_profit_yoy_pct": 18.0,
+      "notes": "2025-11-13\u53d1\u5e03\u3002\u8425\u65361,928.7\u4ebf+15%, \u975eIFRS\u7ecf\u8425\u5229\u6da6725.7\u4ebf+18%, \u6bdb\u52291,088\u4ebf+22%\u3002\u51c0\u73b0\u91d11,024\u4ebf(6/30\u4e3a746\u4ebf)\u3002\u8d44\u672c\u5f00\u652f129.8\u4ebf\u3002[\u6765\u6e90:\u4e2d\u6587\u5a92\u4f53\u8f6c\u8ff0\u5b98\u65b9; \u5df2\u7528\u5b98\u65b9\u5168\u5e74259.626\u4ebf\u6821\u9a8c: 70.551+64.694=135.245 \u4e0eH2\u543b\u5408]",
+      "quarter": "2025Q3"
+    },
+    {
+      "marketing_services_yoy_pct": 17.0,
+      "net_cash_billions": 107.145,
+      "non_ifrs_profit_billions": 64.694,
+      "notes": "2026-03-18\u53d1\u5e03(\u5b98\u65b9PRNewswire)\u3002\u8425\u65361,943.71\u4ebf, IFRS\u5f52\u6bcd582.60\u4ebf\u3002\u8425\u9500\u670d\u52a1411.16\u4ebf +17%(AI\u5e7f\u544a\u5b9a\u5411+\u95ed\u73af\u8425\u9500\u9a71\u52a8)\u3002\u5168\u5e74\u975eIFRS\u5f52\u6bcd2,596.26\u4ebf\u3002\u5168\u5e74\u81ea\u7531\u73b0\u91d1\u6d411,826\u4ebf, \u5e74\u672b\u51c0\u73b0\u91d11,071.45\u4ebf\u3002[\u540c\u6bd4\u672a\u5f55: \u7f3aQ4'24\u53ef\u6bd4\u57fa\u6570, \u4e0d\u731c]",
+      "quarter": "2025Q4"
+    },
+    {
+      "non_ifrs_profit_billions": 67.9,
+      "non_ifrs_profit_yoy_pct": 11.0,
+      "notes": "2026-05-13\u53d1\u5e03\u3002\u8425\u65361,964.58\u4ebf+9%, IFRS\u5f52\u6bcd580.93\u4ebf+21%, \u975eIFRS\u5f52\u6bcd679\u4ebf+11%\u3002[\u4e24\u5904\u72ec\u7acb\u6765\u6e90\u4e00\u81f4]",
+      "quarter": "2026Q1"
+    },
+    {
       "buyback_hkd_billions": 12.2,
       "free_cash_flow_billions": -13.8,
       "marketing_services_yoy_pct": 22.0,
@@ -11,6 +31,6 @@
       "quarter": "2026Q2"
     }
   ],
-  "updated_at": "2026-08-17T04:18:37Z",
+  "updated_at": "2026-08-17T07:26:33Z",
   "version": 1
 }
