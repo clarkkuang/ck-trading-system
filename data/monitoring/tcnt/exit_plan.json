@@ -1,17 +1,30 @@
 {
   "baseline_pct": 5.0,
+  "board_lot": 100,
+  "cost_basis_hkd": 400.0,
   "first_tranche_deferred": true,
   "gate": {
     "hard_deadline": "2027-03-31",
     "not_before_quarter": "2027Q1",
     "or_price_at_or_above_pe": 15.4
   },
+  "liquidity_note": "\u57fa\u7ebf\u6863 10,000 \u80a1\u7ea6\u4e3a\u65e5\u5747\u6210\u4ea4\u91cf\u7684 0.05%; \u5168\u4ed3 200,000 \u80a1\u7ea6 1%\u3002\u6267\u884c\u65e0\u51b2\u51fb\u6210\u672c \u2014\u2014 \u6162\u8282\u594f\u7684\u7406\u7531\u53ea\u80fd\u662f\u4ef7\u683c, \u4e0d\u80fd\u662f\u6d41\u52a8\u6027\u3002",
   "note": "\u6301\u6709\u4eba\u4e8e 2026-08-16 \u9009\u62e9\u63a8\u8fdf\u9996\u6863\u4e00\u6574\u683c\u3002\u95f8\u95e8\u4e3a\u89c4\u5219\u800c\u975e\u5f00\u653e\u5f0f\u7b49\u5f85:P/E \u7ad9\u4e0a 15.4x \u6216 2027-03-31 \u4e4b\u524d\u7684\u9996\u4e2a\u5b63\u672b, \u4ee5\u5148\u5230\u8005\u4e3a\u51c6\u3002\u6863\u4f4d\u6807\u5b9a\u5df2\u4e8e\u540c\u65e5\u7531\u6574\u6570(10/12/17x)\u6539\u4e3a52\u5468\u533a\u95f4\u5206\u4f4d\u6570, \u6b64\u540e\u51bb\u7ed3\u3002",
   "pct_sold_to_date": 0.0,
+  "shares_remaining": 200000,
+  "shares_total": 200000,
   "skip_budget_total": 4,
   "skip_budget_used": 0,
   "total_tranches": 20,
+  "tranche_shares": {
+    "accelerate_10pct": 20000,
+    "baseline_5pct": 10000,
+    "deep_brake_0pct": 0,
+    "half_2_5pct": 5000
+  },
   "tranches_executed": 0,
-  "updated_at": "2026-08-17T04:18:37Z",
+  "updated_at": "2026-08-17T06:38:57Z",
+  "us_adr_included": false,
+  "us_adr_note": "\u7f8e\u80a1 55.99 \u80a1 TCEHY \u4e0d\u5e76\u5165\u672c\u8ba1\u5212(\u6301\u6709\u4eba 2026-08-16 \u51b3\u5b9a), \u5355\u72ec\u5904\u7406",
   "version": 1
 }
