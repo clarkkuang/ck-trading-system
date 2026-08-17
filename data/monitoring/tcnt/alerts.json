@@ -20,10 +20,10 @@
         {
           "period_key": "2026-W34",
           "status": "ok",
-          "value": 13.715439774804732
+          "value": 13.72155944625287
         }
       ],
-      "metric_value": 13.715439774804732,
+      "metric_value": 13.72155944625287,
       "period_key": "2026-W34",
       "required": 1,
       "resolved_at": null,
@@ -54,10 +54,10 @@
         {
           "period_key": "2026-W34",
           "status": "ok",
-          "value": 13.715439774804732
+          "value": 13.72155944625287
         }
       ],
-      "metric_value": 13.715439774804732,
+      "metric_value": 13.72155944625287,
       "period_key": "2026-W34",
       "required": 1,
       "resolved_at": null,
@@ -88,10 +88,10 @@
         {
           "period_key": "2026-W34",
           "status": "ok",
-          "value": 13.715439774804732
+          "value": 13.72155944625287
         }
       ],
-      "metric_value": 13.715439774804732,
+      "metric_value": 13.72155944625287,
       "period_key": "2026-W34",
       "required": 1,
       "resolved_at": null,
@@ -122,10 +122,10 @@
         {
           "period_key": "2026-W34",
           "status": "ok",
-          "value": 13.715439774804732
+          "value": 13.72155944625287
         }
       ],
-      "metric_value": 13.715439774804732,
+      "metric_value": 13.72155944625287,
       "period_key": "2026-W34",
       "required": 1,
       "resolved_at": null,
@@ -286,5 +286,5 @@
       "triggered_at": null
     }
   ],
-  "updated_at": "2026-08-17T07:26:46Z"
+  "updated_at": "2026-08-17T07:28:14Z"
 }
