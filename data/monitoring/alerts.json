@@ -23,10 +23,10 @@
         {
           "period_key": "2026-W27",
           "status": "insufficient_data",
-          "value": 0.1027054481972289
+          "value": 0.10131571818249993
         }
       ],
-      "metric_value": 0.1027054481972289,
+      "metric_value": 0.10131571818249993,
       "period_key": "2026-W27",
       "required": 8,
       "resolved_at": null,
@@ -42,7 +42,7 @@
       "details": {
         "current_model_id": "anthropic/claude-opus-5-fast",
         "drop_pct": 0.0,
-        "history_days": 38,
+        "history_days": 45,
         "max_model_id": "anthropic/claude-opus-4.8-fast",
         "max_period": "2026-07-03",
         "max_value": 50.0
@@ -85,10 +85,15 @@
           "period_key": "2026-08-10",
           "status": "ok",
           "value": 50.0
+        },
+        {
+          "period_key": "2026-08-17",
+          "status": "ok",
+          "value": 50.0
         }
       ],
       "metric_value": 50.0,
-      "period_key": "2026-08-10",
+      "period_key": "2026-08-17",
       "required": 1,
       "resolved_at": null,
       "rule_id": "claude_opus_price_cut_gt30_365d",
@@ -103,14 +108,14 @@
       "details": {
         "current_model_id": "anthropic/claude-sonnet-5:batch",
         "drop_pct": 0.5,
-        "history_days": 38,
+        "history_days": 45,
         "max_model_id": "anthropic/claude-sonnet-5",
         "max_period": "2026-07-03",
         "max_value": 10.0
       },
       "episode_started": "2026-08-10",
       "fired": true,
-      "first_period_key": "2026-08-10",
+      "first_period_key": "2026-08-17",
       "history": [
         {
           "period_key": null,
@@ -146,10 +151,15 @@
           "period_key": "2026-08-10",
           "status": "triggered",
           "value": 5.0
+        },
+        {
+          "period_key": "2026-08-17",
+          "status": "triggered",
+          "value": 5.0
         }
       ],
       "metric_value": 5.0,
-      "period_key": "2026-08-10",
+      "period_key": "2026-08-17",
       "required": 1,
       "resolved_at": null,
       "rule_id": "claude_sonnet_price_cut_gt30_365d",
@@ -162,15 +172,7 @@
     {
       "action_label": "Advisory: dev adoption slipping vs competitor CLI",
       "details": {
-        "competitors_grown": [
-          {
-            "dimensions": {
-              "package": "@openai/codex",
-              "registry": "npm"
-            },
-            "growth": 0.021136979014827525
-          }
-        ],
+        "competitors_grown": [],
         "contiguous": true,
         "declining": false
       },
@@ -202,10 +204,15 @@
           "period_key": "2026-W32",
           "status": "ok",
           "value": 15100156.0
+        },
+        {
+          "period_key": "2026-W33",
+          "status": "ok",
+          "value": 19469013.0
         }
       ],
-      "metric_value": 15100156.0,
-      "period_key": "2026-W32",
+      "metric_value": 19469013.0,
+      "period_key": "2026-W33",
       "required": 3,
       "resolved_at": null,
       "rule_id": "claude_code_npm_decline_3w",
@@ -216,5 +223,5 @@
       "triggered_at": null
     }
   ],
-  "updated_at": "2026-08-10T08:03:27Z"
+  "updated_at": "2026-08-17T07:16:19Z"
 }
