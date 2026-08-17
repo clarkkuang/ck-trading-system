@@ -1,0 +1,17 @@
+{
+  "baseline_pct": 5.0,
+  "first_tranche_deferred": true,
+  "gate": {
+    "hard_deadline": "2027-03-31",
+    "not_before_quarter": "2027Q1",
+    "or_price_at_or_above_pe": 15.4
+  },
+  "note": "\u6301\u6709\u4eba\u4e8e 2026-08-16 \u9009\u62e9\u63a8\u8fdf\u9996\u6863\u4e00\u6574\u683c\u3002\u95f8\u95e8\u4e3a\u89c4\u5219\u800c\u975e\u5f00\u653e\u5f0f\u7b49\u5f85:P/E \u7ad9\u4e0a 15.4x \u6216 2027-03-31 \u4e4b\u524d\u7684\u9996\u4e2a\u5b63\u672b, \u4ee5\u5148\u5230\u8005\u4e3a\u51c6\u3002\u6863\u4f4d\u6807\u5b9a\u5df2\u4e8e\u540c\u65e5\u7531\u6574\u6570(10/12/17x)\u6539\u4e3a52\u5468\u533a\u95f4\u5206\u4f4d\u6570, \u6b64\u540e\u51bb\u7ed3\u3002",
+  "pct_sold_to_date": 0.0,
+  "skip_budget_total": 4,
+  "skip_budget_used": 0,
+  "total_tranches": 20,
+  "tranches_executed": 0,
+  "updated_at": "2026-08-17T04:18:37Z",
+  "version": 1
+}

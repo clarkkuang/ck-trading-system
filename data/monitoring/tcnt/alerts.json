@@ -1,0 +1,274 @@
+{
+  "rules": [
+    {
+      "action_label": "\u8fdb\u516552\u5468\u533a\u95f4\u4e0a1/3 \u2014 \u672c\u6863 \u00d72",
+      "details": {
+        "dimensions_used": {
+          "ticker": "0700.HK"
+        },
+        "fallback_used": false
+      },
+      "episode_started": null,
+      "fired": false,
+      "first_period_key": null,
+      "history": [
+        {
+          "period_key": "2026-W33",
+          "status": "ok",
+          "value": 13.464509898599708
+        }
+      ],
+      "metric_value": 13.464509898599708,
+      "period_key": "2026-W33",
+      "required": 1,
+      "resolved_at": null,
+      "rule_id": "tcnt_exit_accelerate_upper_band",
+      "severity": "advisory",
+      "status": "ok",
+      "streak": 0,
+      "threshold": 18.2,
+      "triggered_at": null
+    },
+    {
+      "action_label": "P/E \u226523x \u2014 \u5356\u51fa\u5269\u4f59\u4ed3\u4f4d\u7684 50%",
+      "details": {
+        "dimensions_used": {
+          "ticker": "0700.HK"
+        },
+        "fallback_used": false
+      },
+      "episode_started": null,
+      "fired": false,
+      "first_period_key": null,
+      "history": [
+        {
+          "period_key": "2026-W33",
+          "status": "ok",
+          "value": 13.464509898599708
+        }
+      ],
+      "metric_value": 13.464509898599708,
+      "period_key": "2026-W33",
+      "required": 1,
+      "resolved_at": null,
+      "rule_id": "tcnt_exit_clear_half_pe23",
+      "severity": "trigger",
+      "status": "ok",
+      "streak": 0,
+      "threshold": 23.0,
+      "triggered_at": null
+    },
+    {
+      "action_label": "P/E \u226526x(\u224810\u5e74\u5747\u503c) \u2014 \u5269\u4f59\u5168\u90e8\u6e05\u7a7a, \u4e0d\u518d\u7b49",
+      "details": {
+        "dimensions_used": {
+          "ticker": "0700.HK"
+        },
+        "fallback_used": false
+      },
+      "episode_started": null,
+      "fired": false,
+      "first_period_key": null,
+      "history": [
+        {
+          "period_key": "2026-W33",
+          "status": "ok",
+          "value": 13.464509898599708
+        }
+      ],
+      "metric_value": 13.464509898599708,
+      "period_key": "2026-W33",
+      "required": 1,
+      "resolved_at": null,
+      "rule_id": "tcnt_exit_clear_all_pe26",
+      "severity": "trigger",
+      "status": "ok",
+      "streak": 0,
+      "threshold": 26.0,
+      "triggered_at": null
+    },
+    {
+      "action_label": "P/E \u226410x \u2014 \u53ef\u8df3\u8fc7\u672c\u6863(\u5168\u7a0b\u9650 4 \u6b21)",
+      "details": {
+        "dimensions_used": {
+          "ticker": "0700.HK"
+        },
+        "fallback_used": false
+      },
+      "episode_started": null,
+      "fired": false,
+      "first_period_key": null,
+      "history": [
+        {
+          "period_key": "2026-W33",
+          "status": "ok",
+          "value": 13.464509898599708
+        }
+      ],
+      "metric_value": 13.464509898599708,
+      "period_key": "2026-W33",
+      "required": 1,
+      "resolved_at": null,
+      "rule_id": "tcnt_brake_deep_value_pe10",
+      "severity": "advisory",
+      "status": "ok",
+      "streak": 0,
+      "threshold": 10.0,
+      "triggered_at": null
+    },
+    {
+      "action_label": "\u81ea\u7531\u73b0\u91d1\u6d41\u8fde\u7eed3\u5b63\u4e3a\u8d1f \u2014 \u5168\u901f\u6e05\u4ed3, \u4e0d\u518d\u770b\u4ef7\u683c",
+      "details": {
+        "dimensions_used": {
+          "field": "free_cash_flow_billions"
+        },
+        "fallback_used": false,
+        "periods_available": 1,
+        "reason": "insufficient_history"
+      },
+      "episode_started": null,
+      "fired": false,
+      "first_period_key": null,
+      "history": [
+        {
+          "period_key": "2026Q2",
+          "status": "insufficient_data",
+          "value": -13.8
+        }
+      ],
+      "metric_value": -13.8,
+      "period_key": "2026Q2",
+      "required": 3,
+      "resolved_at": null,
+      "rule_id": "tcnt_kill_fcf_negative_3q",
+      "severity": "trigger",
+      "status": "insufficient_data",
+      "streak": 1,
+      "threshold": 0.0,
+      "triggered_at": null
+    },
+    {
+      "action_label": "\u8425\u9500\u670d\u52a1\u589e\u901f\u8fde\u7eed2\u5b63<10% \u2014 AI\u53d8\u73b0\u8bba\u70b9\u7834\u4ea7, \u5168\u901f\u6e05\u4ed3",
+      "details": {
+        "dimensions_used": {
+          "field": "marketing_services_yoy_pct"
+        },
+        "fallback_used": false,
+        "periods_available": 1,
+        "reason": "insufficient_history"
+      },
+      "episode_started": null,
+      "fired": false,
+      "first_period_key": null,
+      "history": [
+        {
+          "period_key": "2026Q2",
+          "status": "insufficient_data",
+          "value": 22.0
+        }
+      ],
+      "metric_value": 22.0,
+      "period_key": "2026Q2",
+      "required": 2,
+      "resolved_at": null,
+      "rule_id": "tcnt_kill_ads_below_10_2q",
+      "severity": "trigger",
+      "status": "insufficient_data",
+      "streak": 0,
+      "threshold": 10.0,
+      "triggered_at": null
+    },
+    {
+      "action_label": "\u975eIFRS\u5f52\u6bcd\u51c0\u5229\u8fde\u7eed2\u5b63\u540c\u6bd4\u8d1f\u589e\u957f \u2014 \u5168\u901f\u6e05\u4ed3",
+      "details": {
+        "dimensions_used": {
+          "field": "non_ifrs_profit_yoy_pct"
+        },
+        "fallback_used": false,
+        "periods_available": 1,
+        "reason": "insufficient_history"
+      },
+      "episode_started": null,
+      "fired": false,
+      "first_period_key": null,
+      "history": [
+        {
+          "period_key": "2026Q2",
+          "status": "insufficient_data",
+          "value": 9.0
+        }
+      ],
+      "metric_value": 9.0,
+      "period_key": "2026Q2",
+      "required": 2,
+      "resolved_at": null,
+      "rule_id": "tcnt_kill_profit_decline_2q",
+      "severity": "trigger",
+      "status": "insufficient_data",
+      "streak": 0,
+      "threshold": 0.0,
+      "triggered_at": null
+    },
+    {
+      "action_label": "\u51c0\u73b0\u91d1\u8f6c\u8d1f \u2014 \u5168\u901f\u6e05\u4ed3",
+      "details": {
+        "dimensions_used": {
+          "field": "net_cash_billions"
+        },
+        "fallback_used": false
+      },
+      "episode_started": null,
+      "fired": false,
+      "first_period_key": null,
+      "history": [
+        {
+          "period_key": "2026Q2",
+          "status": "ok",
+          "value": 58.2
+        }
+      ],
+      "metric_value": 58.2,
+      "period_key": "2026Q2",
+      "required": 1,
+      "resolved_at": null,
+      "rule_id": "tcnt_kill_net_cash_negative",
+      "severity": "trigger",
+      "status": "ok",
+      "streak": 0,
+      "threshold": 0.0,
+      "triggered_at": null
+    },
+    {
+      "action_label": "\u5b63\u5ea6\u56de\u8d2d<HK$80\u4ebf \u8fde\u7eed2\u5b63 \u2014 \u4e70\u76d8\u6d88\u5931+FCF\u786e\u8ba4, \u52a0\u901f\u6e05\u4ed3",
+      "details": {
+        "dimensions_used": {
+          "field": "buyback_hkd_billions"
+        },
+        "fallback_used": false,
+        "periods_available": 1,
+        "reason": "insufficient_history"
+      },
+      "episode_started": null,
+      "fired": false,
+      "first_period_key": null,
+      "history": [
+        {
+          "period_key": "2026Q2",
+          "status": "insufficient_data",
+          "value": 12.2
+        }
+      ],
+      "metric_value": 12.2,
+      "period_key": "2026Q2",
+      "required": 2,
+      "resolved_at": null,
+      "rule_id": "tcnt_buyback_cut_2q",
+      "severity": "trigger",
+      "status": "insufficient_data",
+      "streak": 0,
+      "threshold": 8.0,
+      "triggered_at": null
+    }
+  ],
+  "updated_at": "2026-08-17T04:18:47Z"
+}
