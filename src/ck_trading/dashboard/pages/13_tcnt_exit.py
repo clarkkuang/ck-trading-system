@@ -186,6 +186,19 @@ if cur_rs is not None:
 else:
     e2.metric(f"{RELATIVE_WINDOW_WEEKS}周相对 {RELATIVE_BENCHMARK}", "数据不足")
 
+# two-level attribution: is it Tencent, the industry, or China?
+spread = tcnt_metrics.sector_vs_country_spread(prices, "KWEB", "MCHI",
+                                               RELATIVE_WINDOW_WEEKS)
+if not spread.is_empty():
+    sc = float(spread["value"][-1])
+    st.caption(
+        f"**两级归因** — ①腾讯 vs 板块 {cur_rs:+.1f}pp"
+        f" ②板块 vs 中国宽基(MCHI) {sc:+.1f}pp。"
+        " 2026-08 分解显示 KWEB 一年 -21.9% 而 MCHI 仅 -2.6%:这是**行业问题**"
+        "(即时零售补贴战两个季度烧掉逾千亿 + AI capex 周期),**不是国别折价**。"
+        " 二者半衰期不同 —— 行业利润战是周期性的,国别风险溢价不是。"
+    )
+
 # --------------------------------------------------------------------------
 # Invalidation counters — the load-bearing wall of a 5-year plan
 # --------------------------------------------------------------------------

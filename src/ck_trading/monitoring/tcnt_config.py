@@ -49,6 +49,14 @@ WATCH_TICKERS: tuple[tuple[str, str], ...] = (
     ("9988.HK", "peer"),      # Alibaba — the other China mega-cap AI spender
     ("3690.HK", "peer"),      # Meituan
     ("^HSI", "benchmark"),    # Hang Seng — broad HK market
+    ("MCHI", "country"),      # broad China. The 2026-08 decomposition showed
+                              # KWEB -21.9% over a year while MCHI was only
+                              # -2.6% and FXI -4.7% — the drawdown is an
+                              # INDUSTRY problem (subsidy war, AI capex cycle),
+                              # not a China-country discount. Keeping both
+                              # separates the two, which matters because one
+                              # is cyclical and the other is not.
+    ("FXI", "country"),       # China large-cap, cross-check on MCHI
     ("KWEB", "sector"),       # China-internet sector proxy. ^HSTECH has no
                               # yfinance feed; KWEB is the closest liquid
                               # stand-in and holds ~10% Tencent, which makes

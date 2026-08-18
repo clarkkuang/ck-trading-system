@@ -279,3 +279,26 @@ def buyback_blackout(as_of: date, calendar=None, annual_days=None, interim_days=
         "days_until": (start - as_of).days,
         "note": f"下一个静默窗口 {start} 起 ({label})",
     }
+
+
+def sector_vs_country_spread(
+    prices: pl.DataFrame,
+    sector: str = "KWEB",
+    country: str = "MCHI",
+    window_weeks: int = 13,
+) -> pl.DataFrame:
+    """Excess return of the internet sector over broad China, in points.
+
+    Diagnostic, not a trigger. The 2026-08 decomposition of Tencent's -34%
+    found the sector down 21.9% over a year while broad China was down 2.6%
+    (MCHI) / 4.7% (FXI) — so the drawdown is an industry problem (the instant-
+    retail subsidy war burned >RMB100bn in two quarters; Alibaba's e-commerce
+    EBITA fell RMB85.7bn, Meituan swung ~RMB60bn) layered on an AI capex
+    cycle, NOT a country discount.
+
+    Worth separating because the two have different half-lives: an industry
+    margin war is cyclical, a country risk premium is not. Deliberately not
+    wired to a rule — it explains WHY, and inventing an action threshold for
+    it without evidence would just add noise to the ladder.
+    """
+    return relative_strength_series(prices, sector, country, window_weeks)
