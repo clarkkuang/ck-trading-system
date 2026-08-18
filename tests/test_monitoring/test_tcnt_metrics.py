@@ -170,3 +170,74 @@ class TestExitBand:
         high_regime = exit_band(17.0, self._series(lo=16.0, hi=30.0))
         assert low_regime["multiplier"] == 2.0    # 17x is near the top of 10-18
         assert high_regime["multiplier"] == 0.5   # 17x is near the bottom of 16-30
+
+
+class TestRelativeStrength:
+    def _pair(self, sub_closes, bmk_closes):
+        from datetime import timedelta
+        rows, d = [], date(2026, 1, 5)
+        for s, b in zip(sub_closes, bmk_closes):
+            rows.append({"ticker": "0700.HK", "date": d, "close": float(s)})
+            rows.append({"ticker": "KWEB", "date": d, "close": float(b)})
+            d += timedelta(days=7)
+        return pl.DataFrame(
+            rows, schema={"ticker": pl.Utf8, "date": pl.Date, "close": pl.Float64}
+        )
+
+    def test_excess_return_in_points(self):
+        from ck_trading.monitoring.tcnt_metrics import relative_strength_series
+        # subject -20%, benchmark -10% over 4 weeks -> -10pp excess
+        sub = [100, 100, 100, 100, 80]
+        bmk = [100, 100, 100, 100, 90]
+        s = relative_strength_series(self._pair(sub, bmk), "0700.HK", "KWEB", 4)
+        assert s.height == 1
+        assert s["value"][0] == pytest.approx(-10.0, abs=0.01)
+
+    def test_falling_with_the_sector_is_not_underperformance(self):
+        """The Feb-2026 lesson: -14.5% vs a -23% sector must NOT look bad."""
+        from ck_trading.monitoring.tcnt_metrics import relative_strength_series
+        sub = [100, 100, 100, 100, 85.5]
+        bmk = [100, 100, 100, 100, 77.0]
+        s = relative_strength_series(self._pair(sub, bmk), "0700.HK", "KWEB", 4)
+        assert s["value"][0] > 0   # outperformed while falling
+
+    def test_missing_benchmark_is_empty_not_error(self):
+        from ck_trading.monitoring.tcnt_metrics import relative_strength_series
+        assert relative_strength_series(
+            self._pair([100] * 5, [100] * 5), "0700.HK", "NOPE", 4
+        ).is_empty()
+
+    def test_window_longer_than_history_is_empty(self):
+        from ck_trading.monitoring.tcnt_metrics import relative_strength_series
+        assert relative_strength_series(
+            self._pair([100] * 5, [100] * 5), "0700.HK", "KWEB", 52
+        ).is_empty()
+
+
+class TestBuybackBlackout:
+    CAL = (("2026-03-18", "FY2025 annual"), ("2026-08-12", "2026Q2 interim"))
+
+    def test_inside_annual_window(self):
+        from ck_trading.monitoring.tcnt_metrics import buyback_blackout
+        # the real event: buybacks stopped 2026-01-16 for 2026-03-18 results
+        got = buyback_blackout(date(2026, 2, 10), self.CAL, 61, 30)
+        assert got["in_blackout"] is True
+        assert got["results_date"] == date(2026, 3, 18)
+        assert got["days_remaining"] == 36
+
+    def test_just_outside_window(self):
+        from ck_trading.monitoring.tcnt_metrics import buyback_blackout
+        got = buyback_blackout(date(2026, 1, 10), self.CAL, 61, 30)
+        assert got["in_blackout"] is False
+        assert got["next_window_start"] == date(2026, 1, 16)
+
+    def test_interim_window_is_shorter(self):
+        from ck_trading.monitoring.tcnt_metrics import buyback_blackout
+        assert buyback_blackout(date(2026, 7, 20), self.CAL, 61, 30)["in_blackout"] is True
+        assert buyback_blackout(date(2026, 7, 1), self.CAL, 61, 30)["in_blackout"] is False
+
+    def test_calendar_exhausted_is_reported(self):
+        from ck_trading.monitoring.tcnt_metrics import buyback_blackout
+        got = buyback_blackout(date(2030, 1, 1), self.CAL, 61, 30)
+        assert got["in_blackout"] is False
+        assert "补录" in got["note"]

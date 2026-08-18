@@ -14,6 +14,8 @@ shared technicals module.
 
 from __future__ import annotations
 
+from datetime import date, timedelta
+
 import polars as pl
 
 from ck_trading.monitoring.quarters import (  # noqa: F401
@@ -186,3 +188,94 @@ def exit_band(current_pe: float, pe_series: pl.DataFrame | None) -> dict:
     return {"band": label, "multiplier": mult,
             "tranche_pct": EXIT_BASELINE_PCT * mult,
             "low_52w": lo, "high_52w": hi, "percentile": pct}
+
+
+def relative_strength_series(
+    prices: pl.DataFrame,
+    ticker: str,
+    benchmark: str,
+    window_weeks: int = 13,
+) -> pl.DataFrame:
+    """Rolling excess return of `ticker` over `benchmark`, in percentage points.
+
+    Answers the only question that should make a liquidation ladder go faster:
+    is this the subject breaking, or the whole sector? In Feb-2026 Tencent fell
+    14.5% while Hang Seng Tech fell 23% — accelerating on that would have sold
+    the bottom of a beta move.
+
+    Both legs are sampled to weekly closes first, so a US-listed benchmark and
+    an HK-listed subject line up on ISO weeks despite trading different hours.
+    Weeks where either leg is missing are dropped rather than carried forward.
+    """
+    empty = pl.DataFrame(schema=EMPTY_SERIES_SCHEMA)
+    if prices is None or prices.is_empty() or window_weeks < 1:
+        return empty
+    sub = weekly_close_series(prices, ticker)
+    bmk = weekly_close_series(prices, benchmark)
+    if sub.is_empty() or bmk.is_empty():
+        return empty
+
+    joined = (
+        sub.rename({"value": "sub"})
+        .join(bmk.rename({"value": "bmk"}).drop("period_start"), on="period_key")
+        .sort("period_start")
+    )
+    if joined.height <= window_weeks:
+        return empty
+
+    joined = joined.with_columns([
+        (pl.col("sub") / pl.col("sub").shift(window_weeks) - 1).alias("r_sub"),
+        (pl.col("bmk") / pl.col("bmk").shift(window_weeks) - 1).alias("r_bmk"),
+    ]).drop_nulls(["r_sub", "r_bmk"])
+    if joined.is_empty():
+        return empty
+    return joined.select(
+        "period_key",
+        "period_start",
+        ((pl.col("r_sub") - pl.col("r_bmk")) * 100).alias("value"),
+    )
+
+
+def buyback_blackout(as_of: date, calendar=None, annual_days=None, interim_days=None) -> dict:
+    """Whether `as_of` falls inside a buyback blackout, and what is next.
+
+    Not a threshold rule — a calendar fact none of the metric rules can see.
+    Tencent stopped buying on 2026-01-16 ahead of 2026-03-18 annual results
+    and the HK$500M/day bid simply disappeared for two months.
+    """
+    from ck_trading.monitoring.tcnt_config import (
+        BLACKOUT_DAYS_ANNUAL,
+        BLACKOUT_DAYS_INTERIM,
+        RESULTS_CALENDAR,
+    )
+
+    calendar = RESULTS_CALENDAR if calendar is None else calendar
+    annual_days = BLACKOUT_DAYS_ANNUAL if annual_days is None else annual_days
+    interim_days = BLACKOUT_DAYS_INTERIM if interim_days is None else interim_days
+
+    windows = []
+    for iso, label in calendar:
+        results = date.fromisoformat(iso)
+        lead = annual_days if "annual" in label.lower() else interim_days
+        windows.append((results - timedelta(days=lead), results, label))
+    windows.sort()
+
+    for start, end, label in windows:
+        if start <= as_of <= end:
+            return {
+                "in_blackout": True, "label": label,
+                "window_start": start, "results_date": end,
+                "days_remaining": (end - as_of).days,
+                "note": "回购静默期内 —— 无回购托底; 大额减持应避开此窗口",
+            }
+    upcoming = [w for w in windows if w[0] > as_of]
+    if not upcoming:
+        return {"in_blackout": False, "label": None, "next_window_start": None,
+                "note": "日历已用尽 — 需补录后续业绩日期"}
+    start, end, label = upcoming[0]
+    return {
+        "in_blackout": False, "label": label,
+        "next_window_start": start, "results_date": end,
+        "days_until": (start - as_of).days,
+        "note": f"下一个静默窗口 {start} 起 ({label})",
+    }

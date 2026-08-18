@@ -31,6 +31,8 @@ from ck_trading.monitoring.rules import evaluate_rules
 from ck_trading.monitoring.store import MonitoringStore
 from ck_trading.monitoring.tcnt_config import (
     DEFAULT_CHECKLIST,
+    RELATIVE_BENCHMARK,
+    RELATIVE_WINDOW_WEEKS,
     TCNT_DEDUPE_KEYS,
     TCNT_RULES,
     WATCH_TICKERS,
@@ -72,6 +74,13 @@ def build_tcnt_series_provider(store: MonitoringStore):
         if metric_key == "tcnt.forward_pe":
             return tcnt_metrics.trailing_pe_series(
                 _prices(), ticker or SUBJECT_TICKER, _quarters()
+            )
+        if metric_key == "tcnt.relative_strength":
+            return tcnt_metrics.relative_strength_series(
+                _prices(),
+                ticker or SUBJECT_TICKER,
+                dims.get("benchmark", RELATIVE_BENCHMARK),
+                RELATIVE_WINDOW_WEEKS,
             )
         if metric_key == "tcnt.fundamental":
             return fundamentals_series(_quarters(), dims.get("field", ""))

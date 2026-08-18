@@ -255,6 +255,36 @@
       "triggered_at": null
     },
     {
+      "action_label": "13\u5468\u8dd1\u8f93\u677f\u5757 >10% \u2014 \u4e2a\u80a1\u95ee\u9898\u800c\u975e\u677f\u5757beta, \u52a0\u901f\u672c\u6863",
+      "details": {
+        "dimensions_used": {
+          "benchmark": "KWEB",
+          "ticker": "0700.HK"
+        },
+        "fallback_used": false
+      },
+      "episode_started": null,
+      "fired": false,
+      "first_period_key": null,
+      "history": [
+        {
+          "period_key": "2026-W34",
+          "status": "ok",
+          "value": 0.9841123876364266
+        }
+      ],
+      "metric_value": 0.9841123876364266,
+      "period_key": "2026-W34",
+      "required": 1,
+      "resolved_at": null,
+      "rule_id": "tcnt_exit_underperform_sector_13w",
+      "severity": "advisory",
+      "status": "ok",
+      "streak": 0,
+      "threshold": -10.0,
+      "triggered_at": null
+    },
+    {
       "action_label": "\u5b63\u5ea6\u56de\u8d2d<HK$80\u4ebf \u8fde\u7eed2\u5b63 \u2014 \u4e70\u76d8\u6d88\u5931+FCF\u786e\u8ba4, \u52a0\u901f\u6e05\u4ed3",
       "details": {
         "dimensions_used": {
@@ -286,5 +316,5 @@
       "triggered_at": null
     }
   ],
-  "updated_at": "2026-08-17T09:24:22Z"
+  "updated_at": "2026-08-18T03:49:37Z"
 }

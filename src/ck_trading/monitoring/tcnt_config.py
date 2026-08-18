@@ -48,7 +48,13 @@ WATCH_TICKERS: tuple[tuple[str, str], ...] = (
     ("0700.HK", "subject"),
     ("9988.HK", "peer"),      # Alibaba — the other China mega-cap AI spender
     ("3690.HK", "peer"),      # Meituan
-    ("^HSI", "benchmark"),    # Hang Seng
+    ("^HSI", "benchmark"),    # Hang Seng — broad HK market
+    ("KWEB", "sector"),       # China-internet sector proxy. ^HSTECH has no
+                              # yfinance feed; KWEB is the closest liquid
+                              # stand-in and holds ~10% Tencent, which makes
+                              # the relative test CONSERVATIVE (the subject is
+                              # partly inside its own benchmark). USD-quoted,
+                              # but HKD is pegged so FX is not a factor.
 )
 
 TCNT_DEDUPE_KEYS: dict[str, list[str]] = {"prices": ["ticker", "date"]}
@@ -90,6 +96,46 @@ BAND_MULTIPLIERS: tuple[tuple[str, float, float], ...] = (
 PE_CLEAR_HALF: float = 23.0    # sell half of whatever remains
 PE_CLEAR_ALL: float = 26.0     # ~10-year mean 25.73x — clear the rest
 PE_DEEP_BRAKE: float = 10.0    # skip this tranche, drawing on SKIP_BUDGET
+
+# ---------------------------------------------------------------------------
+# Buyback blackout calendar
+# ---------------------------------------------------------------------------
+# Learned the hard way from the Feb-2026 leg: Tencent suspended buybacks on
+# 2026-01-16 ahead of its 2026-03-18 annual results, and the HK$500M/day bid
+# vanished right as the "digital tax" rumour hit. The stock fell 14.5% that
+# month. None of the nine rules could see it because it is a CALENDAR fact,
+# not a threshold breach.
+#
+# Two consequences for a seller:
+#   * do not expect buyback support inside the window
+#   * do not schedule a large tranche into it — you are selling while the
+#     single largest buyer is legally barred from bidding
+RESULTS_CALENDAR: tuple[tuple[str, str], ...] = (
+    ("2026-03-18", "FY2025 annual"),
+    ("2026-05-13", "2026Q1"),
+    ("2026-08-12", "2026Q2 interim"),
+    ("2026-11-12", "2026Q3 (estimated)"),
+    ("2027-03-17", "FY2026 annual (estimated)"),
+    ("2027-05-12", "2027Q1 (estimated)"),
+    ("2027-08-11", "2027Q2 interim (estimated)"),
+)
+#: observed lead time from buyback suspension to results (2026-01-16 ->
+#: 2026-03-18 = 61 days). HK listing rules require only ~30; Tencent's own
+#: practice is longer, so use the observed figure for annual results.
+BLACKOUT_DAYS_ANNUAL: int = 61
+#: interim/quarterly windows are shorter in practice
+BLACKOUT_DAYS_INTERIM: int = 30
+
+# ---------------------------------------------------------------------------
+# Relative strength vs the China-internet sector
+# ---------------------------------------------------------------------------
+# Also from the Feb-2026 post-mortem: Tencent fell 14.5% while Hang Seng Tech
+# fell 23%. That was sector beta, not a Tencent problem — and a seller who
+# panics on beta sells the bottom. The exit ladder should only ACCELERATE on
+# idiosyncratic weakness.
+RELATIVE_BENCHMARK: str = "KWEB"
+RELATIVE_WINDOW_WEEKS: int = 13          # one quarter
+RELATIVE_UNDERPERFORM_PCT: float = -10.0  # excess return over the window
 
 # ---------------------------------------------------------------------------
 # Prefill fundamentals (quarterly manual entry; dashboard is the only writer)
@@ -224,6 +270,24 @@ TCNT_RULES: tuple[AlertRule, ...] = (
         severity="trigger",
         action_label="净现金转负 — 全速清仓",
     ),
+    # --- idiosyncratic vs sector beta -------------------------------------
+    AlertRule(
+        rule_id="tcnt_exit_underperform_sector_13w",
+        metric_key="tcnt.relative_strength",
+        dimensions={"ticker": "0700.HK", "benchmark": RELATIVE_BENCHMARK},
+        comparator="lt_consecutive",
+        threshold=RELATIVE_UNDERPERFORM_PCT,
+        inclusive=True,
+        max_gap_days=14,
+        severity="advisory",
+        action_label=(
+            f"13周跑输板块 >{abs(RELATIVE_UNDERPERFORM_PCT):.0f}% — 个股问题而非板块beta, 加速本档"
+        ),
+        description="Feb-2026 taught the opposite lesson: Tencent -14.5% vs "
+                    "Hang Seng Tech -23% was BETA, and selling into it would "
+                    "have hit the low. Only accelerate when the subject is "
+                    "losing to its own sector.",
+    ),
     # --- the buyback: support AND early warning ---------------------------
     AlertRule(
         rule_id="tcnt_buyback_cut_2q",
@@ -265,6 +329,17 @@ DEFAULT_CHECKLIST: tuple[dict, ...] = (
         "id": "tcnt_fcf_recovery",
         "label": "⭐自由现金流是否回正(当前计数 1/3) — Q2 -138亿为2005年以来首次。"
                  "剔除预付款后仍+376亿, 故一季属时点问题; Q3(约11月中)若仍为负则计数2, 距全速清仓一步",
+        "url": "https://www.tencent.com/en-us/investors/financial-news.html",
+        "cadence_days": 92,
+    },
+    {
+        "id": "tcnt_buyback_blackout",
+        "label": "⭐回购静默期日历(2026-08-17 新增, 来自 2026-02 复盘) — "
+                 "腾讯 2026-01-16 停止回购、3-18 才出年报, HK$5亿/日买盘消失两个月, "
+                 "恰好撞上'数字税'传闻, 当月跌 14.5%。这是【可预知的日历事件】, "
+                 "九条度量规则一条都看不见。"
+                 "用法: 静默窗口内不指望回购托底, 且不把大额档位排进去 —— "
+                 "你在卖而最大的买家被法规禁止出价。核对下一年度业绩日以更新日历",
         "url": "https://www.tencent.com/en-us/investors/financial-news.html",
         "cadence_days": 92,
     },

@@ -26,6 +26,9 @@ from ck_trading.dashboard.data_cache import (
 from ck_trading.monitoring import tcnt_metrics
 from ck_trading.monitoring.tcnt_config import (
     EXIT_BASELINE_PCT,
+    RELATIVE_BENCHMARK,
+    RELATIVE_UNDERPERFORM_PCT,
+    RELATIVE_WINDOW_WEEKS,
     EXIT_TRANCHES,
     PE_CLEAR_ALL,
     PE_CLEAR_HALF,
@@ -147,6 +150,41 @@ if plan.get("first_tranche_deferred"):
         + (f"(≈ HK${trigger_px:,.0f})" if trigger_px else "")
         + f",或 {gate.get('hard_deadline')} 之前的首个季末 —— 以先到者为准。"
     )
+
+# --------------------------------------------------------------------------
+# Calendar + relative-strength context (the two things Feb-2026 exposed)
+# --------------------------------------------------------------------------
+st.subheader("执行环境")
+bb = tcnt_metrics.buyback_blackout(dt.date.today())
+rs = tcnt_metrics.relative_strength_series(
+    prices, SUBJECT, RELATIVE_BENCHMARK, RELATIVE_WINDOW_WEEKS
+)
+cur_rs = float(rs["value"][-1]) if not rs.is_empty() else None
+
+e1, e2 = st.columns(2)
+if bb["in_blackout"]:
+    e1.metric("回购静默期", f"🔴 静默中 · 剩 {bb['days_remaining']} 天",
+              help="公司被禁止回购 —— 无买盘托底。大额减持应避开此窗口:"
+                   "你在卖,而最大的买家不能出价")
+    e1.caption(f"{bb['label']} · 业绩日 {bb['results_date']}")
+else:
+    e1.metric("回购静默期", f"🟢 可回购 · {bb.get('days_until', '—')} 天后进入",
+              help="2026-01-16 停止回购 → 2026-02 跌 14.5%。"
+                   "HK$5亿/日的买盘消失是一个可预知的日历事件")
+    if bb.get("next_window_start"):
+        e1.caption(f"下一窗口 {bb['next_window_start']} 起 · {bb['label']}")
+
+if cur_rs is not None:
+    weak = cur_rs <= RELATIVE_UNDERPERFORM_PCT
+    e2.metric(
+        f"{RELATIVE_WINDOW_WEEKS}周相对 {RELATIVE_BENCHMARK}",
+        f"{'🔴' if weak else '🟢'} {cur_rs:+.1f}pp",
+        help="只在跑输板块时加速。2026-02 腾讯 -14.5% 而板块 -23%,"
+             "那是 beta —— 在那里加速就是卖在底部",
+    )
+    e2.caption("超额为正 = 跑赢板块,下跌属 beta,不加速")
+else:
+    e2.metric(f"{RELATIVE_WINDOW_WEEKS}周相对 {RELATIVE_BENCHMARK}", "数据不足")
 
 # --------------------------------------------------------------------------
 # Invalidation counters — the load-bearing wall of a 5-year plan
