@@ -46,10 +46,15 @@
           "period_key": "2026-W33",
           "status": "ok",
           "value": 0.0006213909798140378
+        },
+        {
+          "period_key": "2026-W34",
+          "status": "ok",
+          "value": 0.046959616900778114
         }
       ],
-      "metric_value": 0.0006213909798140378,
-      "period_key": "2026-W33",
+      "metric_value": 0.046959616900778114,
+      "period_key": "2026-W34",
       "required": 1,
       "resolved_at": "2026-08-07T04:11:56Z",
       "rule_id": "nvda_buy_dip_gated",
@@ -105,10 +110,15 @@
           "period_key": "2026-W33",
           "status": "ok",
           "value": 32.16571480887277
+        },
+        {
+          "period_key": "2026-W34",
+          "status": "ok",
+          "value": 30.674285888671875
         }
       ],
-      "metric_value": 32.16571480887277,
-      "period_key": "2026-W33",
+      "metric_value": 30.674285888671875,
+      "period_key": "2026-W34",
       "required": 1,
       "resolved_at": null,
       "rule_id": "nvda_buy_pe_below_25",
@@ -164,10 +174,15 @@
           "period_key": "2026-W33",
           "status": "ok",
           "value": 32.16571480887277
+        },
+        {
+          "period_key": "2026-W34",
+          "status": "ok",
+          "value": 30.674285888671875
         }
       ],
-      "metric_value": 32.16571480887277,
-      "period_key": "2026-W33",
+      "metric_value": 30.674285888671875,
+      "period_key": "2026-W34",
       "required": 1,
       "resolved_at": null,
       "rule_id": "nvda_sell_pe_above_45",
@@ -223,10 +238,15 @@
           "period_key": "2026-W33",
           "status": "ok",
           "value": 0.15514206957142318
+        },
+        {
+          "period_key": "2026-W34",
+          "status": "ok",
+          "value": 0.09950714187567522
         }
       ],
-      "metric_value": 0.15514206957142318,
-      "period_key": "2026-W33",
+      "metric_value": 0.09950714187567522,
+      "period_key": "2026-W34",
       "required": 4,
       "resolved_at": null,
       "rule_id": "nvda_sell_below_200dma_4w",
@@ -406,5 +426,5 @@
       "triggered_at": null
     }
   ],
-  "updated_at": "2026-08-17T08:03:02Z"
+  "updated_at": "2026-08-24T08:06:21Z"
 }
