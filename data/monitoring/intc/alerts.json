@@ -26,10 +26,15 @@
           "period_key": "2026-W33",
           "status": "ok",
           "value": 102.5
+        },
+        {
+          "period_key": "2026-W34",
+          "status": "ok",
+          "value": 90.06999969482422
         }
       ],
-      "metric_value": 102.5,
-      "period_key": "2026-W33",
+      "metric_value": 90.06999969482422,
+      "period_key": "2026-W34",
       "required": 1,
       "resolved_at": null,
       "rule_id": "intc_buy_ladder_t1",
@@ -65,10 +70,15 @@
           "period_key": "2026-W33",
           "status": "ok",
           "value": 102.5
+        },
+        {
+          "period_key": "2026-W34",
+          "status": "ok",
+          "value": 90.06999969482422
         }
       ],
-      "metric_value": 102.5,
-      "period_key": "2026-W33",
+      "metric_value": 90.06999969482422,
+      "period_key": "2026-W34",
       "required": 1,
       "resolved_at": null,
       "rule_id": "intc_buy_ladder_t2",
@@ -104,10 +114,15 @@
           "period_key": "2026-W33",
           "status": "ok",
           "value": 102.5
+        },
+        {
+          "period_key": "2026-W34",
+          "status": "ok",
+          "value": 90.06999969482422
         }
       ],
-      "metric_value": 102.5,
-      "period_key": "2026-W33",
+      "metric_value": 90.06999969482422,
+      "period_key": "2026-W34",
       "required": 1,
       "resolved_at": null,
       "rule_id": "intc_buy_ladder_t3",
@@ -143,16 +158,21 @@
           "period_key": "2026-W33",
           "status": "triggered",
           "value": 0.46126611379850124
+        },
+        {
+          "period_key": "2026-W34",
+          "status": "triggered",
+          "value": 0.2595802255548032
         }
       ],
-      "metric_value": 0.46126611379850124,
-      "period_key": "2026-W33",
+      "metric_value": 0.2595802255548032,
+      "period_key": "2026-W34",
       "required": 2,
       "resolved_at": null,
       "rule_id": "intc_buy_trend_repair",
       "severity": "advisory",
       "status": "triggered",
-      "streak": 53,
+      "streak": 54,
       "threshold": 0.0,
       "triggered_at": "2026-07-23T23:47:54Z"
     },
@@ -182,10 +202,15 @@
           "period_key": "2026-W33",
           "status": "ok",
           "value": 4.6212804328223624
+        },
+        {
+          "period_key": "2026-W34",
+          "status": "ok",
+          "value": 4.0608656309659255
         }
       ],
-      "metric_value": 4.6212804328223624,
-      "period_key": "2026-W33",
+      "metric_value": 4.0608656309659255,
+      "period_key": "2026-W34",
       "required": 1,
       "resolved_at": null,
       "rule_id": "intc_buy_pb_below_2",
@@ -276,10 +301,15 @@
           "period_key": "2026-W33",
           "status": "ok",
           "value": 0.46126611379850124
+        },
+        {
+          "period_key": "2026-W34",
+          "status": "ok",
+          "value": 0.2595802255548032
         }
       ],
-      "metric_value": 0.46126611379850124,
-      "period_key": "2026-W33",
+      "metric_value": 0.2595802255548032,
+      "period_key": "2026-W34",
       "required": 4,
       "resolved_at": null,
       "rule_id": "intc_sell_trend_break",
@@ -315,10 +345,15 @@
           "period_key": "2026-W33",
           "status": "ok",
           "value": 4.6212804328223624
+        },
+        {
+          "period_key": "2026-W34",
+          "status": "ok",
+          "value": 4.0608656309659255
         }
       ],
-      "metric_value": 4.6212804328223624,
-      "period_key": "2026-W33",
+      "metric_value": 4.0608656309659255,
+      "period_key": "2026-W34",
       "required": 1,
       "resolved_at": null,
       "rule_id": "intc_sell_pb_above_5",
@@ -496,5 +531,5 @@
       "triggered_at": null
     }
   ],
-  "updated_at": "2026-08-17T09:00:02Z"
+  "updated_at": "2026-08-24T09:04:02Z"
 }
