@@ -23,10 +23,10 @@
         {
           "period_key": "2026-W27",
           "status": "insufficient_data",
-          "value": 0.10379071942464803
+          "value": 0.10666650426087658
         }
       ],
-      "metric_value": 0.10379071942464803,
+      "metric_value": 0.10666650426087658,
       "period_key": "2026-W27",
       "required": 8,
       "resolved_at": null,
@@ -42,7 +42,7 @@
       "details": {
         "current_model_id": "anthropic/claude-opus-5-fast",
         "drop_pct": 0.0,
-        "history_days": 52,
+        "history_days": 59,
         "max_model_id": "anthropic/claude-opus-4.8-fast",
         "max_period": "2026-07-03",
         "max_value": 50.0
@@ -95,10 +95,15 @@
           "period_key": "2026-08-24",
           "status": "ok",
           "value": 50.0
+        },
+        {
+          "period_key": "2026-08-31",
+          "status": "ok",
+          "value": 50.0
         }
       ],
       "metric_value": 50.0,
-      "period_key": "2026-08-24",
+      "period_key": "2026-08-31",
       "required": 1,
       "resolved_at": null,
       "rule_id": "claude_opus_price_cut_gt30_365d",
@@ -113,7 +118,7 @@
       "details": {
         "current_model_id": "anthropic/claude-sonnet-5",
         "drop_pct": 0.0,
-        "history_days": 52,
+        "history_days": 59,
         "max_model_id": "anthropic/claude-sonnet-5",
         "max_period": "2026-07-03",
         "max_value": 10.0
@@ -166,10 +171,15 @@
           "period_key": "2026-08-24",
           "status": "ok",
           "value": 10.0
+        },
+        {
+          "period_key": "2026-08-31",
+          "status": "ok",
+          "value": 10.0
         }
       ],
       "metric_value": 10.0,
-      "period_key": "2026-08-24",
+      "period_key": "2026-08-31",
       "required": 1,
       "resolved_at": "2026-08-24T07:22:13Z",
       "rule_id": "claude_sonnet_price_cut_gt30_365d",
@@ -185,10 +195,17 @@
         "competitors_grown": [
           {
             "dimensions": {
+              "package": "@openai/codex",
+              "registry": "npm"
+            },
+            "growth": 0.30524388688105336
+          },
+          {
+            "dimensions": {
               "package": "@qwen-code/qwen-code",
               "registry": "npm"
             },
-            "growth": 0.41408934707903783
+            "growth": 0.12803080278409779
           }
         ],
         "contiguous": true,
@@ -232,10 +249,15 @@
           "period_key": "2026-W34",
           "status": "ok",
           "value": 22614173.0
+        },
+        {
+          "period_key": "2026-W35",
+          "status": "ok",
+          "value": 20650701.0
         }
       ],
-      "metric_value": 22614173.0,
-      "period_key": "2026-W34",
+      "metric_value": 20650701.0,
+      "period_key": "2026-W35",
       "required": 3,
       "resolved_at": null,
       "rule_id": "claude_code_npm_decline_3w",
@@ -246,5 +268,5 @@
       "triggered_at": null
     }
   ],
-  "updated_at": "2026-08-24T07:22:13Z"
+  "updated_at": "2026-08-31T13:49:40Z"
 }
