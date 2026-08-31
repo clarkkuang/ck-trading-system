@@ -25,10 +25,10 @@
         {
           "period_key": "2026-W35",
           "status": "ok",
-          "value": 13.464509898599708
+          "value": 13.92964788682791
         }
       ],
-      "metric_value": 13.464509898599708,
+      "metric_value": 13.92964788682791,
       "period_key": "2026-W35",
       "required": 1,
       "resolved_at": null,
@@ -64,10 +64,10 @@
         {
           "period_key": "2026-W35",
           "status": "ok",
-          "value": 13.464509898599708
+          "value": 13.92964788682791
         }
       ],
-      "metric_value": 13.464509898599708,
+      "metric_value": 13.92964788682791,
       "period_key": "2026-W35",
       "required": 1,
       "resolved_at": null,
@@ -103,10 +103,10 @@
         {
           "period_key": "2026-W35",
           "status": "ok",
-          "value": 13.464509898599708
+          "value": 13.92964788682791
         }
       ],
-      "metric_value": 13.464509898599708,
+      "metric_value": 13.92964788682791,
       "period_key": "2026-W35",
       "required": 1,
       "resolved_at": null,
@@ -142,10 +142,10 @@
         {
           "period_key": "2026-W35",
           "status": "ok",
-          "value": 13.464509898599708
+          "value": 13.92964788682791
         }
       ],
-      "metric_value": 13.464509898599708,
+      "metric_value": 13.92964788682791,
       "period_key": "2026-W35",
       "required": 1,
       "resolved_at": null,
@@ -291,10 +291,15 @@
           "period_key": "2026-W34",
           "status": "ok",
           "value": 4.46323343899111
+        },
+        {
+          "period_key": "2026-W35",
+          "status": "ok",
+          "value": 8.088163473650578
         }
       ],
-      "metric_value": 4.46323343899111,
-      "period_key": "2026-W34",
+      "metric_value": 8.088163473650578,
+      "period_key": "2026-W35",
       "required": 1,
       "resolved_at": null,
       "rule_id": "tcnt_exit_underperform_sector_13w",
@@ -336,5 +341,5 @@
       "triggered_at": null
     }
   ],
-  "updated_at": "2026-08-24T09:29:57Z"
+  "updated_at": "2026-08-31T16:23:22Z"
 }
