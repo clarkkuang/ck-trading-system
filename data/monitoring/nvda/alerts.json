@@ -48,17 +48,12 @@
           "value": 0.0006213909798140378
         },
         {
-          "period_key": "2026-W34",
-          "status": "ok",
-          "value": 0.046959616900778114
-        },
-        {
           "period_key": "2026-W36",
           "status": "ok",
-          "value": 0.03675803400558882
+          "value": 0.0
         }
       ],
-      "metric_value": 0.03675803400558882,
+      "metric_value": 0.0,
       "period_key": "2026-W36",
       "required": 1,
       "resolved_at": "2026-08-07T04:11:56Z",
@@ -77,9 +72,9 @@
         },
         "fallback_used": false
       },
-      "episode_started": null,
-      "fired": false,
-      "first_period_key": null,
+      "episode_started": "2026-W28",
+      "fired": true,
+      "first_period_key": "2026-W28",
       "history": [
         {
           "period_key": "2026-W27",
@@ -117,26 +112,21 @@
           "value": 32.16571480887277
         },
         {
-          "period_key": "2026-W34",
-          "status": "ok",
-          "value": 30.674285888671875
-        },
-        {
           "period_key": "2026-W36",
-          "status": "ok",
-          "value": 31.371414184570312
+          "status": "triggered",
+          "value": 16.554347604945086
         }
       ],
-      "metric_value": 31.371414184570312,
+      "metric_value": 16.554347604945086,
       "period_key": "2026-W36",
       "required": 1,
       "resolved_at": null,
       "rule_id": "nvda_buy_pe_below_25",
       "severity": "advisory",
-      "status": "ok",
-      "streak": 0,
+      "status": "triggered",
+      "streak": 9,
       "threshold": 25.0,
-      "triggered_at": null
+      "triggered_at": "2026-09-04T03:29:34Z"
     },
     {
       "action_label": "\u4f30\u503c\u5356\u70b9: forward P/E>45x \u2014 \u5386\u53f2\u51cf\u4ed3\u533a",
@@ -186,17 +176,12 @@
           "value": 32.16571480887277
         },
         {
-          "period_key": "2026-W34",
-          "status": "ok",
-          "value": 30.674285888671875
-        },
-        {
           "period_key": "2026-W36",
           "status": "ok",
-          "value": 31.371414184570312
+          "value": 16.554347604945086
         }
       ],
-      "metric_value": 31.371414184570312,
+      "metric_value": 16.554347604945086,
       "period_key": "2026-W36",
       "required": 1,
       "resolved_at": null,
@@ -255,17 +240,12 @@
           "value": 0.15514206957142318
         },
         {
-          "period_key": "2026-W34",
-          "status": "ok",
-          "value": 0.09950714187567522
-        },
-        {
           "period_key": "2026-W36",
           "status": "ok",
-          "value": 0.12065122142836904
+          "value": 0.1628282648073256
         }
       ],
-      "metric_value": 0.12065122142836904,
+      "metric_value": 0.1628282648073256,
       "period_key": "2026-W36",
       "required": 4,
       "resolved_at": null,
@@ -278,11 +258,7 @@
     },
     {
       "action_label": "\u8bba\u70b9\u5356\u70b9: DC\u589e\u901f\u8fde\u7eed\u4e24\u5b63\u4e0d\u5347 \u2014 \u51cf\u901f\u786e\u8ba4",
-      "details": {
-        "periods_available": 2,
-        "periods_needed": 3,
-        "reason": "insufficient_history"
-      },
+      "details": {},
       "episode_started": null,
       "fired": false,
       "first_period_key": null,
@@ -291,16 +267,21 @@
           "period_key": null,
           "status": "insufficient_data",
           "value": null
+        },
+        {
+          "period_key": "2026Q3",
+          "status": "ok",
+          "value": 18.3
         }
       ],
-      "metric_value": null,
-      "period_key": null,
+      "metric_value": 18.3,
+      "period_key": "2026Q3",
       "required": 2,
       "resolved_at": null,
       "rule_id": "nvda_sell_dc_decel_2q",
       "severity": "trigger",
-      "status": "insufficient_data",
-      "streak": 0,
+      "status": "ok",
+      "streak": 1,
       "threshold": 0.0,
       "triggered_at": null
     },
@@ -320,10 +301,15 @@
           "period_key": "2026Q2",
           "status": "ok",
           "value": 4.6
+        },
+        {
+          "period_key": "2026Q3",
+          "status": "ok",
+          "value": 4.0
         }
       ],
-      "metric_value": 4.6,
-      "period_key": "2026Q2",
+      "metric_value": 4.0,
+      "period_key": "2026Q3",
       "required": 1,
       "resolved_at": null,
       "rule_id": "nvda_sell_guide_miss",
@@ -378,10 +364,15 @@
           "period_key": "2026Q2",
           "status": "ok",
           "value": 75.0
+        },
+        {
+          "period_key": "2026Q3",
+          "status": "ok",
+          "value": 75.0
         }
       ],
       "metric_value": 75.0,
-      "period_key": "2026Q2",
+      "period_key": "2026Q3",
       "required": 1,
       "resolved_at": null,
       "rule_id": "nvda_sell_gm_below_70",
@@ -394,7 +385,7 @@
     {
       "action_label": "\u4fe1\u7528\u9884\u8b66: AR\u5929\u6570\u8fde\u53472\u5b63 \u2014 \u6536\u5165\u8d28\u91cf\u6076\u5316, \u6838\u5bf910-Q\u5e94\u6536\u660e\u7ec6",
       "details": {
-        "periods_available": 0,
+        "periods_available": 1,
         "periods_needed": 3,
         "reason": "insufficient_history"
       },
@@ -422,29 +413,37 @@
     {
       "action_label": "\u4fe1\u7528\u5356\u70b9: \u5ba2\u6237\u878d\u8d44\u655e\u53e3\u226525%\u8425\u6536 \u2014 vendor financing\u665a\u5468\u671f\u6807\u8bb0, \u51cf\u4ed3\u91cd\u5ba1",
       "details": {
-        "reason": "no_data"
+        "dimensions_used": {
+          "field": "customer_financing_exposure_pct"
+        },
+        "fallback_used": false
       },
-      "episode_started": null,
-      "fired": false,
-      "first_period_key": null,
+      "episode_started": "2026Q3",
+      "fired": true,
+      "first_period_key": "2026Q3",
       "history": [
         {
           "period_key": null,
           "status": "insufficient_data",
           "value": null
+        },
+        {
+          "period_key": "2026Q3",
+          "status": "triggered",
+          "value": 34.7
         }
       ],
-      "metric_value": null,
-      "period_key": null,
+      "metric_value": 34.7,
+      "period_key": "2026Q3",
       "required": 1,
       "resolved_at": null,
       "rule_id": "nvda_sell_financing_exposure_25",
       "severity": "trigger",
-      "status": "insufficient_data",
-      "streak": 0,
+      "status": "triggered",
+      "streak": 1,
       "threshold": 25.0,
-      "triggered_at": null
+      "triggered_at": "2026-09-04T03:29:34Z"
     }
   ],
-  "updated_at": "2026-08-31T15:09:28Z"
+  "updated_at": "2026-09-04T03:29:34Z"
 }

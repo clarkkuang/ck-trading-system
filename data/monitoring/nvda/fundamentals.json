@@ -9,7 +9,7 @@
       "forward_eps_consensus": null,
       "gross_margin_pct": null,
       "guide_vs_consensus_pct": null,
-      "notes": "FY26Q4(截至2026-01-25)。DC营收与QoQ为估计值(~$62B, ~+16%),仅用于让减速规则更早可评估;其余字段留空待补。",
+      "notes": "FY26Q4(\u622a\u81f32026-01-25)\u3002DC\u8425\u6536\u4e0eQoQ\u4e3a\u4f30\u8ba1\u503c(~$62B, ~+16%),\u4ec5\u7528\u4e8e\u8ba9\u51cf\u901f\u89c4\u5219\u66f4\u65e9\u53ef\u8bc4\u4f30;\u5176\u4f59\u5b57\u6bb5\u7559\u7a7a\u5f85\u8865\u3002",
       "quarter": "2026Q1",
       "total_revenue_billions": null
     },
@@ -22,11 +22,24 @@
       "forward_eps_consensus": 7.0,
       "gross_margin_pct": 75.0,
       "guide_vs_consensus_pct": 4.6,
-      "notes": "FY27Q1(截至2026-04-26, 2026-05-20发布)。营收+85% YoY/+20% QoQ;DC +92% YoY/+21% QoQ;Q2指引$91B vs 共识$87B(+4.6%);毛利率75.0%(non-GAAP);ASIC份额27.8%为TrendForce 2026全年预测;指引不含中国DC。",
+      "notes": "FY27Q1(\u622a\u81f32026-04-26, 2026-05-20\u53d1\u5e03)\u3002\u8425\u6536+85% YoY/+20% QoQ;DC +92% YoY/+21% QoQ;Q2\u6307\u5f15$91B vs \u5171\u8bc6$87B(+4.6%);\u6bdb\u5229\u738775.0%(non-GAAP);ASIC\u4efd\u989d27.8%\u4e3aTrendForce 2026\u5168\u5e74\u9884\u6d4b;\u6307\u5f15\u4e0d\u542b\u4e2d\u56fdDC\u3002",
       "quarter": "2026Q2",
       "total_revenue_billions": 81.6
+    },
+    {
+      "ar_days": 59.6,
+      "asic_server_share_pct": null,
+      "customer_financing_exposure_pct": 34.7,
+      "dc_qoq_growth_pct": 18.3,
+      "dc_revenue_billions": 89.023,
+      "forward_eps_consensus": 13.8,
+      "gross_margin_pct": 75.0,
+      "guide_vs_consensus_pct": 4.0,
+      "notes": "FY27Q2(\u622a\u81f32026-07-26, 8/26\u53d1\u5e03)\u3002\u8425\u6536$96.221B +18%QoQ/+106%YoY \u8d85\u5171\u8bc6$92.07B(+4.5%);DC $89.023B +18.3%QoQ/+117%YoY \u8d85\u9884\u671f$86.33B;\u6bdb\u5229\u738775.0%;\u975eGAAP EPS $2.22 vs \u5171\u8bc6$2.09\u3002Q3\u6307\u5f15$108B vs \u5171\u8bc6$104.2B(+4.0%), \u6bdb\u5229\u7387\u6307\u5f1574.0%, \u4e14\u3010\u4e0d\u542b\u4efb\u4f55\u4e2d\u56fdDC\u8ba1\u7b97\u6536\u5165\u3011\u3002\u7535\u8bdd\u4f1a: \u9ec4\u4ec1\u52cb\u9884\u6d4bFY2028\u8425\u6536\u589e\u957f\u7ea670%; AWS\u627f\u8bfa\u91c7\u8d2d200\u4e07\u9897GPU\u5e76\u7528Vera CPU\u3002\u5206\u90e8: \u8d85\u5927\u89c4\u6a21$48.7B(+13%QoQ) vs ACIE(AI\u4e91/\u5de5\u4e1a/\u4f01\u4e1a)$40.3B(+25%QoQ) \u2014\u2014 \u589e\u957f\u66f4\u5feb\u7684\u662f\u4fe1\u7528\u66f4\u654f\u611f\u7684neocloud\u5ba2\u7fa4\u3002\u26a0\ufe0f\u4fe1\u7528\u901a\u9053\u9996\u6b21\u53ef\u6d4b: \u4f9b\u5e94\u4e0e\u4ea7\u80fd\u627f\u8bfa\u4e00\u5b63\u4ece$119B\u2192$279B(+134%); \u975e\u4e0a\u5e02\u8bc1\u5238$22.3B\u2192$51.2B(+130%); \u4e0a\u5e02\u80a1\u6743\u8bc1\u5238$12.9B\u2192$42.8B(+232%); \u5e94\u6536$38.5B\u2192$63.1B(+64%, 59.6\u5929)\u3002\u53e6\u6709'\u4e3aAI\u4e91\u4f19\u4f34\u6570\u636e\u4e2d\u5fc3\u79df\u7ea6\u63d0\u4f9b\u571f\u5730/\u7535\u529b/\u5916\u58f3\u62c5\u4fdd'(\u8fdd\u7ea6\u4ee3\u507f), \u6309\u4fe1\u7528\u884d\u751f\u54c1\u5165\u8d26\u4f46\u3010\u91d1\u989d\u672a\u62ab\u9732\u3011\u3002\u26a0\ufe0f\u655e\u53e3\u6bd4\u53e3\u5f84\u8bf4\u660e: 10-Q\u65e0\u5355\u4e00\u5bf9\u5e94\u79d1\u76ee, 34.7%\u91c7\u7528\u3010\u4e2d\u53e3\u5f84\u3011=(\u80a1\u6743\u6295\u8d44\u627f\u8bfa$25B + \u4e91\u670d\u52a1\u534f\u8bae$29B + \u975e\u4e0a\u5e02\u8bc1\u5238$51.2B) \u00f7 TTM\u8425\u6536\u7ea6$303B(\u4f30\u7b97)\u3002\u7a84\u53e3\u5f8417.8%\u3001\u5bbd\u53e3\u5f84(\u542b\u4e0a\u5e02\u80a1\u6743)48.8%\u3002\u5b9a\u4e49\u6a21\u7cca, \u89e6\u53d1\u540e\u987b\u4eba\u5de5\u590d\u6838\u800c\u975e\u673a\u68b0\u6267\u884c\u3002",
+      "quarter": "2026Q3",
+      "total_revenue_billions": 96.221
     }
   ],
-  "updated_at": "2026-07-28T03:32:01Z",
+  "updated_at": "2026-09-04T03:29:31Z",
   "version": 1
 }

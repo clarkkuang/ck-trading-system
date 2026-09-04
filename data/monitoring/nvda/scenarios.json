@@ -2,37 +2,37 @@
   "scenarios": [
     {
       "id": "bull",
-      "label": "超级牛: Rubin超预期+capex至2028+中国重开 (EPS $9×35x)",
-      "probability_pct": 24.0,
-      "implied_price": 315.0,
-      "price_low": 300.0,
-      "price_high": 330.0
+      "implied_price": 470.0,
+      "label": "\u8d85\u7ea7\u725b: Rubin\u5168\u9762\u653e\u91cf+FY28\u589e70%\u5151\u73b0+\u4e2d\u56fd\u91cd\u5f00 (EPS $15.7\u00d730x)",
+      "price_high": 510.0,
+      "price_low": 430.0,
+      "probability_pct": 22.0
     },
     {
       "id": "base",
-      "label": "基准: 增速降档至40-50%,份额守住 (EPS $8×30x)",
-      "probability_pct": 41.0,
-      "implied_price": 240.0,
-      "price_low": 225.0,
-      "price_high": 255.0
+      "implied_price": 360.0,
+      "label": "\u57fa\u51c6: FY28\u589e\u901f\u964d\u6863\u81f345-55%, \u4efd\u989d\u4e0e\u6bdb\u5229\u5b88\u4f4f (EPS $13.8\u00d726x)",
+      "price_high": 390.0,
+      "price_low": 330.0,
+      "probability_pct": 42.0
     },
     {
       "id": "mild_bear",
-      "label": "温和熊: 估值压缩,增速降至25-30% (EPS $7×22x)",
-      "probability_pct": 26.0,
-      "implied_price": 154.0,
-      "price_low": 145.0,
-      "price_high": 165.0
+      "implied_price": 230.0,
+      "label": "\u6e29\u548c\u718a: \u589e\u901f\u964d\u81f325-30% + \u500d\u6570\u538b\u7f29\u81f320x (EPS $11.5\u00d720x)",
+      "price_high": 250.0,
+      "price_low": 210.0,
+      "probability_pct": 27.0
     },
     {
       "id": "structural_bear",
-      "label": "结构熊: capex见顶(需求或客户现金流任一)+ASIC 35%+ (EPS $5.5×19x)",
-      "probability_pct": 9.0,
-      "implied_price": 105.0,
-      "price_low": 95.0,
-      "price_high": 115.0
+      "implied_price": 155.0,
+      "label": "\u7ed3\u6784\u718a: \u5ba2\u6237\u73b0\u91d1\u6d41/\u4fe1\u7528\u7ea6\u675f\u8feb\u4f7fcapex\u51cf\u901f+ASIC\u4efd\u989d (EPS $9.7\u00d716x)",
+      "price_high": 175.0,
+      "price_low": 140.0,
+      "probability_pct": 9.0
     }
   ],
-  "updated_at": "2026-08-07T04:40:52Z",
+  "updated_at": "2026-09-04T03:29:31Z",
   "version": 1
 }
