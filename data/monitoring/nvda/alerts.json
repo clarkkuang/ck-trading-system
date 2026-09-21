@@ -56,10 +56,15 @@
           "period_key": "2026-W38",
           "status": "ok",
           "value": 0.08148117825459616
+        },
+        {
+          "period_key": "2026-W39",
+          "status": "ok",
+          "value": 0.030495719212846262
         }
       ],
-      "metric_value": 0.08148117825459616,
-      "period_key": "2026-W38",
+      "metric_value": 0.030495719212846262,
+      "period_key": "2026-W39",
       "required": 1,
       "resolved_at": "2026-08-07T04:11:56Z",
       "rule_id": "nvda_buy_dip_gated",
@@ -125,16 +130,21 @@
           "period_key": "2026-W38",
           "status": "triggered",
           "value": 15.332608430281928
+        },
+        {
+          "period_key": "2026-W39",
+          "status": "triggered",
+          "value": 16.183696138686027
         }
       ],
-      "metric_value": 15.332608430281928,
-      "period_key": "2026-W38",
+      "metric_value": 16.183696138686027,
+      "period_key": "2026-W39",
       "required": 1,
       "resolved_at": null,
       "rule_id": "nvda_buy_pe_below_25",
       "severity": "advisory",
       "status": "triggered",
-      "streak": 11,
+      "streak": 12,
       "threshold": 25.0,
       "triggered_at": "2026-09-04T03:29:34Z"
     },
@@ -194,10 +204,15 @@
           "period_key": "2026-W38",
           "status": "ok",
           "value": 15.332608430281928
+        },
+        {
+          "period_key": "2026-W39",
+          "status": "ok",
+          "value": 16.183696138686027
         }
       ],
-      "metric_value": 15.332608430281928,
-      "period_key": "2026-W38",
+      "metric_value": 16.183696138686027,
+      "period_key": "2026-W39",
       "required": 1,
       "resolved_at": null,
       "rule_id": "nvda_sell_pe_above_45",
@@ -263,10 +278,15 @@
           "period_key": "2026-W38",
           "status": "ok",
           "value": 0.07070258477641977
+        },
+        {
+          "period_key": "2026-W39",
+          "status": "ok",
+          "value": 0.12461750397670102
         }
       ],
-      "metric_value": 0.07070258477641977,
-      "period_key": "2026-W38",
+      "metric_value": 0.12461750397670102,
+      "period_key": "2026-W39",
       "required": 4,
       "resolved_at": null,
       "rule_id": "nvda_sell_below_200dma_4w",
@@ -465,5 +485,5 @@
       "triggered_at": "2026-09-04T03:29:34Z"
     }
   ],
-  "updated_at": "2026-09-14T14:10:15Z"
+  "updated_at": "2026-09-21T14:16:16Z"
 }
