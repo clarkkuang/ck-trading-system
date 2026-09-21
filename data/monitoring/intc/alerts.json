@@ -41,10 +41,15 @@
           "period_key": "2026-W38",
           "status": "ok",
           "value": 96.38500213623047
+        },
+        {
+          "period_key": "2026-W39",
+          "status": "ok",
+          "value": 122.8550033569336
         }
       ],
-      "metric_value": 96.38500213623047,
-      "period_key": "2026-W38",
+      "metric_value": 122.8550033569336,
+      "period_key": "2026-W39",
       "required": 1,
       "resolved_at": null,
       "rule_id": "intc_buy_ladder_t1",
@@ -95,10 +100,15 @@
           "period_key": "2026-W38",
           "status": "ok",
           "value": 96.38500213623047
+        },
+        {
+          "period_key": "2026-W39",
+          "status": "ok",
+          "value": 122.8550033569336
         }
       ],
-      "metric_value": 96.38500213623047,
-      "period_key": "2026-W38",
+      "metric_value": 122.8550033569336,
+      "period_key": "2026-W39",
       "required": 1,
       "resolved_at": null,
       "rule_id": "intc_buy_ladder_t2",
@@ -149,10 +159,15 @@
           "period_key": "2026-W38",
           "status": "ok",
           "value": 96.38500213623047
+        },
+        {
+          "period_key": "2026-W39",
+          "status": "ok",
+          "value": 122.8550033569336
         }
       ],
-      "metric_value": 96.38500213623047,
-      "period_key": "2026-W38",
+      "metric_value": 122.8550033569336,
+      "period_key": "2026-W39",
       "required": 1,
       "resolved_at": null,
       "rule_id": "intc_buy_ladder_t3",
@@ -203,16 +218,21 @@
           "period_key": "2026-W38",
           "status": "triggered",
           "value": 0.27089970944081654
+        },
+        {
+          "period_key": "2026-W39",
+          "status": "triggered",
+          "value": 0.5841460758911909
         }
       ],
-      "metric_value": 0.27089970944081654,
-      "period_key": "2026-W38",
+      "metric_value": 0.5841460758911909,
+      "period_key": "2026-W39",
       "required": 2,
       "resolved_at": null,
       "rule_id": "intc_buy_trend_repair",
       "severity": "advisory",
       "status": "triggered",
-      "streak": 58,
+      "streak": 59,
       "threshold": 0.0,
       "triggered_at": "2026-07-23T23:47:54Z"
     },
@@ -257,10 +277,15 @@
           "period_key": "2026-W38",
           "status": "ok",
           "value": 4.345581701362961
+        },
+        {
+          "period_key": "2026-W39",
+          "status": "ok",
+          "value": 5.538999249636321
         }
       ],
-      "metric_value": 4.345581701362961,
-      "period_key": "2026-W38",
+      "metric_value": 5.538999249636321,
+      "period_key": "2026-W39",
       "required": 1,
       "resolved_at": null,
       "rule_id": "intc_buy_pb_below_2",
@@ -366,10 +391,15 @@
           "period_key": "2026-W38",
           "status": "ok",
           "value": 0.27089970944081654
+        },
+        {
+          "period_key": "2026-W39",
+          "status": "ok",
+          "value": 0.5841460758911909
         }
       ],
-      "metric_value": 0.27089970944081654,
-      "period_key": "2026-W38",
+      "metric_value": 0.5841460758911909,
+      "period_key": "2026-W39",
       "required": 4,
       "resolved_at": null,
       "rule_id": "intc_sell_trend_break",
@@ -387,9 +417,9 @@
         },
         "fallback_used": false
       },
-      "episode_started": null,
-      "fired": false,
-      "first_period_key": null,
+      "episode_started": "2026-W39",
+      "fired": true,
+      "first_period_key": "2026-W39",
       "history": [
         {
           "period_key": "2026-W30",
@@ -420,18 +450,23 @@
           "period_key": "2026-W38",
           "status": "ok",
           "value": 4.345581701362961
+        },
+        {
+          "period_key": "2026-W39",
+          "status": "triggered",
+          "value": 5.538999249636321
         }
       ],
-      "metric_value": 4.345581701362961,
-      "period_key": "2026-W38",
+      "metric_value": 5.538999249636321,
+      "period_key": "2026-W39",
       "required": 1,
       "resolved_at": null,
       "rule_id": "intc_sell_pb_above_5",
       "severity": "advisory",
-      "status": "ok",
-      "streak": 0,
+      "status": "triggered",
+      "streak": 1,
       "threshold": 5.0,
-      "triggered_at": null
+      "triggered_at": "2026-09-21T15:05:53Z"
     },
     {
       "action_label": "\u8bba\u70b9\u5356\u70b9: \u4ee3\u5de5\u4e8f\u635f\u91cd\u65b0\u8d70\u9614 \u2014 \u504f\u79bb\u76c8\u4e8f\u5e73\u8861\u8f68\u9053",
@@ -601,5 +636,5 @@
       "triggered_at": null
     }
   ],
-  "updated_at": "2026-09-14T15:00:24Z"
+  "updated_at": "2026-09-21T15:05:53Z"
 }
