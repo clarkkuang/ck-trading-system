@@ -40,10 +40,10 @@
         {
           "period_key": "2026-W39",
           "status": "ok",
-          "value": 13.158498309995169
+          "value": 13.360466145248816
         }
       ],
-      "metric_value": 13.158498309995169,
+      "metric_value": 13.360466145248816,
       "period_key": "2026-W39",
       "required": 1,
       "resolved_at": null,
@@ -94,10 +94,10 @@
         {
           "period_key": "2026-W39",
           "status": "ok",
-          "value": 13.158498309995169
+          "value": 13.360466145248816
         }
       ],
-      "metric_value": 13.158498309995169,
+      "metric_value": 13.360466145248816,
       "period_key": "2026-W39",
       "required": 1,
       "resolved_at": null,
@@ -148,10 +148,10 @@
         {
           "period_key": "2026-W39",
           "status": "ok",
-          "value": 13.158498309995169
+          "value": 13.360466145248816
         }
       ],
-      "metric_value": 13.158498309995169,
+      "metric_value": 13.360466145248816,
       "period_key": "2026-W39",
       "required": 1,
       "resolved_at": null,
@@ -202,10 +202,10 @@
         {
           "period_key": "2026-W39",
           "status": "ok",
-          "value": 13.158498309995169
+          "value": 13.360466145248816
         }
       ],
-      "metric_value": 13.158498309995169,
+      "metric_value": 13.360466145248816,
       "period_key": "2026-W39",
       "required": 1,
       "resolved_at": null,
@@ -370,10 +370,10 @@
         {
           "period_key": "2026-W39",
           "status": "ok",
-          "value": 0.17986083286518628
+          "value": 3.348998134563641
         }
       ],
-      "metric_value": 0.17986083286518628,
+      "metric_value": 3.348998134563641,
       "period_key": "2026-W39",
       "required": 1,
       "resolved_at": null,
@@ -416,5 +416,5 @@
       "triggered_at": null
     }
   ],
-  "updated_at": "2026-09-21T15:20:21Z"
+  "updated_at": "2026-09-28T17:02:07Z"
 }
