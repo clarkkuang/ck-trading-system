@@ -51,10 +51,15 @@
           "period_key": "2026-W40",
           "status": "ok",
           "value": 116.09989929199219
+        },
+        {
+          "period_key": "2026-W41",
+          "status": "ok",
+          "value": 116.94999694824219
         }
       ],
-      "metric_value": 116.09989929199219,
-      "period_key": "2026-W40",
+      "metric_value": 116.94999694824219,
+      "period_key": "2026-W41",
       "required": 1,
       "resolved_at": null,
       "rule_id": "intc_buy_ladder_t1",
@@ -115,10 +120,15 @@
           "period_key": "2026-W40",
           "status": "ok",
           "value": 116.09989929199219
+        },
+        {
+          "period_key": "2026-W41",
+          "status": "ok",
+          "value": 116.94999694824219
         }
       ],
-      "metric_value": 116.09989929199219,
-      "period_key": "2026-W40",
+      "metric_value": 116.94999694824219,
+      "period_key": "2026-W41",
       "required": 1,
       "resolved_at": null,
       "rule_id": "intc_buy_ladder_t2",
@@ -179,10 +189,15 @@
           "period_key": "2026-W40",
           "status": "ok",
           "value": 116.09989929199219
+        },
+        {
+          "period_key": "2026-W41",
+          "status": "ok",
+          "value": 116.94999694824219
         }
       ],
-      "metric_value": 116.09989929199219,
-      "period_key": "2026-W40",
+      "metric_value": 116.94999694824219,
+      "period_key": "2026-W41",
       "required": 1,
       "resolved_at": null,
       "rule_id": "intc_buy_ladder_t3",
@@ -243,16 +258,21 @@
           "period_key": "2026-W40",
           "status": "triggered",
           "value": 0.4589107681160072
+        },
+        {
+          "period_key": "2026-W41",
+          "status": "triggered",
+          "value": 0.4336130726479772
         }
       ],
-      "metric_value": 0.4589107681160072,
-      "period_key": "2026-W40",
+      "metric_value": 0.4336130726479772,
+      "period_key": "2026-W41",
       "required": 2,
       "resolved_at": null,
       "rule_id": "intc_buy_trend_repair",
       "severity": "advisory",
       "status": "triggered",
-      "streak": 60,
+      "streak": 61,
       "threshold": 0.0,
       "triggered_at": "2026-07-23T23:47:54Z"
     },
@@ -307,10 +327,15 @@
           "period_key": "2026-W40",
           "status": "ok",
           "value": 5.234440905860784
+        },
+        {
+          "period_key": "2026-W41",
+          "status": "ok",
+          "value": 5.272768122102894
         }
       ],
-      "metric_value": 5.234440905860784,
-      "period_key": "2026-W40",
+      "metric_value": 5.272768122102894,
+      "period_key": "2026-W41",
       "required": 1,
       "resolved_at": null,
       "rule_id": "intc_buy_pb_below_2",
@@ -426,10 +451,15 @@
           "period_key": "2026-W40",
           "status": "ok",
           "value": 0.4589107681160072
+        },
+        {
+          "period_key": "2026-W41",
+          "status": "ok",
+          "value": 0.4336130726479772
         }
       ],
-      "metric_value": 0.4589107681160072,
-      "period_key": "2026-W40",
+      "metric_value": 0.4336130726479772,
+      "period_key": "2026-W41",
       "required": 4,
       "resolved_at": null,
       "rule_id": "intc_sell_trend_break",
@@ -490,16 +520,21 @@
           "period_key": "2026-W40",
           "status": "triggered",
           "value": 5.234440905860784
+        },
+        {
+          "period_key": "2026-W41",
+          "status": "triggered",
+          "value": 5.272768122102894
         }
       ],
-      "metric_value": 5.234440905860784,
-      "period_key": "2026-W40",
+      "metric_value": 5.272768122102894,
+      "period_key": "2026-W41",
       "required": 1,
       "resolved_at": null,
       "rule_id": "intc_sell_pb_above_5",
       "severity": "advisory",
       "status": "triggered",
-      "streak": 2,
+      "streak": 3,
       "threshold": 5.0,
       "triggered_at": "2026-09-21T15:05:53Z"
     },
@@ -671,5 +706,5 @@
       "triggered_at": null
     }
   ],
-  "updated_at": "2026-09-28T16:44:44Z"
+  "updated_at": "2026-10-05T17:08:05Z"
 }
