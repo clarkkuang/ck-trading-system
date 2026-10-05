@@ -23,10 +23,10 @@
         {
           "period_key": "2026-W27",
           "status": "insufficient_data",
-          "value": 0.10179946908729805
+          "value": 0.10419616472647955
         }
       ],
-      "metric_value": 0.10179946908729805,
+      "metric_value": 0.10419616472647955,
       "period_key": "2026-W27",
       "required": 8,
       "resolved_at": null,
@@ -40,16 +40,16 @@
     {
       "action_label": "Cut GM tier",
       "details": {
-        "current_model_id": "anthropic/claude-opus-5.5:batch",
-        "drop_pct": 0.8,
-        "history_days": 87,
+        "current_model_id": "anthropic/claude-opus-5.5",
+        "drop_pct": 0.6,
+        "history_days": 94,
         "max_model_id": "anthropic/claude-opus-4.8-fast",
         "max_period": "2026-07-03",
         "max_value": 50.0
       },
       "episode_started": "2026-09-07",
       "fired": true,
-      "first_period_key": "2026-09-28",
+      "first_period_key": "2026-10-05",
       "history": [
         {
           "period_key": null,
@@ -120,10 +120,15 @@
           "period_key": "2026-09-28",
           "status": "triggered",
           "value": 10.0
+        },
+        {
+          "period_key": "2026-10-05",
+          "status": "triggered",
+          "value": 20.0
         }
       ],
-      "metric_value": 10.0,
-      "period_key": "2026-09-28",
+      "metric_value": 20.0,
+      "period_key": "2026-10-05",
       "required": 1,
       "resolved_at": null,
       "rule_id": "claude_opus_price_cut_gt30_365d",
@@ -136,16 +141,16 @@
     {
       "action_label": "Cut GM tier",
       "details": {
-        "current_model_id": "anthropic/claude-sonnet-5:batch",
-        "drop_pct": 0.5,
-        "history_days": 87,
+        "current_model_id": "anthropic/claude-sonnet-5.5",
+        "drop_pct": 0.0,
+        "history_days": 94,
         "max_model_id": "anthropic/claude-sonnet-5",
         "max_period": "2026-07-03",
         "max_value": 10.0
       },
-      "episode_started": "2026-09-07",
-      "fired": true,
-      "first_period_key": "2026-09-28",
+      "episode_started": null,
+      "fired": false,
+      "first_period_key": null,
       "history": [
         {
           "period_key": null,
@@ -216,18 +221,23 @@
           "period_key": "2026-09-28",
           "status": "triggered",
           "value": 5.0
+        },
+        {
+          "period_key": "2026-10-05",
+          "status": "ok",
+          "value": 10.0
         }
       ],
-      "metric_value": 5.0,
-      "period_key": "2026-09-28",
+      "metric_value": 10.0,
+      "period_key": "2026-10-05",
       "required": 1,
-      "resolved_at": null,
+      "resolved_at": "2026-10-05T14:34:18Z",
       "rule_id": "claude_sonnet_price_cut_gt30_365d",
       "severity": "trigger",
-      "status": "triggered",
-      "streak": 1,
+      "status": "ok",
+      "streak": 0,
       "threshold": 0.3,
-      "triggered_at": "2026-09-07T12:30:59Z"
+      "triggered_at": null
     },
     {
       "action_label": "Advisory: dev adoption slipping vs competitor CLI",
@@ -238,21 +248,21 @@
               "package": "@openai/codex",
               "registry": "npm"
             },
-            "growth": 0.148892496011442
+            "growth": 0.5021984031255752
           },
           {
             "dimensions": {
               "package": "@google/gemini-cli",
               "registry": "npm"
             },
-            "growth": 0.59560200545602
+            "growth": 0.4858631293890852
           },
           {
             "dimensions": {
               "package": "@qwen-code/qwen-code",
               "registry": "npm"
             },
-            "growth": 0.5989222632471809
+            "growth": 1.107083986652193
           }
         ],
         "contiguous": true,
@@ -321,10 +331,15 @@
           "period_key": "2026-W39",
           "status": "ok",
           "value": 13250272.0
+        },
+        {
+          "period_key": "2026-W40",
+          "status": "ok",
+          "value": 14786283.0
         }
       ],
-      "metric_value": 13250272.0,
-      "period_key": "2026-W39",
+      "metric_value": 14786283.0,
+      "period_key": "2026-W40",
       "required": 3,
       "resolved_at": "2026-09-21T12:47:40Z",
       "rule_id": "claude_code_npm_decline_3w",
@@ -335,5 +350,5 @@
       "triggered_at": null
     }
   ],
-  "updated_at": "2026-09-28T13:53:33Z"
+  "updated_at": "2026-10-05T14:34:18Z"
 }
