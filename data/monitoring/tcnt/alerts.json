@@ -46,10 +46,15 @@
           "period_key": "2026-W40",
           "status": "ok",
           "value": 12.889208485572478
+        },
+        {
+          "period_key": "2026-W41",
+          "status": "ok",
+          "value": 12.999371910371506
         }
       ],
-      "metric_value": 12.889208485572478,
-      "period_key": "2026-W40",
+      "metric_value": 12.999371910371506,
+      "period_key": "2026-W41",
       "required": 1,
       "resolved_at": null,
       "rule_id": "tcnt_exit_accelerate_upper_band",
@@ -105,10 +110,15 @@
           "period_key": "2026-W40",
           "status": "ok",
           "value": 12.889208485572478
+        },
+        {
+          "period_key": "2026-W41",
+          "status": "ok",
+          "value": 12.999371910371506
         }
       ],
-      "metric_value": 12.889208485572478,
-      "period_key": "2026-W40",
+      "metric_value": 12.999371910371506,
+      "period_key": "2026-W41",
       "required": 1,
       "resolved_at": null,
       "rule_id": "tcnt_exit_clear_half_pe23",
@@ -164,10 +174,15 @@
           "period_key": "2026-W40",
           "status": "ok",
           "value": 12.889208485572478
+        },
+        {
+          "period_key": "2026-W41",
+          "status": "ok",
+          "value": 12.999371910371506
         }
       ],
-      "metric_value": 12.889208485572478,
-      "period_key": "2026-W40",
+      "metric_value": 12.999371910371506,
+      "period_key": "2026-W41",
       "required": 1,
       "resolved_at": null,
       "rule_id": "tcnt_exit_clear_all_pe26",
@@ -223,10 +238,15 @@
           "period_key": "2026-W40",
           "status": "ok",
           "value": 12.889208485572478
+        },
+        {
+          "period_key": "2026-W41",
+          "status": "ok",
+          "value": 12.999371910371506
         }
       ],
-      "metric_value": 12.889208485572478,
-      "period_key": "2026-W40",
+      "metric_value": 12.999371910371506,
+      "period_key": "2026-W41",
       "required": 1,
       "resolved_at": null,
       "rule_id": "tcnt_brake_deep_value_pe10",
@@ -396,10 +416,15 @@
           "period_key": "2026-W40",
           "status": "ok",
           "value": 2.2026960103135096
+        },
+        {
+          "period_key": "2026-W41",
+          "status": "ok",
+          "value": -2.19572863218096
         }
       ],
-      "metric_value": 2.2026960103135096,
-      "period_key": "2026-W40",
+      "metric_value": -2.19572863218096,
+      "period_key": "2026-W41",
       "required": 1,
       "resolved_at": null,
       "rule_id": "tcnt_exit_underperform_sector_13w",
@@ -441,5 +466,5 @@
       "triggered_at": null
     }
   ],
-  "updated_at": "2026-10-05T17:24:51Z"
+  "updated_at": "2026-10-12T18:13:11Z"
 }
